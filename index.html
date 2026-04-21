@@ -392,9 +392,8 @@ function midiToFreq(m) { return A4 * Math.pow(2, (m - 69) / 12); }
 const SHARP_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const FLAT_NAMES  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 
-function noteLabel(midi, flat) {
-  const n = flat ? FLAT_NAMES : SHARP_NAMES;
-  return n[((midi % 12) + 12) % 12];
+function noteLabel(midi) {
+  return FLAT_NAMES[((midi % 12) + 12) % 12];
 }
 
 // 12 keys, semitone offset from C4=60
@@ -443,7 +442,7 @@ function getHoles() {
   }));
 }
 
-function nl(midi) { return noteLabel(midi, preferFlat); }
+function nl(midi) { return noteLabel(midi); }
 
 // ═══════════════════════════════════════════
 //  KEY SELECTOR
@@ -689,7 +688,7 @@ function updateMeter(det) {
   const nm  = Math.round(cd/100);
   const diff = cd - nm*100;
 
-  meterNote.textContent = noteLabel(nm, preferFlat);
+  meterNote.textContent = noteLabel(nm);
   meterNote.style.opacity = '1';
   meterCents.textContent = (diff>=0?'+':'')+diff.toFixed(1)+'¢';
 
