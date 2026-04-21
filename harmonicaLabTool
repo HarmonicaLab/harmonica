@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harmonica Lab Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161922;
+    --surface2: #1e2230;
+    --border: #2a3040;
+    --accent: #e8c84a;
+    --accent2: #4ae8b4;
+    --danger: #e84a4a;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --in-tune: #4ae8b4;
+    --close: #e8c84a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(232,200,74,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 30% at 80% 100%, rgba(74,232,180,0.05) 0%, transparent 50%);
+  }
+
+  header { text-align: center; margin-bottom: 28px; }
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 7vw, 4rem);
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  header p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 14px;
+  }
+
+  h2.section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* ── KEY SELECTOR ── */
+  .key-selector { display: flex; flex-wrap: wrap; gap: 6px; }
+  .key-btn {
+    padding: 6px 13px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .key-btn:hover { border-color: var(--accent); color: var(--text); }
+  .key-btn.active {
+    border-color: var(--accent);
+    background: rgba(232,200,74,0.15);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── NOTE CHART TABLE ── */
+  .chart-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .note-chart {
+    width: 100%;
+    min-width: 500px;
+    border-collapse: separate;
+    border-spacing: 4px;
+  }
+
+  .note-chart th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 2px 6px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .note-chart th.hole-th {
+    background: var(--surface2);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.7rem;
+  }
+
+  .note-chart td { text-align: center; padding: 0; }
+
+  .note-chart td.row-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.64rem;
+    color: var(--muted);
+    text-align: left;
+    padding: 2px 8px 2px 0;
+    white-space: nowrap;
+    width: 72px;
+  }
+
+  .cell-btn {
+    width: 100%;
+    padding: 9px 2px;
+    border-radius: 7px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(0.58rem, 1.5vw, 0.76rem);
+    font-weight: 500;
+    transition: all 0.13s;
+    display: block;
+    line-height: 1.2;
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .cell-btn.empty {
+    background: transparent;
+    border-color: transparent;
+    cursor: default;
+    color: var(--surface2);
+    pointer-events: none;
+  }
+
+  /* Blow = teal */
+  .cell-btn.blow {
+    border-color: rgba(74,232,180,0.28);
+    color: var(--accent2);
+    background: rgba(74,232,180,0.08);
+  }
+  .cell-btn.blow:hover { border-color: var(--accent2); background: rgba(74,232,180,0.18); }
+  .cell-btn.blow.active {
+    border-color: var(--accent2);
+    background: rgba(74,232,180,0.24);
+    box-shadow: 0 0 10px rgba(74,232,180,0.28);
+  }
+
+  /* Draw = yellow */
+  .cell-btn.draw {
+    border-color: rgba(232,200,74,0.28);
+    color: var(--accent);
+    background: rgba(232,200,74,0.08);
+  }
+  .cell-btn.draw:hover { border-color: var(--accent); background: rgba(232,200,74,0.18); }
+  .cell-btn.draw.active {
+    border-color: var(--accent);
+    background: rgba(232,200,74,0.24);
+    box-shadow: 0 0 10px rgba(232,200,74,0.28);
+  }
+
+  /* Bend = subtle */
+  .cell-btn.bend {
+    border-color: rgba(255,255,255,0.08);
+    color: #8a92a6;
+    background: rgba(255,255,255,0.03);
+    font-size: clamp(0.5rem, 1.3vw, 0.66rem);
+  }
+  .cell-btn.bend:hover { border-color: rgba(255,255,255,0.22); color: var(--text); }
+  .cell-btn.bend.active {
+    border-color: rgba(255,255,255,0.38);
+    color: var(--text);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 8px rgba(255,255,255,0.1);
+  }
+
+  .chart-legend {
+    display: flex; gap: 16px; margin-top: 10px;
+    font-size: 0.68rem; color: var(--muted);
+  }
+  .chart-legend span { display: flex; align-items: center; gap: 5px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid; }
+  .leg-dot.blow { border-color: var(--accent2); background: rgba(74,232,180,0.12); }
+  .leg-dot.draw { border-color: var(--accent);  background: rgba(232,200,74,0.12); }
+  .leg-dot.bend { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); }
+
+  /* ── SELECTED NOTE ── */
+  .selected-note {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .note-display { display: flex; flex-direction: column; gap: 2px; }
+  .note-display .label { font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; }
+  .note-display .big-note { font-family:'Bebas Neue',sans-serif; font-size:3.2rem; line-height:1; color:var(--accent); }
+  .note-display .freq { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); }
+
+  .tone-btn {
+    padding: 11px 26px; border-radius: 50px;
+    border: 2px solid var(--accent); background: transparent; color: var(--accent);
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.1em;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px;
+  }
+  .tone-btn:hover, .tone-btn.playing { background: var(--accent); color: var(--bg); }
+  .tone-btn svg { width: 15px; height: 15px; }
+
+  /* ── MIC ── */
+  .controls-row {
+    display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;
+  }
+  .mic-toggle {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; border-radius: 50px;
+    border: 2px solid var(--border); background: var(--surface2);
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: var(--muted);
+  }
+  .mic-toggle.active { border-color:var(--in-tune); color:var(--in-tune); background:rgba(74,232,180,0.08); }
+  .mic-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); }
+  .mic-toggle.active .mic-dot { background:var(--in-tune); box-shadow:0 0 8px var(--in-tune); animation:pulse 1.2s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status-text { font-size:0.73rem; color:var(--muted); font-family:'DM Mono',monospace; }
+
+  /* ── METER ── */
+  .meter-wrap {
+    position:relative; height:86px;
+    background:var(--surface2); border-radius:12px; border:1px solid var(--border); overflow:hidden;
+  }
+  .meter-track { width:100%; height:100%; position:relative; }
+  .meter-center-zone {
+    position:absolute; top:0; height:100%; left:43%; width:14%;
+    background:rgba(74,232,180,0.07);
+    border-left:1px solid rgba(74,232,180,0.2); border-right:1px solid rgba(74,232,180,0.2);
+  }
+  .meter-center-line {
+    position:absolute; left:50%; top:10%; height:80%; width:2px;
+    background:rgba(74,232,180,0.4); transform:translateX(-50%); border-radius:2px;
+  }
+  .meter-labels {
+    position:absolute; top:8px; left:0; right:0;
+    display:flex; justify-content:space-between; padding:0 12px;
+    font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--muted); pointer-events:none;
+  }
+  .meter-needle {
+    position:absolute; top:15%; height:70%; width:3px;
+    background:var(--muted); border-radius:3px; left:50%; transform:translateX(-50%);
+    transition:left 0.08s ease, background 0.2s;
+  }
+  .meter-note {
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--text);
+    pointer-events:none; letter-spacing:0.05em; opacity:0; transition:opacity 0.2s;
+  }
+  .meter-cents { position:absolute; top:10px; right:12px; font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); transition:color 0.2s; }
+  .in-tune-badge { position:absolute; top:10px; left:12px; font-family:'Bebas Neue',sans-serif; font-size:0.85rem; letter-spacing:0.1em; opacity:0; transition:opacity 0.3s; }
+
+  /* ── LEVELS ── */
+  .levels-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; }
+  .level-chip {
+    display:flex; flex-direction:column; align-items:center;
+    padding:9px 4px 7px; border-radius:10px;
+    border:1.5px solid var(--border); background:var(--surface2);
+    cursor:pointer; transition:all 0.15s; gap:3px;
+  }
+  .level-chip:hover { border-color:var(--accent); }
+  .level-chip.active { border-color:var(--accent); background:rgba(232,200,74,0.1); }
+  .level-chip .lnum { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--accent); line-height:1; }
+  .level-chip .ltag { font-size:0.5rem; color:var(--muted); text-align:center; text-transform:uppercase; letter-spacing:0.04em; line-height:1.2; }
+  .level-desc {
+    font-size:0.76rem; color:var(--muted); line-height:1.55; margin-top:12px;
+    padding:9px 13px; background:var(--surface2); border-radius:8px; border-left:3px solid var(--accent);
+  }
+
+  @media (max-width:500px) {
+    .levels-grid { grid-template-columns:repeat(4,1fr); }
+    .note-chart { min-width:420px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Harmonica Lab Tool</h1>
+  <p>Bending Tool — Key of <span id="keyLabel">C</span> Diatonic</p>
+</header>
+
+<!-- KEY SELECTOR -->
+<div class="card">
+  <h2 class="section-label">Tonalità dell'armonica</h2>
+  <div class="key-selector" id="keySelector"></div>
+</div>
+
+<!-- MIC + METER -->
+<div class="card">
+  <div class="controls-row">
+    <button class="mic-toggle" id="micBtn">
+      <div class="mic-dot"></div>
+      Microfono OFF
+    </button>
+    <div class="status-text" id="statusText">Attiva il microfono per iniziare</div>
+  </div>
+  <div class="meter-wrap">
+    <div class="meter-track">
+      <div class="meter-center-zone"></div>
+      <div class="meter-center-line"></div>
+      <div class="meter-labels">
+        <span>-50¢</span><span>-25¢</span><span>0</span><span>+25¢</span><span>+50¢</span>
+      </div>
+      <div class="meter-needle" id="needle"></div>
+      <div class="meter-note"   id="meterNote">—</div>
+      <div class="meter-cents"  id="meterCents">— ¢</div>
+      <div class="in-tune-badge" id="inTuneBadge">✓ IN TUNE</div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE CHART -->
+<div class="card">
+  <h2 class="section-label">Note — Clicca per selezionare e ascoltare</h2>
+  <div class="chart-wrap">
+    <table class="note-chart" id="noteChart">
+      <thead><tr id="chartHeader"></tr></thead>
+      <tbody id="chartBody"></tbody>
+    </table>
+  </div>
+  <div class="chart-legend">
+    <span><div class="leg-dot blow"></div> Espira (blow)</span>
+    <span><div class="leg-dot draw"></div> Aspira (draw)</span>
+    <span><div class="leg-dot bend"></div> Bend / semitono</span>
+  </div>
+</div>
+
+<!-- SELECTED NOTE + TONE -->
+<div class="card">
+  <div class="selected-note">
+    <div class="note-display">
+      <span class="label">Nota selezionata</span>
+      <div class="big-note" id="selectedNoteName">—</div>
+      <div class="freq" id="selectedFreq">— Hz</div>
+    </div>
+    <button class="tone-btn" id="toneBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      Ascolta la nota
+    </button>
+  </div>
+</div>
+
+<!-- LEVELS -->
+<div class="card">
+  <h2 class="section-label">Livelli di difficoltà</h2>
+  <div class="levels-grid" id="levelsGrid"></div>
+  <div class="level-desc" id="levelDesc">Seleziona un livello per vedere le istruzioni.</div>
+</div>
+<div class="card">
+  <h2 class="section-label">Livelli di difficoltà</h2>
+  <div class="levels-grid" id="levelsGrid"></div>
+  <div class="level-desc" id="levelDesc">Seleziona un livello per vedere le istruzioni.</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  TUNING DATA
+// ═══════════════════════════════════════════
+const A4 = 440;
+function midiToFreq(m) { return A4 * Math.pow(2, (m - 69) / 12); }
+
+const SHARP_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const FLAT_NAMES  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+
+function noteLabel(midi, flat) {
+  const n = flat ? FLAT_NAMES : SHARP_NAMES;
+  return n[((midi % 12) + 12) % 12];
+}
+
+// 12 keys, semitone offset from C4=60
+const KEYS = [
+  {name:'G',  offset:-5, flat:false},
+  {name:'Ab', offset:-4, flat:true },
+  {name:'A',  offset:-3, flat:false},
+  {name:'Bb', offset:-2, flat:true },
+  {name:'B',  offset:-1, flat:false},
+  {name:'C',  offset: 0, flat:false},
+  {name:'Db', offset: 1, flat:true },
+  {name:'D',  offset: 2, flat:false},
+  {name:'Eb', offset: 3, flat:true },
+  {name:'E',  offset: 4, flat:false},
+  {name:'F',  offset: 5, flat:true },
+  {name:'F#', offset: 6, flat:false},
+];
+
+// Richter tuning in C — MIDI corretti
+// Blow: C4=60, E4=64, G4=67, C5=72, E5=76, G5=79, C6=84, E6=88, G6=91, C7=96
+// Draw: D4=62, G4=67, B4=71, D5=74, F5=77, A5=81, B5=83, D6=86, F6=89, A6=93
+const BASE = [
+  {n:1,  blow:60, draw:62, drawBends:[61],      blowBends:[]      },
+  {n:2,  blow:64, draw:67, drawBends:[66,65],    blowBends:[]      },
+  {n:3,  blow:67, draw:71, drawBends:[70,69,68], blowBends:[]      },
+  {n:4,  blow:72, draw:74, drawBends:[73],        blowBends:[]      },
+  {n:5,  blow:76, draw:77, drawBends:[],          blowBends:[]      },
+  {n:6,  blow:79, draw:81, drawBends:[80],        blowBends:[]      },
+  {n:7,  blow:84, draw:83, drawBends:[],          blowBends:[]      },
+  {n:8,  blow:88, draw:86, drawBends:[],          blowBends:[87]    },
+  {n:9,  blow:91, draw:89, drawBends:[],          blowBends:[90]    },
+  {n:10, blow:96, draw:93, drawBends:[],          blowBends:[94,95] },
+];
+
+let currentOffset = 0;
+let preferFlat    = false;
+let selectedMidi  = null;
+
+function getHoles() {
+  return BASE.map(h => ({
+    n:         h.n,
+    blow:      h.blow + currentOffset,
+    draw:      h.draw + currentOffset,
+    drawBends: h.drawBends.map(m => m + currentOffset),
+    blowBends: h.blowBends.map(m => m + currentOffset),
+  }));
+}
+
+function nl(midi) { return noteLabel(midi, preferFlat); }
+
+// ═══════════════════════════════════════════
+//  KEY SELECTOR
+// ═══════════════════════════════════════════
+function buildKeySelector() {
+  const c = document.getElementById('keySelector');
+  c.innerHTML = '';
+  KEYS.forEach(k => {
+    const b = document.createElement('button');
+    b.className = 'key-btn' + (k.offset === 0 ? ' active' : '');
+    b.textContent = k.name;
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.key-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      currentOffset = k.offset;
+      preferFlat    = k.flat;
+      document.getElementById('keyLabel').textContent = k.name;
+      // reset selection
+      selectedMidi = null;
+      document.getElementById('selectedNoteName').textContent = '—';
+      document.getElementById('selectedFreq').textContent = '— Hz';
+      document.getElementById('toneBtn').disabled = true;
+      stopTone();
+      buildChart();
+    });
+    c.appendChild(b);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  NOTE CHART
+//  Rows top→bottom:
+//    Blow bend 2 | Blow bend 1 | BLOW | DRAW | Draw bend 1 | Draw bend 2 | Draw bend 3
+// ═══════════════════════════════════════════
+function buildChart() {
+  const holes = getHoles();
+
+  // ── Header ──
+  const hdr = document.getElementById('chartHeader');
+  hdr.innerHTML = '';
+  const thEmpty = document.createElement('th');
+  thEmpty.style.width = '72px';
+  hdr.appendChild(thEmpty);
+  holes.forEach(h => {
+    const th = document.createElement('th');
+    th.className = 'hole-th';
+    th.textContent = h.n;
+    hdr.appendChild(th);
+  });
+
+  // ── Rows ──
+  const ROWS = [
+    { label:'▲ Bend 2',  type:'bend', get: h => h.blowBends[1] ?? null },
+    { label:'▲ Bend 1',  type:'bend', get: h => h.blowBends[0] ?? null },
+    { label:'▲ Espira',  type:'blow', get: h => h.blow                  },
+    { label:'▼ Aspira',  type:'draw', get: h => h.draw                  },
+    { label:'▼ Bend 1',  type:'bend', get: h => h.drawBends[0] ?? null  },
+    { label:'▼ Bend 2',  type:'bend', get: h => h.drawBends[1] ?? null  },
+    { label:'▼ Bend 3',  type:'bend', get: h => h.drawBends[2] ?? null  },
+  ];
+
+  const body = document.getElementById('chartBody');
+  body.innerHTML = '';
+
+  ROWS.forEach(row => {
+    const vals = holes.map(h => row.get(h));
+    if (vals.every(v => v === null)) return; // skip empty rows
+
+    const tr = document.createElement('tr');
+
+    // row label cell
+    const tdL = document.createElement('td');
+    tdL.className = 'row-label';
+    tdL.textContent = row.label;
+    tr.appendChild(tdL);
+
+    holes.forEach((h, i) => {
+      const midi = vals[i];
+      const td   = document.createElement('td');
+      const btn  = document.createElement('button');
+
+      if (midi !== null) {
+        btn.className = 'cell-btn ' + row.type;
+        btn.textContent = nl(midi);
+        btn.dataset.midi = midi;
+        btn.addEventListener('click', () => selectNote(midi, btn));
+        if (midi === selectedMidi) btn.classList.add('active');
+      } else {
+        btn.className = 'cell-btn empty';
+        btn.textContent = '·';
+        btn.disabled = true;
+      }
+
+      td.appendChild(btn);
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  SELECT NOTE
+// ═══════════════════════════════════════════
+function selectNote(midi, btn) {
+  document.querySelectorAll('.cell-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMidi = midi;
+  document.getElementById('selectedNoteName').textContent = nl(midi);
+  document.getElementById('selectedFreq').textContent = midiToFreq(midi).toFixed(2) + ' Hz';
+  document.getElementById('toneBtn').disabled = false;
+  stopTone();
+}
+
+// ═══════════════════════════════════════════
+//  TONE GENERATOR
+// ═══════════════════════════════════════════
+let toneOsc=null, toneGain=null, audioCtx=null, tonePlaying=false;
+const toneBtn = document.getElementById('toneBtn');
+
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+toneBtn.addEventListener('click', () => tonePlaying ? stopTone() : playTone());
+
+function playTone() {
+  if (selectedMidi === null) return;
+  const ctx = getCtx(); stopTone();
+  toneGain = ctx.createGain();
+  toneGain.gain.setValueAtTime(0, ctx.currentTime);
+  toneGain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.05);
+  toneOsc = ctx.createOscillator();
+  toneOsc.type = 'sine';
+  toneOsc.frequency.value = midiToFreq(selectedMidi);
+  toneOsc.connect(toneGain); toneGain.connect(ctx.destination);
+  toneOsc.start();
+  tonePlaying = true;
+  toneBtn.classList.add('playing');
+  toneBtn.querySelector('svg').innerHTML = '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+  toneBtn.lastChild.textContent = ' Stop';
+  setTimeout(() => { if (tonePlaying) stopTone(); }, 3000);
+}
+
+function stopTone() {
+  if (toneOsc) {
+    try {
+      toneGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
+      toneOsc.stop(audioCtx.currentTime + 0.1);
+    } catch(e) {}
+    toneOsc = null; toneGain = null;
+  }
+  tonePlaying = false;
+  toneBtn.classList.remove('playing');
+  toneBtn.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+  toneBtn.lastChild.textContent = ' Ascolta la nota';
+}
+
+// ═══════════════════════════════════════════
+//  PITCH DETECTION
+// ═══════════════════════════════════════════
+let micStream=null, analyser=null, pitchRafId=null, micActive=false;
+const micBtn      = document.getElementById('micBtn');
+const statusText  = document.getElementById('statusText');
+const needle      = document.getElementById('needle');
+const meterNote   = document.getElementById('meterNote');
+const meterCents  = document.getElementById('meterCents');
+const inTuneBadge = document.getElementById('inTuneBadge');
+
+micBtn.addEventListener('click', async () => micActive ? stopMic() : await startMic());
+
+async function startMic() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+    const ctx = getCtx();
+    const src = ctx.createMediaStreamSource(micStream);
+    analyser = ctx.createAnalyser(); analyser.fftSize = 4096;
+    src.connect(analyser);
+    micActive = true;
+    micBtn.classList.add('active');
+    micBtn.lastChild.textContent = 'Microfono ON';
+    statusText.textContent = 'In ascolto…';
+    detectPitch();
+  } catch(e) { statusText.textContent = 'Accesso al microfono negato.'; }
+}
+
+function stopMic() {
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  if (pitchRafId) cancelAnimationFrame(pitchRafId);
+  micActive = false;
+  micBtn.classList.remove('active');
+  micBtn.lastChild.textContent = 'Microfono OFF';
+  statusText.textContent = 'Attiva il microfono per iniziare';
+  resetMeter();
+}
+
+function resetMeter() {
+  needle.style.left = '50%'; needle.style.background = 'var(--muted)';
+  meterNote.style.opacity = '0'; meterCents.textContent = '— ¢'; inTuneBadge.style.opacity = '0';
+}
+
+function detectPitch() {
+  const buf = new Float32Array(analyser.fftSize);
+  function loop() {
+    analyser.getFloatTimeDomainData(buf);
+    let rms = 0; for (let i=0;i<buf.length;i++) rms+=buf[i]*buf[i];
+    rms = Math.sqrt(rms/buf.length);
+    if (rms < 0.01) { resetMeter(); statusText.textContent='Suona una nota…'; }
+    else {
+      const f = autoCorrelate(buf, audioCtx.sampleRate);
+      if (f > 50 && f < 2000) updateMeter(f);
+    }
+    pitchRafId = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function autoCorrelate(buf, sr) {
+  const SIZE = buf.length;
+  let rms = 0; for(let i=0;i<SIZE;i++) rms+=buf[i]*buf[i]; rms=Math.sqrt(rms/SIZE);
+  if (rms < 0.01) return -1;
+  let r1=0, r2=SIZE-1;
+  for(let i=0;i<SIZE/2;i++){if(Math.abs(buf[i])<0.2){r1=i;break;}}
+  for(let i=1;i<SIZE/2;i++){if(Math.abs(buf[SIZE-i])<0.2){r2=SIZE-i;break;}}
+  const s=buf.slice(r1,r2), len=s.length;
+  const c=new Array(len).fill(0);
+  for(let i=0;i<len;i++) for(let j=0;j<len-i;j++) c[i]+=s[j]*s[j+i];
+  let d=0; while(d<len-1&&c[d]>c[d+1])d++;
+  let maxval=-1,maxpos=-1;
+  for(let i=d;i<len;i++){if(c[i]>maxval){maxval=c[i];maxpos=i;}}
+  let T0=maxpos;
+  const x1=c[T0-1],x2=c[T0],x3=c[T0+1];
+  const a=(x1+x3-2*x2)/2, b2=(x3-x1)/2;
+  if(a) T0=T0-b2/(2*a);
+  return sr/T0;
+}
+
+function freqToCents(f) { return 1200*Math.log2(f/A4)+6900; }
+
+function updateMeter(det) {
+  const cd  = freqToCents(det);
+  const nm  = Math.round(cd/100);
+  const diff = cd - nm*100;
+
+  meterNote.textContent = noteLabel(nm, preferFlat);
+  meterNote.style.opacity = '1';
+  meterCents.textContent = (diff>=0?'+':'')+diff.toFixed(1)+'¢';
+
+  const pct = 50 + (diff/50)*45;
+  needle.style.left = Math.max(3,Math.min(97,pct))+'%';
+
+  const abs = Math.abs(diff);
+  let col;
+  if (abs<=8) {
+    col='var(--in-tune)'; statusText.textContent='✓ In tune!';
+    inTuneBadge.style.color='var(--in-tune)'; inTuneBadge.style.opacity='1';
+  } else if (abs<=20) {
+    col='var(--close)'; statusText.textContent=diff>0?'Troppo alto →':'← Troppo basso';
+    inTuneBadge.style.opacity='0';
+  } else {
+    col='var(--danger)'; statusText.textContent=diff>0?'Molto alto →':'← Molto basso';
+    inTuneBadge.style.opacity='0';
+  }
+  needle.style.background=col; meterCents.style.color=col;
+
+  if (selectedMidi!==null && Math.abs(cd-selectedMidi*100)<=8)
+    statusText.textContent='🎯 Nota corretta — In tune!';
+}
+
+// ═══════════════════════════════════════════
+//  LEVELS
+// ═══════════════════════════════════════════
+const LEVELS=[
+  {n:1,tag:'Inizia',    desc:"Piega (bend) la nota 1 o 4 draw — quella più facile. Non preoccuparti ancora dell'intonazione."},
+  {n:2,tag:'Draw 1-6',  desc:'Piega tutte le note draw dal foro 1 al 6. Ancora non devi essere in tune.'},
+  {n:3,tag:'Blow bend', desc:'Prova a piegare 8, 9 o 10 blow. Concentrati solo sul sentire il bend.'},
+  {n:4,tag:'1° tune',   desc:'Piega 1, 4 o 6 draw di un semitono IN TUNE. Scegline una sola.'},
+  {n:5,tag:'3 in tune', desc:'Piega tutte e tre le note del Livello 4 IN TUNE.'},
+  {n:6,tag:'Doppio',    desc:'Suona -2″ (2 draw doppio) o -3′ (3 draw singolo) IN TUNE.'},
+  {n:7,tag:'Maestro',   desc:'Suona tutti i blow bend e draw bend IN TUNE. Sei un master!'},
+];
+
+function buildLevels() {
+  const g = document.getElementById('levelsGrid');
+  LEVELS.forEach(lv => {
+    const c = document.createElement('div'); c.className='level-chip';
+    c.innerHTML=`<div class="lnum">${lv.n}</div><div class="ltag">${lv.tag}</div>`;
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.level-chip').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+      document.getElementById('levelDesc').textContent=`Livello ${lv.n}: ${lv.desc}`;
+    });
+    g.appendChild(c);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+buildKeySelector();
+buildChart();
+buildLevels();
+</script>
+</body>
+</html>
