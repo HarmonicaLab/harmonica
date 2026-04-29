@@ -414,7 +414,7 @@ function detectPitch(buf,sr){
   let rms=0;
   for(let i=0;i<N;i++) rms+=buf[i]*buf[i];
   rms=Math.sqrt(rms/N);
-  if(rms<0.006) return -1;
+  if(rms<0.002) return -1;
 
   // Autocorrelazione
   const corr=new Float32Array(N);
