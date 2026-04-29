@@ -790,9 +790,10 @@ function autoCorrelate(buf,sr) {
 function freqToCents(f){ return 1200*Math.log2(f/A4)+6900; }
 
 function updateMeter(det) {
-  const cd=freqToCents(det);
-  const nm=Math.round(cd/100);
-  const diff=cd-nm*100;
+  // Calcola midi corretto direttamente dalla frequenza
+  const midiExact = 69 + 12 * Math.log2(det / A4);
+  const nm   = Math.round(midiExact);          // midi intero più vicino
+  const diff = (midiExact - nm) * 100;         // cents di scostamento (-50..+50)
 
   meterNote.textContent=noteLabel(nm); meterNote.style.opacity='1';
   meterCents.textContent=(diff>=0?'+':'')+diff.toFixed(1)+'¢';
@@ -816,10 +817,10 @@ function updateMeter(det) {
   }
   needle.style.background=col; meterCents.style.color=col;
 
-  if(selectedMidi!==null&&Math.abs(cd-selectedMidi*100)<=8)
+  if(selectedMidi!==null&&Math.abs(midiExact-selectedMidi)<=0.5)
     statusText.textContent=t('correct');
 
-  // sync highlight on box 3
+  // sync highlight on box 3 — usa midi intero esatto
   highlightDetectedNote(nm, abs);
 
   // push to history
@@ -833,11 +834,8 @@ function highlightDetectedNote(detectedMidi, absCents) {
   document.querySelectorAll('.cell-btn.detected,.cell-btn.detected-intune,.cell-btn.detected-close,.cell-btn.detected-off')
     .forEach(b => b.classList.remove('detected','detected-intune','detected-close','detected-off'));
 
-  // Match by exact midi ±1 semitone (accounts for slight octave ambiguity in pitch detection)
   const targets = [...document.querySelectorAll('.cell-btn:not(.empty)')].filter(btn => {
-    const midi = parseInt(btn.dataset.midi);
-    if (isNaN(midi)) return false;
-    return Math.abs(midi - detectedMidi) <= 1;
+    return parseInt(btn.dataset.midi) === detectedMidi;
   });
 
   if (!targets.length) return;
