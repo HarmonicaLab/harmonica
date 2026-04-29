@@ -834,8 +834,15 @@ function highlightDetectedNote(detectedMidi, absCents) {
   document.querySelectorAll('.cell-btn.detected,.cell-btn.detected-intune,.cell-btn.detected-close,.cell-btn.detected-off')
     .forEach(b => b.classList.remove('detected','detected-intune','detected-close','detected-off'));
 
-  // Find all cell buttons with this exact midi value
-  const targets = document.querySelectorAll(`.cell-btn[data-midi="${detectedMidi}"]`);
+  // Match by pitch class (0-11) so it works in all keys
+  const detectedPC = ((detectedMidi % 12) + 12) % 12;
+
+  const targets = [...document.querySelectorAll('.cell-btn:not(.empty)')].filter(btn => {
+    const midi = parseInt(btn.dataset.midi);
+    if (isNaN(midi)) return false;
+    return ((midi % 12) + 12) % 12 === detectedPC;
+  });
+
   if (!targets.length) return;
 
   let tuneClass;
@@ -843,9 +850,7 @@ function highlightDetectedNote(detectedMidi, absCents) {
   else if (absCents <= 20) tuneClass = 'detected-close';
   else                     tuneClass = 'detected-off';
 
-  targets.forEach(btn => {
-    btn.classList.add('detected', tuneClass);
-  });
+  targets.forEach(btn => btn.classList.add('detected', tuneClass));
 }
 
 // ─── PITCH HISTORY CANVAS ───
