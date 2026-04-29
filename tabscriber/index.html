@@ -274,15 +274,23 @@ const BASE_DB3 =[null,null,8,null,null,null,null,null,null,null];
 const BASE_BB1 =[null,null,null,null,null,null,22,27,30,35];
 
 const KEYS=[
-  {name:'C',offset:0},{name:'D',offset:2},{name:'E',offset:4},
-  {name:'F',offset:5},{name:'G',offset:7},{name:'A',offset:9},
-  {name:'Bb',offset:10},{name:'Ab',offset:8},{name:'F#',offset:6},
-  {name:'Low F',offset:-7},{name:'Low D',offset:-3},{name:'Low C',offset:0,low:true}
+  {name:'C',  root:60}, // C4
+  {name:'D',  root:62}, // D4
+  {name:'E',  root:64}, // E4
+  {name:'F',  root:65}, // F4
+  {name:'G',  root:67}, // G4
+  {name:'A',  root:57}, // A3 ← foro 1 soffiato è A3, non A4!
+  {name:'Bb', root:58}, // Bb3
+  {name:'Ab', root:56}, // Ab3
+  {name:'F#', root:66}, // F#4
+  {name:'Low F', root:53}, // F3
+  {name:'Low D', root:50}, // D3
+  {name:'Low C', root:48}, // C3
 ];
 let currentKey=KEYS[0], HMAP=[];
 
 function buildMap(key){
-  const root=60+key.offset+(key.low?-12:0), m=[];
+  const root=key.root, m=[];
   for(let i=0;i<10;i++){
     const h=i+1;
     m.push({midi:root+BASE_BLOW[i],hz:midi2hz(root+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
@@ -342,7 +350,7 @@ function setKey(i,btn){
 function buildHarpTable(){
   const tbl=document.getElementById('harpTable');
   tbl.innerHTML='';
-  const root=60+currentKey.offset+(currentKey.low?-12:0);
+  const root=currentKey.root;
   const holes=[];
   for(let i=0;i<10;i++) holes.push({
     blow:{midi:root+BASE_BLOW[i],dir:'blow'},
