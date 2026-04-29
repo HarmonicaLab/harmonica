@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harmonica Tab Transcriber</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f5f5f3;
+    --bg3: #ebebea;
+    --text: #1a1a1a;
+    --text2: #666660;
+    --text3: #999994;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --radius: 10px;
+    --radius-sm: 7px;
+    --teal: #1D9E75;
+    --teal-bg: #E1F5EE;
+    --teal-border: #9FE1CB;
+    --teal-dark: #085041;
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+    --blue-border: #B5D4F4;
+    --blue-dark: #0C447C;
+    --amber: #BA7517;
+    --amber-bg: #FAEEDA;
+    --amber-border: #FAC775;
+    --amber-dark: #633806;
+    --red-bg: #FCEBEB;
+    --red: #A32D2D;
+    --green-bg: #EAF3DE;
+    --green: #3B6D11;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1c;
+      --bg2: #2a2a28;
+      --bg3: #333331;
+      --text: #f0f0ee;
+      --text2: #aaaaaa;
+      --text3: #777775;
+      --border: rgba(255,255,255,0.10);
+      --border2: rgba(255,255,255,0.20);
+      --teal-bg: #04342C;
+      --teal-border: #0F6E56;
+      --teal-dark: #9FE1CB;
+      --blue-bg: #042C53;
+      --blue-border: #185FA5;
+      --blue-dark: #B5D4F4;
+      --amber-bg: #412402;
+      --amber-border: #854F0B;
+      --amber-dark: #FAC775;
+      --red-bg: #501313;
+      --red: #F09595;
+      --green-bg: #173404;
+      --green: #C0DD97;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg2);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 700px; margin: 0 auto; }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .sub {
+    font-size: 14px;
+    color: var(--text2);
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  /* --- TUNER --- */
+  .tuner { text-align: center; }
+
+  .pitch-big {
+    font-size: 62px;
+    font-weight: 500;
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+    min-height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text3);
+    letter-spacing: -1px;
+    transition: color 0.1s;
+  }
+  .pitch-big.on   { color: var(--teal); }
+  .pitch-big.bend { color: var(--amber); }
+  .pitch-big.oob  { color: var(--red); }
+
+  .freq-sub {
+    font-size: 13px;
+    color: var(--text2);
+    font-family: 'Courier New', monospace;
+    margin-top: 4px;
+    min-height: 18px;
+  }
+
+  .cents-wrap {
+    position: relative;
+    height: 6px;
+    background: var(--bg3);
+    border-radius: 3px;
+    margin: 14px auto;
+    max-width: 300px;
+  }
+  .cents-fill {
+    position: absolute;
+    height: 100%;
+    border-radius: 3px;
+    top: 0;
+    transition: all 0.08s;
+    background: var(--teal);
+  }
+  .cents-mid {
+    position: absolute;
+    left: 50%;
+    top: -3px;
+    width: 1.5px;
+    height: 12px;
+    background: var(--border2);
+    transform: translateX(-50%);
+    border-radius: 1px;
+  }
+  .cents-lbl {
+    font-size: 12px;
+    color: var(--text2);
+    font-family: 'Courier New', monospace;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-family: 'Courier New', monospace;
+    margin-top: 8px;
+  }
+  .badge.intune { background: var(--teal-bg); color: var(--teal-dark); }
+  .badge.sharp  { background: var(--amber-bg); color: var(--amber-dark); }
+  .badge.flat   { background: var(--amber-bg); color: var(--amber-dark); }
+  .badge.bend   { background: var(--amber-bg); color: var(--amber-dark); }
+  .badge.idle   { background: var(--bg2); color: var(--text3); }
+  .badge.oob    { background: var(--red-bg); color: var(--red); }
+
+  .mic-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border2);
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: background 0.15s;
+  }
+  .mic-btn:hover { background: var(--bg2); }
+  .mic-btn.on { border-color: var(--teal); color: var(--teal); }
+  .mic-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .mic-btn.on .mic-dot { animation: blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* --- HARP GRID --- */
+  .legend-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
+  .leg-sq { width: 12px; height: 12px; border-radius: 3px; }
+
+  .harp-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .harp-row { display: flex; gap: 4px; align-items: flex-end; width: max-content; }
+
+  .hole-col { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .hole-num { font-size: 11px; color: var(--text3); font-family: 'Courier New', monospace; margin-top: 2px; }
+
+  .hole-cell {
+    width: 42px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: var(--text3);
+    background: var(--bg2);
+    transition: transform 0.1s, background 0.1s;
+  }
+  .hole-cell.blow  { background: var(--blue-bg);  color: var(--blue-dark);  border-color: var(--blue-border); }
+  .hole-cell.draw  { background: var(--teal-bg);  color: var(--teal-dark);  border-color: var(--teal-border); }
+  .hole-cell.bend1 { background: var(--amber-bg); color: var(--amber-dark); border-color: var(--amber-border); }
+  .hole-cell.bend2 { background: var(--amber-bg); color: var(--amber-dark); border-color: var(--amber-border); opacity: 0.85; }
+  .hole-cell.bend3 { background: var(--amber-bg); color: var(--amber-dark); border-color: var(--amber-border); opacity: 0.7; }
+  .hole-cell.active { transform: scale(1.18); font-weight: 600; z-index: 2; }
+  .hole-cell.ghost  { opacity: 0; pointer-events: none; }
+
+  /* --- TAB --- */
+  .sec-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .sec-hdr h2 { font-size: 14px; font-weight: 500; }
+
+  .clr-btn {
+    font-size: 12px;
+    color: var(--text2);
+    border: 0.5px solid var(--border);
+    background: transparent;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .clr-btn:hover { background: var(--bg2); }
+
+  .tab-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 48px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .tab-chip {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 9px;
+    min-width: 40px;
+    gap: 1px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .tab-chip:hover { opacity: 0.55; }
+  .tab-chip .arr { font-size: 13px; line-height: 1; }
+  .tab-chip.blow  .arr { color: var(--blue); }
+  .tab-chip.draw  .arr { color: var(--teal); }
+  .tab-chip.bend1 .arr,
+  .tab-chip.bend2 .arr,
+  .tab-chip.bend3 .arr { color: var(--amber); }
+  .tab-chip .hn { font-size: 17px; font-weight: 500; font-family: 'Courier New', monospace; color: var(--text); line-height: 1; }
+  .tab-chip .nn { font-size: 10px; color: var(--text2); font-family: 'Courier New', monospace; }
+  .tab-empty { font-size: 13px; color: var(--text3); }
+
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--teal);
+    background: transparent;
+    color: var(--teal);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .add-btn:hover { background: var(--teal-bg); }
+  .add-btn:disabled { opacity: 0.35; cursor: not-allowed; border-color: var(--border2); color: var(--text3); }
+  .add-btn:disabled:hover { background: transparent; }
+  .add-btn.bend-active { border-color: var(--amber); color: var(--amber); }
+  .add-btn.bend-active:hover { background: var(--amber-bg); }
+
+  .txt-out {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: var(--bg2);
+    border-radius: var(--radius-sm);
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: 2px;
+    word-break: break-all;
+    min-height: 40px;
+    border: 0.5px solid var(--border);
+    user-select: all;
+  }
+
+  /* --- COPY BTN --- */
+  .copy-row { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .copy-btn {
+    font-size: 12px;
+    color: var(--text2);
+    border: 0.5px solid var(--border);
+    background: transparent;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: var(--bg2); }
+  .copy-btn.ok { color: var(--teal); border-color: var(--teal-border); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Harmonica Tab Transcriber</h1>
+  <p class="sub">Armonica diatonica in Do — riconosce note e bend in tempo reale</p>
+
+  <!-- TUNER -->
+  <div class="card tuner">
+    <div class="pitch-big" id="pitchBig">—</div>
+    <div class="freq-sub" id="freqSub">Premi il microfono per iniziare</div>
+    <div class="cents-wrap">
+      <div class="cents-fill" id="cFill" style="left:50%;width:0"></div>
+      <div class="cents-mid"></div>
+    </div>
+    <div class="cents-lbl" id="cLbl">— ct</div>
+    <br>
+    <span class="badge idle" id="badge">in attesa</span>
+    <br>
+    <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+      <span class="mic-dot"></span>
+      <span id="micLbl">Attiva microfono</span>
+    </button>
+  </div>
+
+  <!-- HARP GRID -->
+  <div class="card">
+    <div class="legend-row">
+      <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-border)"></div>↑ soffiata</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--teal-bg);border:0.5px solid var(--teal-border)"></div>↓ aspirata</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-border)"></div>' bend</div>
+    </div>
+    <div class="harp-scroll"><div class="harp-row" id="harpRow"></div></div>
+  </div>
+
+  <!-- TAB -->
+  <div class="card">
+    <div class="sec-hdr">
+      <h2>Tablatura</h2>
+      <button class="clr-btn" onclick="clearTab()">Cancella tutto</button>
+    </div>
+    <div class="tab-notes" id="tabNotes"><span class="tab-empty">Nessuna nota ancora</span></div>
+    <button class="add-btn" id="addBtn" onclick="addNote()" disabled>+ Aggiungi nota</button>
+    <div class="txt-out" id="txtOut">—</div>
+    <div class="copy-row">
+      <button class="copy-btn" id="copyBtn" onclick="copyTab()">Copia testo</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const BLOW  = [60,64,67,72,72,76,79,84,88,96];
+const DRAW  = [62,67,71,74,71,74,77,81,83,86];
+const BEND1 = [61,66,70,null,null,null,null,null,null,null];
+const BEND2 = [null,65,69,null,null,null,null,null,null,null];
+const BEND3 = [null,null,68,null,null,null,null,null,null,null];
+
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function midiName(m){ return NOTE_NAMES[m % 12]; }
+function freq2midi(f){ return 69 + 12 * Math.log2(f / 440); }
+
+function buildHarpMap(){
+  const map = [];
+  for(let i = 0; i < 10; i++){
+    if(BLOW[i]  != null) map.push({midi:BLOW[i],  hole:i+1, dir:'blow',  sym:'↑', semis:0});
+    if(DRAW[i]  != null) map.push({midi:DRAW[i],  hole:i+1, dir:'draw',  sym:'↓', semis:0});
+    if(BEND1[i] != null) map.push({midi:BEND1[i], hole:i+1, dir:'bend1', sym:"↓'",  semis:1});
+    if(BEND2[i] != null) map.push({midi:BEND2[i], hole:i+1, dir:'bend2', sym:"↓''", semis:2});
+    if(BEND3[i] != null) map.push({midi:BEND3[i], hole:i+1, dir:'bend3', sym:"↓'''",semis:3});
+  }
+  return map;
+}
+const HMAP = buildHarpMap();
+
+function findClosest(midi){
+  let best = null, bestDist = 999;
+  for(const e of HMAP){
+    const d = Math.abs(e.midi - midi);
+    if(d < bestDist){ bestDist = d; best = e; }
+  }
+  if(bestDist > 1.8) return null;
+  return {...best, cents: Math.round((midi - best.midi) * 100)};
+}
+
+function buildHarpUI(){
+  const row = document.getElementById('harpRow');
+  row.innerHTML = '';
+  for(let i = 0; i < 10; i++){
+    const col = document.createElement('div');
+    col.className = 'hole-col';
+    const mk = (midi, cls, id, label) =>
+      `<div class="hole-cell ${cls}" id="${id}">${midi != null ? midiName(midi) + label : ''}</div>`;
+    col.innerHTML =
+      mk(BLOW[i],  'blow',  `h${i+1}blow`,  '') +
+      mk(DRAW[i],  'draw',  `h${i+1}draw`,  '') +
+      (BEND1[i] != null ? mk(BEND1[i], 'bend1', `h${i+1}bend1`, "'")   : '<div class="hole-cell ghost"></div>') +
+      (BEND2[i] != null ? mk(BEND2[i], 'bend2', `h${i+1}bend2`, "''")  : '<div class="hole-cell ghost"></div>') +
+      (BEND3[i] != null ? mk(BEND3[i], 'bend3', `h${i+1}bend3`, "'''") : '<div class="hole-cell ghost"></div>') +
+      `<div class="hole-num">${i+1}</div>`;
+    row.appendChild(col);
+  }
+}
+buildHarpUI();
+
+let lastActive = null;
+function highlightHarp(match){
+  if(lastActive){
+    const el = document.getElementById('h' + lastActive.hole + lastActive.dir);
+    if(el) el.classList.remove('active');
+  }
+  if(!match){ lastActive = null; return; }
+  const el = document.getElementById('h' + match.hole + match.dir);
+  if(el){ el.classList.add('active'); lastActive = match; }
+}
+
+let audioCtx = null, analyser = null, stream = null, raf = null, listening = false;
+let curMatch = null;
+
+async function toggleMic(){
+  if(!listening){
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 4096;
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
+      listening = true;
+      document.getElementById('micBtn').classList.add('on');
+      document.getElementById('micLbl').textContent = 'Stop';
+      loop();
+    } catch(e){
+      document.getElementById('freqSub').textContent = 'Errore: ' + e.message;
+    }
+  } else { stopMic(); }
+}
+
+function stopMic(){
+  listening = false;
+  cancelAnimationFrame(raf);
+  stream && stream.getTracks().forEach(t => t.stop());
+  audioCtx && audioCtx.close();
+  document.getElementById('micBtn').classList.remove('on');
+  document.getElementById('micLbl').textContent = 'Attiva microfono';
+  document.getElementById('pitchBig').textContent = '—';
+  document.getElementById('pitchBig').className = 'pitch-big';
+  document.getElementById('freqSub').textContent = 'Premi il microfono per iniziare';
+  document.getElementById('cFill').style.width = '0';
+  document.getElementById('cLbl').textContent = '— ct';
+  setBadge('idle', 'in attesa');
+  document.getElementById('addBtn').disabled = true;
+  document.getElementById('addBtn').textContent = '+ Aggiungi nota';
+  document.getElementById('addBtn').className = 'add-btn';
+  highlightHarp(null);
+  curMatch = null;
+}
+
+function autoCorrelate(buf, sr){
+  const N = buf.length;
+  let rms = 0;
+  for(let i = 0; i < N; i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / N);
+  if(rms < 0.008) return -1;
+  let r1 = 0, r2 = N - 1;
+  for(let i = 0; i < N/2; i++){ if(Math.abs(buf[i]) < 0.15){ r1 = i; break; } }
+  for(let i = 1; i < N/2; i++){ if(Math.abs(buf[N-i]) < 0.15){ r2 = N-i; break; } }
+  const b = buf.slice(r1, r2), L = b.length;
+  const c = new Float32Array(L);
+  for(let i = 0; i < L; i++) for(let j = 0; j < L-i; j++) c[i] += b[j] * b[j+i];
+  let d = 0;
+  while(c[d] > c[d+1]) d++;
+  let mx = -1, mp = -1;
+  for(let i = d; i < L; i++) if(c[i] > mx){ mx = c[i]; mp = i; }
+  const x1 = c[mp-1], x2 = c[mp], x3 = c[mp+1];
+  const a = (x1 + x3 - 2*x2) / 2, b2 = (x3 - x1) / 2;
+  return a === 0 ? sr/mp : sr / (-b2/(2*a) + mp);
+}
+
+function setBadge(cls, txt){
+  const b = document.getElementById('badge');
+  b.className = 'badge ' + cls;
+  b.textContent = txt;
+}
+
+function loop(){
+  if(!listening) return;
+  raf = requestAnimationFrame(loop);
+  const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  const freq = autoCorrelate(buf, audioCtx.sampleRate);
+
+  if(freq > 60 && freq < 1400){
+    const midi = freq2midi(freq);
+    const match = findClosest(midi);
+    if(match){
+      curMatch = match;
+      const isBend = match.dir.startsWith('bend');
+      const apostrophes = "'".repeat(match.semis);
+      const pb = document.getElementById('pitchBig');
+      pb.textContent = midiName(match.midi) + apostrophes + ' ' + match.sym + match.hole;
+      pb.className = 'pitch-big ' + (isBend ? 'bend' : 'on');
+      document.getElementById('freqSub').textContent = freq.toFixed(1) + ' Hz';
+      const ct = match.cents;
+      const pct = Math.min(Math.max((ct + 50) / 100, 0), 1);
+      const fill = document.getElementById('cFill');
+      if(ct >= 0){
+        fill.style.left = '50%';
+        fill.style.width = Math.min(pct * 100, 50) + '%';
+      } else {
+        const w = (0.5 - pct) * 100;
+        fill.style.left = (50 - w) + '%';
+        fill.style.width = w + '%';
+      }
+      fill.style.background = Math.abs(ct) <= 20 ? '#1D9E75' : '#BA7517';
+      document.getElementById('cLbl').textContent = (ct >= 0 ? '+' : '') + ct + ' ct';
+      if(Math.abs(ct) <= 20) setBadge(isBend ? 'bend' : 'intune', isBend ? 'bend rilevato' : 'in tune');
+      else if(ct > 20) setBadge('sharp', 'troppo alta');
+      else setBadge('flat', 'troppo bassa');
+      highlightHarp(match);
+      const ab = document.getElementById('addBtn');
+      ab.disabled = false;
+      ab.className = 'add-btn' + (isBend ? ' bend-active' : '');
+      ab.textContent = '+ ' + match.sym + match.hole + (match.semis > 0 ? apostrophes : '') + ' (' + midiName(match.midi) + apostrophes + ')';
+    } else {
+      curMatch = null;
+      document.getElementById('pitchBig').textContent = '?';
+      document.getElementById('pitchBig').className = 'pitch-big oob';
+      document.getElementById('freqSub').textContent = freq.toFixed(1) + ' Hz — fuori range';
+      setBadge('oob', 'fuori range');
+      highlightHarp(null);
+      document.getElementById('addBtn').disabled = true;
+    }
+  } else {
+    curMatch = null;
+    document.getElementById('pitchBig').textContent = '—';
+    document.getElementById('pitchBig').className = 'pitch-big';
+    document.getElementById('freqSub').textContent = 'Ascoltando...';
+    document.getElementById('cFill').style.width = '0';
+    document.getElementById('cLbl').textContent = '— ct';
+    setBadge('idle', 'silenzio');
+    highlightHarp(null);
+    document.getElementById('addBtn').disabled = true;
+    document.getElementById('addBtn').textContent = '+ Aggiungi nota';
+    document.getElementById('addBtn').className = 'add-btn';
+  }
+}
+
+let tabList = [];
+function addNote(){
+  if(!curMatch) return;
+  tabList.push({...curMatch});
+  renderTab();
+}
+function clearTab(){ tabList = []; renderTab(); }
+function removeNote(i){ tabList.splice(i, 1); renderTab(); }
+
+function renderTab(){
+  const cont = document.getElementById('tabNotes');
+  const txt = document.getElementById('txtOut');
+  if(!tabList.length){
+    cont.innerHTML = '<span class="tab-empty">Nessuna nota ancora</span>';
+    txt.textContent = '—';
+    return;
+  }
+  cont.innerHTML = '';
+  let str = '';
+  tabList.forEach((t, i) => {
+    const apos = "'".repeat(t.semis);
+    const chip = document.createElement('div');
+    chip.className = 'tab-chip ' + t.dir;
+    chip.title = 'Clicca per rimuovere';
+    chip.onclick = () => removeNote(i);
+    chip.innerHTML =
+      `<span class="arr">${t.sym}</span>` +
+      `<span class="hn">${t.hole}${apos}</span>` +
+      `<span class="nn">${midiName(t.midi)}${apos}</span>`;
+    cont.appendChild(chip);
+    str += t.sym + t.hole + apos + ' ';
+  });
+  txt.textContent = str.trim();
+}
+
+function copyTab(){
+  const txt = document.getElementById('txtOut').textContent;
+  if(txt === '—') return;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copiato!';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copia testo'; btn.classList.remove('ok'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>
