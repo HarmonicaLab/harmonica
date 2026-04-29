@@ -447,23 +447,61 @@ function stopMic(){
   setBadge('idle',t('badge_idle'));
   setAddBtn(false,null);highlight(null);curMatch=null;
 }
-function autoCorr(buf,sr){
-  const N=buf.length;let rms=0;
-  for(let i=0;i<N;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/N);
-  if(rms<0.005)return -1; // soglia abbassata per note più deboli
-  let r1=0,r2=N-1;
-  for(let i=0;i<N/2;i++){if(Math.abs(buf[i])<0.1){r1=i;break;}}
-  for(let i=1;i<N/2;i++){if(Math.abs(buf[N-i])<0.1){r2=N-i;break;}}
-  const b=buf.slice(r1,r2),L=b.length;
-  if(L<32)return -1;
-  const c=new Float32Array(L);
-  for(let i=0;i<L;i++)for(let j=0;j<L-i;j++)c[i]+=b[j]*b[j+i];
-  let d=0;while(d<L-1&&c[d]>c[d+1])d++;
-  let mx=-1,mp=-1;for(let i=d;i<L;i++)if(c[i]>mx){mx=c[i];mp=i;}
-  if(mp<=0||mp>=L-1)return -1;
-  const x1=c[mp-1],x2=c[mp],x3=c[mp+1];
-  const a=(x1+x3-2*x2)/2,b2=(x3-x1)/2;
-  return a===0?sr/mp:sr/(-b2/(2*a)+mp);
+// Algoritmo YIN per rilevamento pitch - molto più preciso dell'autocorrelazione
+function detectPitch(buf, sr) {
+  const N = buf.length;
+
+  // RMS check
+  let rms = 0;
+  for(let i=0;i<N;i++) rms+=buf[i]*buf[i];
+  rms = Math.sqrt(rms/N);
+  if(rms < 0.004) return -1;
+
+  const W = Math.floor(N/2);
+  const threshold = 0.10; // soglia YIN (più bassa = più sensibile)
+
+  // Step 1: differenza quadratica
+  const d = new Float32Array(W);
+  for(let tau=1;tau<W;tau++){
+    for(let j=0;j<W;j++){
+      const diff=buf[j]-buf[j+tau];
+      d[tau]+=diff*diff;
+    }
+  }
+
+  // Step 2: mean normalisation cumulativa
+  const dn = new Float32Array(W);
+  dn[0]=1;
+  let sum=0;
+  for(let tau=1;tau<W;tau++){
+    sum+=d[tau];
+    dn[tau]=sum===0?0:d[tau]*tau/sum;
+  }
+
+  // Step 3: trova il primo minimo sotto la soglia
+  let tau=-1;
+  for(let t=2;t<W;t++){
+    if(dn[t]<threshold){
+      // prendi il minimo locale
+      while(t+1<W && dn[t+1]<dn[t]) t++;
+      tau=t;
+      break;
+    }
+  }
+
+  // fallback: minimo assoluto
+  if(tau===-1){
+    let mn=Infinity, mi=2;
+    for(let t=2;t<W;t++) if(dn[t]<mn){mn=dn[t];mi=t;}
+    if(mn>0.35) return -1; // segnale troppo ambiguo
+    tau=mi;
+  }
+
+  // Step 4: interpolazione parabolica per precisione sub-campione
+  if(tau<=1||tau>=W-1) return sr/tau;
+  const x1=dn[tau-1],x2=dn[tau],x3=dn[tau+1];
+  const adj=(x3-x1)/(2*(2*x2-x1-x3));
+  return sr/(tau+adj);
 }
 function setBadge(cls,txt){const b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
 function setAddBtn(on,match){
@@ -479,15 +517,17 @@ function loop(){
   raf=requestAnimationFrame(loop);
   const buf=new Float32Array(analyser.fftSize);
   analyser.getFloatTimeDomainData(buf);
-  const freq=autoCorr(buf,actx.sampleRate);
-  if(freq>60&&freq<2000){
-    const match=findClosest(freq); // passa Hz direttamente
+  const freq=detectPitch(buf,actx.sampleRate);
+
+  // Range frequenze armonica: ~130 Hz (C3 low) fino a ~2100 Hz (C7 high)
+  if(freq>120&&freq<2200){
+    const match=findClosest(freq);
     if(match){
       curMatch=match;
       const pb=document.getElementById('pitchBig');
       pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
       pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'on');
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz · midi '+match.midi;
       const ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
       const fill=document.getElementById('cFill');
       if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}
