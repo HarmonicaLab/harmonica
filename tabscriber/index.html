@@ -543,11 +543,23 @@ function loop(){
 
   // Range frequenze armonica: ~130 Hz (C3 low) fino a ~2100 Hz (C7 high)
   if(freq>120&&freq<2200){
+    // Correzione octave error: verifica se freq*2 è più vicina a una nota della mappa
+    const matchNorm = findClosest(freq);
+    const matchDouble = findClosest(freq*2);
+    let match = matchNorm;
+    if(matchDouble && matchNorm){
+      const cN = Math.abs(matchNorm.cents);
+      const cD = Math.abs(matchDouble.cents);
+      if(cD < cN) match = matchDouble;
+    } else if(matchDouble && !matchNorm){
+      match = matchDouble;
+    }
+
     // Debug
     const midiRel = 69+12*Math.log2(freq/440);
-    document.getElementById('debugFreq').textContent=`freq: ${freq.toFixed(2)} Hz`;
-    document.getElementById('debugMidi').textContent=`midi rilevato: ${midiRel.toFixed(2)} (nota: ${mn(Math.round(midiRel))})`;
-    const match=findClosest(freq);
+    document.getElementById('debugFreq').textContent=`freq: ${freq.toFixed(2)} Hz (×2: ${(freq*2).toFixed(2)} Hz)`;
+    document.getElementById('debugMidi').textContent=`midi: ${midiRel.toFixed(2)} → nota: ${mn(Math.round(midiRel))} | match: ${match?match.sym+match.hole+' '+mn(match.midi):'—'}`;
+
     if(match){
       curMatch=match;
       const pb=document.getElementById('pitchBig');
