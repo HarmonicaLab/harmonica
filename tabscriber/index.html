@@ -1,4 +1,4 @@
-// Converti midi in frequenza Hz<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -38,14 +38,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:1.5rem}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
-.key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .key-row label{font-size:13px;color:var(--text2)}
 .key-btn{padding:5px 12px;border-radius:999px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
 .key-btn:hover{background:var(--bg2);color:var(--text)}
 .key-btn.active{background:var(--teal-bg);border-color:var(--teal-bd);color:var(--teal-dk);font-weight:600}
 .tuner{text-align:center}
 .pitch-big{font-size:54px;font-weight:500;font-family:'Courier New',monospace;line-height:1;min-height:60px;display:flex;align-items:center;justify-content:center;color:var(--text3);letter-spacing:-1px;transition:color .08s}
-.pitch-big.on{color:var(--teal)} .pitch-big.bend{color:var(--amber)} .pitch-big.blowbend{color:var(--purple)} .pitch-big.oob{color:var(--red)}
+.pitch-big.on{color:var(--teal)}.pitch-big.bend{color:var(--amber)}.pitch-big.blowbend{color:var(--purple)}.pitch-big.oob{color:var(--red)}
 .freq-sub{font-size:13px;color:var(--text2);font-family:'Courier New',monospace;margin-top:4px;min-height:18px}
 .cents-wrap{position:relative;height:6px;background:var(--bg3);border-radius:3px;margin:12px auto;max-width:300px}
 .cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
@@ -58,7 +58,7 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .badge.idle{background:var(--bg2);color:var(--text3)}
 .badge.oob{background:var(--red-bg);color:var(--red)}
 .mic-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:14px;cursor:pointer;margin-top:12px;transition:background .12s;font-family:inherit}
-.mic-btn:hover{background:var(--bg2)} .mic-btn.on{border-color:var(--teal);color:var(--teal)}
+.mic-btn:hover{background:var(--bg2)}.mic-btn.on{border-color:var(--teal);color:var(--teal)}
 .mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .mic-btn.on .mic-dot{animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
@@ -78,18 +78,18 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .row-label{font-size:10px;color:var(--text3);font-family:'Courier New',monospace;text-align:right;padding-right:6px;white-space:nowrap}
 .toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:13px;cursor:pointer;transition:background .12s;white-space:nowrap;font-family:inherit}
-.btn:hover:not(:disabled){background:var(--bg2)} .btn:disabled{opacity:.35;cursor:not-allowed}
-.btn.green{border-color:var(--teal);color:var(--teal)} .btn.green:hover:not(:disabled){background:var(--teal-bg)}
-.btn.green.bend{border-color:var(--amber);color:var(--amber)} .btn.green.bend:hover:not(:disabled){background:var(--amber-bg)}
-.btn.green.blowbend{border-color:var(--purple);color:var(--purple)} .btn.green.blowbend:hover:not(:disabled){background:var(--purple-bg)}
-.btn.red{border-color:var(--red-bd);color:var(--red)} .btn.red:hover:not(:disabled){background:var(--red-bg)}
+.btn:hover:not(:disabled){background:var(--bg2)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.green{border-color:var(--teal);color:var(--teal)}.btn.green:hover:not(:disabled){background:var(--teal-bg)}
+.btn.green.bend{border-color:var(--amber);color:var(--amber)}.btn.green.bend:hover:not(:disabled){background:var(--amber-bg)}
+.btn.green.blowbend{border-color:var(--purple);color:var(--purple)}.btn.green.blowbend:hover:not(:disabled){background:var(--purple-bg)}
+.btn.red{border-color:var(--red-bd);color:var(--red)}.btn.red:hover:not(:disabled){background:var(--red-bg)}
 .spacer{flex:1}
 .tab-notes{display:flex;flex-wrap:wrap;gap:5px;min-height:50px;align-items:flex-start;padding:4px 0;margin-bottom:12px}
 .chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;min-width:38px;cursor:pointer;transition:opacity .12s,border-color .12s,background .12s;user-select:none}
-.chip:hover{opacity:.65} .chip.sel{background:var(--purple-bg);border-color:var(--purple-bd)}
+.chip:hover{opacity:.65}.chip.sel{background:var(--purple-bg);border-color:var(--purple-bd)}
 .chip .arr{font-size:12px;line-height:1}
-.chip.blow .arr{color:var(--blue)} .chip.draw .arr{color:var(--teal)}
-.chip.drawbend .arr{color:var(--amber)} .chip.blowbend .arr{color:var(--purple)}
+.chip.blow .arr{color:var(--blue)}.chip.draw .arr{color:var(--teal)}
+.chip.drawbend .arr{color:var(--amber)}.chip.blowbend .arr{color:var(--purple)}
 .chip .hn{font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:var(--text);line-height:1}
 .chip .nn{font-size:10px;color:var(--text2);font-family:'Courier New',monospace}
 .chip.sel .hn,.chip.sel .nn{color:var(--purple-dk)}
@@ -102,10 +102,10 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .sess-hdr h2{font-size:14px;font-weight:500}
 .sess-list{display:flex;flex-direction:column;gap:6px}
 .sess-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .12s}
-.sess-row:hover{border-color:var(--border2)} .sess-row.active{border-color:var(--teal);background:var(--teal-bg)}
+.sess-row:hover{border-color:var(--border2)}.sess-row.active{border-color:var(--teal);background:var(--teal-bg)}
 .sess-name{flex:1;font-size:13px;color:var(--text)}
 .sess-name input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;font-family:inherit}
-.sess-row.active .sess-name{color:var(--teal-dk)} .sess-row.active .sess-meta{color:var(--teal)}
+.sess-row.active .sess-name{color:var(--teal-dk)}.sess-row.active .sess-meta{color:var(--teal)}
 .sess-meta{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;white-space:nowrap}
 .sess-del{font-size:13px;color:var(--text3);background:transparent;border:none;cursor:pointer;padding:2px 5px;border-radius:4px;line-height:1}
 .sess-del:hover{color:var(--red);background:var(--red-bg)}
@@ -115,7 +115,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <body>
 <div class="wrap">
 
-<!-- LANG TOGGLE -->
 <div class="top-bar">
   <div class="lang-toggle">
     <button id="btnIT" class="active" onclick="setLang('it')">🇮🇹 IT</button>
@@ -126,7 +125,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <h1 data-i18n="title">Harmonica Lab Tab Transcriber</h1>
 <p class="sub" id="subTitle"></p>
 
-<!-- KEY SELECTOR -->
 <div class="card">
   <div class="key-row">
     <label data-i18n="key"></label>
@@ -134,18 +132,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   </div>
 </div>
 
-<!-- DEBUG -->
-<div class="card" id="debugCard" style="font-family:monospace;font-size:12px;background:var(--bg3)">
-  <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-    <strong>Debug panel</strong>
-    <button class="btn" style="padding:2px 8px;font-size:11px" onclick="toggleDebug()">Nascondi</button>
-  </div>
-  <div id="debugFreq" style="color:var(--text2)">freq: —</div>
-  <div id="debugMidi" style="color:var(--text2)">midi rilevato: —</div>
-  <div id="debugMap" style="color:var(--text2);margin-top:6px">Note attese per tonalità corrente: —</div>
-</div>
-
-<!-- TUNER -->
 <div class="card tuner">
   <div class="pitch-big" id="pitchBig">—</div>
   <div class="freq-sub" id="freqSub"></div>
@@ -160,7 +146,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   </button>
 </div>
 
-<!-- HARP GRID -->
 <div class="card">
   <div class="leg-row">
     <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-bd)"></div><span data-i18n="leg_blow"></span></div>
@@ -173,7 +158,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   </div>
 </div>
 
-<!-- TABLATURA -->
 <div class="card">
   <div class="toolbar">
     <button class="btn green" id="addBtn" onclick="addNote()" disabled data-i18n="add"></button>
@@ -196,7 +180,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   </div>
 </div>
 
-<!-- SESSIONI -->
 <div class="card">
   <div class="sess-hdr">
     <h2 data-i18n="sessions"></h2>
@@ -207,89 +190,82 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 
 </div>
 <script>
-// ── I18N ─────────────────────────────────────────────────────────────────────
-const I18N = {
-  it: {
-    title:'Harmonica Lab Tab Transcriber',
-    sub:'Armonica diatonica in',
-    key:'Tonalità:',
-    mic_start:'Attiva microfono', mic_stop:'Stop',
-    freq_idle:'Premi il microfono per iniziare', freq_listen:'Ascoltando...',
-    badge_idle:'in attesa', badge_silence:'silenzio', badge_intune:'in tune',
-    badge_high:'troppo alta', badge_low:'troppo bassa',
-    badge_blowbend:'blow bend', badge_drawbend:'bend rilevato', badge_oob:'fuori range',
-    leg_blow:'↑ soffiata', leg_draw:'↓ aspirata',
-    leg_drawbend:"↓' bend aspirato (1–6)", leg_blowbend:"↑' bend soffiato (7–10)",
-    row_bb1:"↑' bend", row_blow:'↑ Soffia', row_draw:'↓ Aspira',
-    row_db1:"↓' bend", row_db2:"↓'' bend", row_db3:"↓''' bend",
-    add:'+ Aggiungi', selected:'selezionate', delete:'Elimina',
-    undo:'↩ Annulla', redo:'↪ Ripristina', clear_all:'Cancella tutto',
-    copy:'Copia testo', export_pdf:'Esporta PDF', save_session:'Salva sessione',
-    sessions:'Sessioni salvate', new_session:'+ Nuova sessione',
-    no_sessions:'Nessuna sessione salvata', no_notes:'Nessuna nota ancora',
-    prompt_name:'Nome della sessione:', confirm_delete:'Eliminare questa sessione?',
-    no_notes_save:'Nessuna nota da salvare.', no_notes_export:'Nessuna nota da esportare.',
-    copied:'Copiato!',
-    pdf_legend:'Legenda', pdf_graphic:'Tablatura grafica', pdf_text:'Tablatura testo',
-    pdf_footer:'Generato con Harmonica Tab Transcriber',
-  },
-  en: {
-    title:'Harmonica Lab Tab Transcriber',
-    sub:'Diatonic harmonica in',
-    key:'Key:',
-    mic_start:'Enable microphone', mic_stop:'Stop',
-    freq_idle:'Press the microphone to start', freq_listen:'Listening...',
-    badge_idle:'waiting', badge_silence:'silence', badge_intune:'in tune',
-    badge_high:'too sharp', badge_low:'too flat',
-    badge_blowbend:'blow bend', badge_drawbend:'bend detected', badge_oob:'out of range',
-    leg_blow:'↑ blow', leg_draw:'↓ draw',
-    leg_drawbend:"↓' draw bend (1–6)", leg_blowbend:"↑' blow bend (7–10)",
-    row_bb1:"↑' bend", row_blow:'↑ Blow', row_draw:'↓ Draw',
-    row_db1:"↓' bend", row_db2:"↓'' bend", row_db3:"↓''' bend",
-    add:'+ Add', selected:'selected', delete:'Delete',
-    undo:'↩ Undo', redo:'↪ Redo', clear_all:'Clear all',
-    copy:'Copy text', export_pdf:'Export PDF', save_session:'Save session',
-    sessions:'Saved sessions', new_session:'+ New session',
-    no_sessions:'No saved sessions', no_notes:'No notes yet',
-    prompt_name:'Session name:', confirm_delete:'Delete this session?',
-    no_notes_save:'No notes to save.', no_notes_export:'No notes to export.',
-    copied:'Copied!',
-    pdf_legend:'Legend', pdf_graphic:'Graphic tab', pdf_text:'Text tab',
-    pdf_footer:'Generated with Harmonica Tab Transcriber',
-  }
+// ── I18N ──────────────────────────────────────────────────────────────────────
+const I18N={
+  it:{title:'Harmonica Lab Tab Transcriber',sub:'Armonica diatonica in',key:'Tonalità:',
+    mic_start:'Attiva microfono',mic_stop:'Stop',
+    freq_idle:'Premi il microfono per iniziare',freq_listen:'Ascoltando...',
+    badge_idle:'in attesa',badge_silence:'silenzio',badge_intune:'in tune',
+    badge_high:'troppo alta',badge_low:'troppo bassa',
+    badge_blowbend:'blow bend',badge_drawbend:'bend rilevato',badge_oob:'fuori range',
+    leg_blow:'↑ soffiata',leg_draw:'↓ aspirata',
+    leg_drawbend:"↓' bend aspirato (1–6)",leg_blowbend:"↑' bend soffiato (7–10)",
+    row_bb1:"↑' bend",row_blow:'↑ Soffia',row_draw:'↓ Aspira',
+    row_db1:"↓' bend",row_db2:"↓'' bend",row_db3:"↓''' bend",
+    add:'+ Aggiungi',selected:'selezionate',delete:'Elimina',
+    undo:'↩ Annulla',redo:'↪ Ripristina',clear_all:'Cancella tutto',
+    copy:'Copia testo',export_pdf:'Esporta PDF',save_session:'Salva sessione',
+    sessions:'Sessioni salvate',new_session:'+ Nuova sessione',
+    no_sessions:'Nessuna sessione salvata',no_notes:'Nessuna nota ancora',
+    prompt_name:'Nome della sessione:',confirm_delete:'Eliminare questa sessione?',
+    no_notes_save:'Nessuna nota da salvare.',no_notes_export:'Nessuna nota da esportare.',
+    copied:'Copiato!',pdf_legend:'Legenda',pdf_graphic:'Tablatura grafica',
+    pdf_text:'Tablatura testo',pdf_footer:'Generato con Harmonica Lab Tab Transcriber'},
+  en:{title:'Harmonica Lab Tab Transcriber',sub:'Diatonic harmonica in',key:'Key:',
+    mic_start:'Enable microphone',mic_stop:'Stop',
+    freq_idle:'Press the microphone to start',freq_listen:'Listening...',
+    badge_idle:'waiting',badge_silence:'silence',badge_intune:'in tune',
+    badge_high:'too sharp',badge_low:'too flat',
+    badge_blowbend:'blow bend',badge_drawbend:'bend detected',badge_oob:'out of range',
+    leg_blow:'↑ blow',leg_draw:'↓ draw',
+    leg_drawbend:"↓' draw bend (1–6)",leg_blowbend:"↑' blow bend (7–10)",
+    row_bb1:"↑' bend",row_blow:'↑ Blow',row_draw:'↓ Draw',
+    row_db1:"↓' bend",row_db2:"↓'' bend",row_db3:"↓''' bend",
+    add:'+ Add',selected:'selected',delete:'Delete',
+    undo:'↩ Undo',redo:'↪ Redo',clear_all:'Clear all',
+    copy:'Copy text',export_pdf:'Export PDF',save_session:'Save session',
+    sessions:'Saved sessions',new_session:'+ New session',
+    no_sessions:'No saved sessions',no_notes:'No notes yet',
+    prompt_name:'Session name:',confirm_delete:'Delete this session?',
+    no_notes_save:'No notes to save.',no_notes_export:'No notes to export.',
+    copied:'Copied!',pdf_legend:'Legend',pdf_graphic:'Graphic tab',
+    pdf_text:'Text tab',pdf_footer:'Generated with Harmonica Lab Tab Transcriber'}
 };
 let lang='it';
-function t(k){return I18N[lang][k]||k;}
+const t=k=>I18N[lang][k]||k;
 
 function setLang(l){
   lang=l;
   document.getElementById('btnIT').classList.toggle('active',l==='it');
   document.getElementById('btnEN').classList.toggle('active',l==='en');
-  applyI18n();
-  buildHarpTable();
-  render();
-  renderSess();
+  applyI18n(); buildHarpTable(); render(); renderSess();
 }
-
 function applyI18n(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const k=el.getAttribute('data-i18n');
-    if(el.tagName==='BUTTON'||el.tagName==='LABEL'||el.tagName==='SPAN'||el.tagName==='H2')
-      el.textContent=t(k);
+    el.textContent=t(k);
   });
   document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
   document.getElementById('freqSub').textContent=listening?t('freq_listen'):t('freq_idle');
   document.getElementById('badge').textContent=t('badge_idle');
   document.getElementById('micLbl').textContent=listening?t('mic_stop'):t('mic_start');
-  // addBtn special
   const ab=document.getElementById('addBtn');
   if(ab.disabled) ab.textContent=t('add');
 }
 
-// ── NOTES & TUNING ────────────────────────────────────────────────────────────
+// ── TUNING ────────────────────────────────────────────────────────────────────
 const NNAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 const mn=m=>NNAMES[((m%12)+12)%12];
-const f2m=f=>69+12*Math.log2(f/440);
+const midi2hz=m=>440*Math.pow(2,(m-69)/12);
+
+// Richter tuning - intervalli semitoni dal root
+// Foro:         1   2   3   4   5   6   7   8   9  10
+const BASE_BLOW=[0,  4,  7, 12, 16, 19, 24, 28, 31, 36];
+const BASE_DRAW=[2,  7, 11, 14, 17, 21, 23, 26, 29, 33];
+const BASE_DB1 =[1,  6, 10, 13,null,null,null,null,null,null];
+const BASE_DB2 =[null,5,  9,null,null,null,null,null,null,null];
+const BASE_DB3 =[null,null,8,null,null,null,null,null,null,null];
+const BASE_BB1 =[null,null,null,null,null,null,22,27,30,35];
 
 const KEYS=[
   {name:'C',offset:0},{name:'D',offset:2},{name:'E',offset:4},
@@ -297,60 +273,34 @@ const KEYS=[
   {name:'Bb',offset:10},{name:'Ab',offset:8},{name:'F#',offset:6},
   {name:'Low F',offset:-7},{name:'Low D',offset:-3},{name:'Low C',offset:0,low:true}
 ];
-// Richter tuning - intervalli in semitoni dal root (es. C4=60)
-// Foro:         1   2   3   4   5   6   7   8   9  10
-const BASE_BLOW=[0,  4,  7, 12, 16, 19, 24, 28, 31, 36]; // C E G C E G C E G C
-const BASE_DRAW=[2,  7, 11, 14, 17, 21, 23, 26, 29, 33]; // D G B D F A B D F A
-
-// Draw bend (aspirati abbassati) - fori 1-6
-const BASE_DB1 =[1,  6, 10, 13, null,null,null,null,null,null]; // C# F# A# C# — —
-const BASE_DB2 =[null,5,  9,null,null,null,null,null,null,null]; // — F  A  — — —
-const BASE_DB3 =[null,null,8,null,null,null,null,null,null,null];// — —  G# — — —
-
-// Blow bend (soffiati abbassati) - fori 7-10
-const BASE_BB1 =[null,null,null,null,null,null,22,27,30,35];    // — — — — — — B  F# F  B
-
 let currentKey=KEYS[0], HMAP=[];
 
 function buildMap(key){
   const root=60+key.offset+(key.low?-12:0), m=[];
   for(let i=0;i<10;i++){
     const h=i+1;
-    m.push({midi:root+BASE_BLOW[i],hole:h,dir:'blow',    sym:'↑',   semis:0,blowbend:false});
-    m.push({midi:root+BASE_DRAW[i],hole:h,dir:'draw',    sym:'↓',   semis:0,blowbend:false});
-    if(BASE_DB1[i]!=null) m.push({midi:root+BASE_DB1[i],hole:h,dir:'drawbend',sym:"↓'",  semis:1,blowbend:false});
-    if(BASE_DB2[i]!=null) m.push({midi:root+BASE_DB2[i],hole:h,dir:'drawbend',sym:"↓''", semis:2,blowbend:false});
-    if(BASE_DB3[i]!=null) m.push({midi:root+BASE_DB3[i],hole:h,dir:'drawbend',sym:"↓'''",semis:3,blowbend:false});
-    if(BASE_BB1[i]!=null) m.push({midi:root+BASE_BB1[i],hole:h,dir:'blowbend',sym:"↑'",  semis:1,blowbend:true});
+    m.push({midi:root+BASE_BLOW[i],hz:midi2hz(root+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
+    m.push({midi:root+BASE_DRAW[i],hz:midi2hz(root+BASE_DRAW[i]),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
+    if(BASE_DB1[i]!=null) m.push({midi:root+BASE_DB1[i],hz:midi2hz(root+BASE_DB1[i]),hole:h,dir:'drawbend',sym:"↓'",semis:1,blowbend:false});
+    if(BASE_DB2[i]!=null) m.push({midi:root+BASE_DB2[i],hz:midi2hz(root+BASE_DB2[i]),hole:h,dir:'drawbend',sym:"↓''",semis:2,blowbend:false});
+    if(BASE_DB3[i]!=null) m.push({midi:root+BASE_DB3[i],hz:midi2hz(root+BASE_DB3[i]),hole:h,dir:'drawbend',sym:"↓'''",semis:3,blowbend:false});
+    if(BASE_BB1[i]!=null) m.push({midi:root+BASE_BB1[i],hz:midi2hz(root+BASE_BB1[i]),hole:h,dir:'blowbend',sym:"↑'",semis:1,blowbend:true});
   }
   return m;
 }
 
-function toggleDebug(){
-  const c=document.getElementById('debugCard');
-  c.style.display=c.style.display==='none'?'block':'none';
-}
-
-function updateDebugMap(){
-  const freqs=HMAP.slice(0,6).map(e=>`${mn(e.midi)}${e.sym}${e.hole}=${midi2hz(e.midi).toFixed(1)}Hz`).join('  ');
-  document.getElementById('debugMap').textContent='Attese: '+freqs;
-}
-
-
-const midi2hz = m => 440 * Math.pow(2,(m-69)/12);
-
-function findClosest(detectedHz){
-  let best=null, d=999;
+// Confronto diretto in Hz - nessuna conversione midi, nessun octave error
+function findClosest(hz){
+  let best=null, bestDiff=9999;
   for(const e of HMAP){
-    const eHz = midi2hz(e.midi);
-    // Confronta in cents (scala logaritmica) — funziona uguale per tutte le tonalità
-    const diffCents = Math.abs(1200 * Math.log2(detectedHz/eHz));
-    if(diffCents < d){d=diffCents; best=e;}
+    const diff=Math.abs(e.hz-hz);
+    if(diff<bestDiff){bestDiff=diff;best=e;}
   }
-  if(d > 250) return null; // accetta ±250 cents (un quarto di tono abbondante)
-  const eHz = midi2hz(best.midi);
-  const cents = Math.round(1200 * Math.log2(detectedHz/eHz));
-  return {...best, cents};
+  // Accetta solo se entro ±80 cents dalla nota più vicina
+  if(!best) return null;
+  const cents=Math.round(1200*Math.log2(hz/best.hz));
+  if(Math.abs(cents)>80) return null;
+  return {...best,cents};
 }
 HMAP=buildMap(currentKey);
 
@@ -376,7 +326,6 @@ function setKey(i,btn){
   HMAP=buildMap(currentKey);
   document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
   buildHarpTable();
-  updateDebugMap();
   curMatch=null;highlight(null);setAddBtn(false,null);
 }
 
@@ -387,20 +336,20 @@ function buildHarpTable(){
   const root=60+currentKey.offset+(currentKey.low?-12:0);
   const holes=[];
   for(let i=0;i<10;i++) holes.push({
-    blow:  {midi:root+BASE_BLOW[i],dir:'blow'},
-    draw:  {midi:root+BASE_DRAW[i],dir:'draw'},
-    bb1:   BASE_BB1[i]!=null?{midi:root+BASE_BB1[i],dir:'blowbend'}:null,
-    db1:   BASE_DB1[i]!=null?{midi:root+BASE_DB1[i],dir:'drawbend'}:null,
-    db2:   BASE_DB2[i]!=null?{midi:root+BASE_DB2[i],dir:'drawbend'}:null,
-    db3:   BASE_DB3[i]!=null?{midi:root+BASE_DB3[i],dir:'drawbend'}:null,
+    blow:{midi:root+BASE_BLOW[i],dir:'blow'},
+    draw:{midi:root+BASE_DRAW[i],dir:'draw'},
+    bb1:BASE_BB1[i]!=null?{midi:root+BASE_BB1[i],dir:'blowbend'}:null,
+    db1:BASE_DB1[i]!=null?{midi:root+BASE_DB1[i],dir:'drawbend'}:null,
+    db2:BASE_DB2[i]!=null?{midi:root+BASE_DB2[i],dir:'drawbend'}:null,
+    db3:BASE_DB3[i]!=null?{midi:root+BASE_DB3[i],dir:'drawbend'}:null,
   });
   const rows=[
-    {key:'bb1', labelKey:'row_bb1', cls:'blowbend'},
+    {key:'bb1',labelKey:'row_bb1',cls:'blowbend'},
     {key:'blow',labelKey:'row_blow',cls:'blow'},
     {key:'draw',labelKey:'row_draw',cls:'draw'},
-    {key:'db1', labelKey:'row_db1', cls:'drawbend'},
-    {key:'db2', labelKey:'row_db2', cls:'drawbend'},
-    {key:'db3', labelKey:'row_db3', cls:'drawbend'},
+    {key:'db1',labelKey:'row_db1',cls:'drawbend'},
+    {key:'db2',labelKey:'row_db2',cls:'drawbend'},
+    {key:'db3',labelKey:'row_db3',cls:'drawbend'},
   ];
   const thead=document.createElement('thead');
   let hr='<tr><th></th>';
@@ -438,26 +387,65 @@ function highlight(match){
   if(e){e.classList.add('active');lastActId=id;}
 }
 
-// ── AUDIO ─────────────────────────────────────────────────────────────────────
+// ── AUDIO: autocorrelazione semplice e affidabile ─────────────────────────────
 let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null;
+
+// Autocorrelazione classica - semplice, stabile, ben testata
+function detectPitch(buf,sr){
+  const N=buf.length;
+  // RMS
+  let rms=0;
+  for(let i=0;i<N;i++) rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/N);
+  if(rms<0.006) return -1;
+
+  // Autocorrelazione
+  const corr=new Float32Array(N);
+  for(let lag=0;lag<N;lag++)
+    for(let i=0;i<N-lag;i++)
+      corr[lag]+=buf[i]*buf[i+lag];
+
+  // Trova il primo zero-crossing discendente dopo il picco centrale
+  let start=1;
+  while(start<N/2 && corr[start]>corr[start-1]) start++;
+  while(start<N/2 && corr[start]<=0) start++;
+
+  // Trova il massimo dopo start
+  let maxVal=-1, maxIdx=start;
+  for(let i=start;i<N/2;i++){
+    if(corr[i]>maxVal){maxVal=corr[i];maxIdx=i;}
+  }
+  if(maxIdx===0) return -1;
+
+  // Interpolazione parabolica
+  if(maxIdx>0&&maxIdx<N-1){
+    const x0=corr[maxIdx-1],x1=corr[maxIdx],x2=corr[maxIdx+1];
+    const d=2*x1-x0-x2;
+    if(d>0) maxIdx+=(x2-x0)/(2*d)*0.5;
+  }
+
+  const freq=sr/maxIdx;
+  return freq;
+}
 
 async function toggleMic(){
   if(!listening){
     try{
       stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
       actx=new(window.AudioContext||window.webkitAudioContext)();
-      analyser=actx.createAnalyser();analyser.fftSize=4096;
+      analyser=actx.createAnalyser();
+      analyser.fftSize=8192; // buffer grande per bassa freq risoluzione
       actx.createMediaStreamSource(stream).connect(analyser);
       listening=true;
       document.getElementById('micBtn').classList.add('on');
       document.getElementById('micLbl').textContent=t('mic_stop');
       loop();
-    }catch(e){document.getElementById('freqSub').textContent='Error: '+e.message;}
+    }catch(e){document.getElementById('freqSub').textContent='Errore: '+e.message;}
   }else{stopMic();}
 }
 function stopMic(){
   listening=false;cancelAnimationFrame(raf);
-  stream&&stream.getTracks().forEach(t=>t.stop());
+  stream&&stream.getTracks().forEach(tr=>tr.stop());
   actx&&actx.close();
   document.getElementById('micBtn').classList.remove('on');
   document.getElementById('micLbl').textContent=t('mic_start');
@@ -469,69 +457,7 @@ function stopMic(){
   setBadge('idle',t('badge_idle'));
   setAddBtn(false,null);highlight(null);curMatch=null;
 }
-// Algoritmo YIN migliorato con finestra adattiva
-function detectPitch(buf, sr) {
-  const N = buf.length;
 
-  // RMS check
-  let rms = 0;
-  for(let i=0;i<N;i++) rms+=buf[i]*buf[i];
-  rms = Math.sqrt(rms/N);
-  if(rms < 0.004) return -1;
-
-  // Finestra YIN: limitata per evitare octave errors sulle frequenze medie/alte
-  // Min freq ~100Hz → tau_max = sr/100
-  // Max freq ~2000Hz → tau_min = sr/2000
-  const tauMin = Math.floor(sr/2000); // ~22 campioni a 44100Hz
-  const tauMax = Math.floor(sr/100);  // ~441 campioni a 44100Hz
-  const W = Math.min(Math.floor(N/2), tauMax+1);
-
-  const threshold = 0.12;
-
-  // Step 1: differenza quadratica
-  const d = new Float32Array(W);
-  for(let tau=1;tau<W;tau++){
-    for(let j=0;j<W;j++){
-      const diff=buf[j]-buf[j+tau];
-      d[tau]+=diff*diff;
-    }
-  }
-
-  // Step 2: media cumulativa normalizzata
-  const dn = new Float32Array(W);
-  dn[0]=1;
-  let runSum=0;
-  for(let tau=1;tau<W;tau++){
-    runSum+=d[tau];
-    dn[tau]=runSum===0?0:d[tau]*tau/runSum;
-  }
-
-  // Step 3: primo minimo sotto soglia nel range valido
-  let tau=-1;
-  for(let t=tauMin;t<W;t++){
-    if(dn[t]<threshold){
-      while(t+1<W && dn[t+1]<dn[t]) t++;
-      tau=t;
-      break;
-    }
-  }
-
-  // Fallback: minimo assoluto nel range
-  if(tau===-1){
-    let mn=Infinity, mi=tauMin;
-    for(let t=tauMin;t<W;t++) if(dn[t]<mn){mn=dn[t];mi=t;}
-    if(mn>0.30) return -1;
-    tau=mi;
-  }
-
-  // Step 4: interpolazione parabolica
-  if(tau<=0||tau>=W-1) return sr/tau;
-  const x1=dn[tau-1],x2=dn[tau],x3=dn[tau+1];
-  const denom=(2*x2-x1-x3);
-  const adj=denom===0?0:(x3-x1)/(2*denom);
-  const refinedTau=tau+adj;
-  return sr/refinedTau;
-}
 function setBadge(cls,txt){const b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
 function setAddBtn(on,match){
   const ab=document.getElementById('addBtn');
@@ -541,6 +467,7 @@ function setAddBtn(on,match){
   ab.className='btn green'+(isDB?' bend':isBB?' blowbend':'');
   ab.textContent='+ '+match.sym+match.hole+' ('+mn(match.midi)+')';
 }
+
 function loop(){
   if(!listening)return;
   raf=requestAnimationFrame(loop);
@@ -548,21 +475,14 @@ function loop(){
   analyser.getFloatTimeDomainData(buf);
   const freq=detectPitch(buf,actx.sampleRate);
 
-  // Range frequenze armonica: ~130 Hz (C3 low) fino a ~2100 Hz (C7 high)
-  if(freq>120&&freq<2200){
+  if(freq>100&&freq<2100){
     const match=findClosest(freq);
-
-    // Debug
-    const midiRel = 69+12*Math.log2(freq/440);
-    document.getElementById('debugFreq').textContent=`freq: ${freq.toFixed(2)} Hz`;
-    document.getElementById('debugMidi').textContent=`midi: ${midiRel.toFixed(2)} → ${mn(Math.round(midiRel))} | match: ${match?match.sym+match.hole+' '+mn(match.midi):'—'}`;
-
     if(match){
       curMatch=match;
       const pb=document.getElementById('pitchBig');
       pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
       pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'on');
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz · midi '+match.midi;
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
       const ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
       const fill=document.getElementById('cFill');
       if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}
@@ -572,14 +492,21 @@ function loop(){
       const tun=Math.abs(ct)<=20;
       const bc=tun?(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'intune'):(ct>20?'sharp':'flat');
       const bl=tun?(match.blowbend?t('badge_blowbend'):match.dir==='drawbend'?t('badge_drawbend'):t('badge_intune')):(ct>20?t('badge_high'):t('badge_low'));
-      setBadge(bc,bl); highlight(match); setAddBtn(true,match);
+      setBadge(bc,bl);highlight(match);setAddBtn(true,match);
     }else{
       curMatch=null;
       document.getElementById('pitchBig').textContent='?';
       document.getElementById('pitchBig').className='pitch-big oob';
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
-      setBadge('oob',t('badge_oob')); highlight(null); setAddBtn(false,null);
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz — '+t('badge_oob');
+      setBadge('oob',t('badge_oob'));highlight(null);setAddBtn(false,null);
     }
+  }else if(freq>0){
+    // frequenza rilevata ma fuori range strumento
+    curMatch=null;
+    document.getElementById('pitchBig').textContent='?';
+    document.getElementById('pitchBig').className='pitch-big oob';
+    document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz — '+t('badge_oob');
+    setBadge('oob',t('badge_oob'));highlight(null);setAddBtn(false,null);
   }else{
     curMatch=null;
     document.getElementById('pitchBig').textContent='—';
@@ -587,7 +514,7 @@ function loop(){
     document.getElementById('freqSub').textContent=t('freq_listen');
     document.getElementById('cFill').style.width='0';
     document.getElementById('cLbl').textContent='— ct';
-    setBadge('idle',t('badge_silence')); highlight(null); setAddBtn(false,null);
+    setBadge('idle',t('badge_silence'));highlight(null);setAddBtn(false,null);
   }
 }
 
@@ -639,7 +566,6 @@ function copyTab(){
 // ── SESSIONI ──────────────────────────────────────────────────────────────────
 let sessions=JSON.parse(localStorage.getItem('harp_v4')||'[]'),activeSess=null;
 function saveSess(){localStorage.setItem('harp_v4',JSON.stringify(sessions));}
-
 function saveSession(){
   if(!tabList.length){alert(t('no_notes_save'));return;}
   const str=tabList.map(n=>n.sym+n.hole).join(' ');
@@ -692,8 +618,7 @@ function renderSess(){
     row.onclick=()=>loadSession(i);
     const d=new Date(s.updated);
     const ds=d.toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString(lang==='it'?'it-IT':'en-GB',{hour:'2-digit',minute:'2-digit'});
-    row.innerHTML=
-      `<div class="sess-name" id="sn${i}" ondblclick="startRename(${i},this,event)">${s.name}</div>`+
+    row.innerHTML=`<div class="sess-name" id="sn${i}" ondblclick="startRename(${i},this,event)">${s.name}</div>`+
       `<div class="sess-meta">${s.key||'C'} · ${s.notes.length} ${lang==='it'?'note':'notes'} · ${ds}</div>`+
       `<button class="sess-del" onclick="deleteSession(${i},event)" title="${lang==='it'?'Elimina':'Delete'}">✕</button>`;
     list.appendChild(row);
@@ -712,10 +637,10 @@ function exportPDF(){
     const row=tabList.slice(i,i+16);
     const cells=row.map(n=>{
       const c=colors[n.dir]||'#333',b=bgs[n.dir]||'#f5f5f3';
-      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33">`
-        +`<div style="font-size:10px;opacity:.8">${n.sym}</div>`
-        +`<div style="font-size:16px;font-weight:600">${n.hole}</div>`
-        +`<div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
+      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33">`+
+        `<div style="font-size:10px;opacity:.8">${n.sym}</div>`+
+        `<div style="font-size:16px;font-weight:600">${n.hole}</div>`+
+        `<div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
     }).join('<td style="width:3px"></td>');
     noteRows.push(`<tr>${cells}</tr><tr style="height:5px"></tr>`);
   }
@@ -743,9 +668,7 @@ table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-applyI18n();
-render();
-renderSess();
+applyI18n();render();renderSess();
 </script>
 </body>
 </html>
