@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Harmonica Tab Transcriber</title>
+<title>Harmonica Lab Tab Transcriber</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -31,18 +31,18 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;padding:2rem 1rem 4rem}
 .wrap{max-width:760px;margin:0 auto}
+.top-bar{display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px}
+.lang-toggle{display:flex;border:0.5px solid var(--border2);border-radius:999px;overflow:hidden}
+.lang-toggle button{padding:4px 14px;font-size:12px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;transition:background .12s,color .12s}
+.lang-toggle button.active{background:var(--teal-bg);color:var(--teal-dk);font-weight:600}
 h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:1.5rem}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
-
-/* KEY SELECTOR */
 .key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .key-row label{font-size:13px;color:var(--text2)}
 .key-btn{padding:5px 12px;border-radius:999px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
 .key-btn:hover{background:var(--bg2);color:var(--text)}
 .key-btn.active{background:var(--teal-bg);border-color:var(--teal-bd);color:var(--teal-dk);font-weight:600}
-
-/* TUNER */
 .tuner{text-align:center}
 .pitch-big{font-size:54px;font-weight:500;font-family:'Courier New',monospace;line-height:1;min-height:60px;display:flex;align-items:center;justify-content:center;color:var(--text3);letter-spacing:-1px;transition:color .08s}
 .pitch-big.on{color:var(--teal)} .pitch-big.bend{color:var(--amber)} .pitch-big.blowbend{color:var(--purple)} .pitch-big.oob{color:var(--red)}
@@ -62,8 +62,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .mic-btn.on .mic-dot{animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-
-/* HARP GRID */
 .leg-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
 .leg-sq{width:11px;height:11px;border-radius:3px}
@@ -78,8 +76,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .harp-table td.empty{background:transparent;border-color:transparent}
 .harp-table td.active{transform:scale(1.15);box-shadow:0 0 0 2px currentColor;font-weight:700;z-index:2;position:relative}
 .row-label{font-size:10px;color:var(--text3);font-family:'Courier New',monospace;text-align:right;padding-right:6px;white-space:nowrap}
-
-/* TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:13px;cursor:pointer;transition:background .12s;white-space:nowrap;font-family:inherit}
 .btn:hover:not(:disabled){background:var(--bg2)} .btn:disabled{opacity:.35;cursor:not-allowed}
@@ -88,15 +84,12 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .btn.green.blowbend{border-color:var(--purple);color:var(--purple)} .btn.green.blowbend:hover:not(:disabled){background:var(--purple-bg)}
 .btn.red{border-color:var(--red-bd);color:var(--red)} .btn.red:hover:not(:disabled){background:var(--red-bg)}
 .spacer{flex:1}
-
-/* CHIPS */
 .tab-notes{display:flex;flex-wrap:wrap;gap:5px;min-height:50px;align-items:flex-start;padding:4px 0;margin-bottom:12px}
 .chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;min-width:38px;cursor:pointer;transition:opacity .12s,border-color .12s,background .12s;user-select:none}
 .chip:hover{opacity:.65} .chip.sel{background:var(--purple-bg);border-color:var(--purple-bd)}
 .chip .arr{font-size:12px;line-height:1}
 .chip.blow .arr{color:var(--blue)} .chip.draw .arr{color:var(--teal)}
 .chip.drawbend .arr{color:var(--amber)} .chip.blowbend .arr{color:var(--purple)}
-.chip.bend1 .arr,.chip.bend2 .arr,.chip.bend3 .arr{color:var(--amber)}
 .chip .hn{font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:var(--text);line-height:1}
 .chip .nn{font-size:10px;color:var(--text2);font-family:'Courier New',monospace}
 .chip.sel .hn,.chip.sel .nn{color:var(--purple-dk)}
@@ -105,8 +98,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .sel-bar.on{display:inline-flex}
 .txt-out{padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);font-family:'Courier New',monospace;font-size:15px;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:38px;border:0.5px solid var(--border);user-select:all;margin-bottom:8px}
 .btm-row{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-
-/* SESSIONI */
 .sess-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sess-hdr h2{font-size:14px;font-weight:500}
 .sess-list{display:flex;flex-direction:column;gap:6px}
@@ -124,13 +115,21 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <body>
 <div class="wrap">
 
-<h1>Harmonica Tab Transcriber</h1>
-<p class="sub" id="subTitle">Armonica diatonica in Do (C)</p>
+<!-- LANG TOGGLE -->
+<div class="top-bar">
+  <div class="lang-toggle">
+    <button id="btnIT" class="active" onclick="setLang('it')">🇮🇹 IT</button>
+    <button id="btnEN" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+</div>
+
+<h1 data-i18n="title">Harmonica Lab Tab Transcriber</h1>
+<p class="sub" id="subTitle"></p>
 
 <!-- KEY SELECTOR -->
 <div class="card">
   <div class="key-row">
-    <label>Tonalità:</label>
+    <label data-i18n="key"></label>
     <div id="keyBtns"></div>
   </div>
 </div>
@@ -138,25 +137,25 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <!-- TUNER -->
 <div class="card tuner">
   <div class="pitch-big" id="pitchBig">—</div>
-  <div class="freq-sub" id="freqSub">Premi il microfono per iniziare</div>
+  <div class="freq-sub" id="freqSub"></div>
   <div class="cents-wrap">
     <div class="cents-fill" id="cFill" style="left:50%;width:0;background:var(--teal)"></div>
     <div class="cents-mid"></div>
   </div>
   <div class="cents-lbl" id="cLbl">— ct</div><br>
-  <span class="badge idle" id="badge">in attesa</span><br>
+  <span class="badge idle" id="badge"></span><br>
   <button class="mic-btn" id="micBtn" onclick="toggleMic()">
-    <span class="mic-dot"></span><span id="micLbl">Attiva microfono</span>
+    <span class="mic-dot"></span><span id="micLbl"></span>
   </button>
 </div>
 
 <!-- HARP GRID -->
 <div class="card">
   <div class="leg-row">
-    <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-bd)"></div>↑ soffiata</div>
-    <div class="leg"><div class="leg-sq" style="background:var(--teal-bg);border:0.5px solid var(--teal-bd)"></div>↓ aspirata</div>
-    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div>↓' bend aspirato (1–6)</div>
-    <div class="leg"><div class="leg-sq" style="background:var(--purple-bg);border:0.5px solid var(--purple-bd)"></div>↑' bend soffiato (7–10)</div>
+    <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-bd)"></div><span data-i18n="leg_blow"></span></div>
+    <div class="leg"><div class="leg-sq" style="background:var(--teal-bg);border:0.5px solid var(--teal-bd)"></div><span data-i18n="leg_draw"></span></div>
+    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div><span data-i18n="leg_drawbend"></span></div>
+    <div class="leg"><div class="leg-sq" style="background:var(--purple-bg);border:0.5px solid var(--purple-bd)"></div><span data-i18n="leg_blowbend"></span></div>
   </div>
   <div class="harp-scroll">
     <table class="harp-table" id="harpTable"></table>
@@ -166,94 +165,167 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <!-- TABLATURA -->
 <div class="card">
   <div class="toolbar">
-    <button class="btn green" id="addBtn" onclick="addNote()" disabled>+ Aggiungi</button>
+    <button class="btn green" id="addBtn" onclick="addNote()" disabled data-i18n="add"></button>
     <span class="sel-bar" id="selBar">
-      <span id="selCount">0</span> selezionate &nbsp;
-      <button class="btn red" style="padding:2px 9px;font-size:11px" onclick="deleteSelected()">Elimina</button>
+      <span id="selCount">0</span> <span data-i18n="selected"></span> &nbsp;
+      <button class="btn red" style="padding:2px 9px;font-size:11px" onclick="deleteSelected()" data-i18n="delete"></button>
       <button class="btn" style="padding:2px 9px;font-size:11px" onclick="clearSel()">✕</button>
     </span>
     <div class="spacer"></div>
-    <button class="btn" id="undoBtn" onclick="undo()" disabled>↩ Annulla</button>
-    <button class="btn" id="redoBtn" onclick="redo()" disabled>↪ Ripristina</button>
-    <button class="btn red" onclick="clearAll()">Cancella tutto</button>
+    <button class="btn" id="undoBtn" onclick="undo()" disabled data-i18n="undo"></button>
+    <button class="btn" id="redoBtn" onclick="redo()" disabled data-i18n="redo"></button>
+    <button class="btn red" onclick="clearAll()" data-i18n="clear_all"></button>
   </div>
-  <div class="tab-notes" id="tabNotes"><span class="empty-msg">Nessuna nota ancora</span></div>
+  <div class="tab-notes" id="tabNotes"></div>
   <div class="txt-out" id="txtOut">—</div>
   <div class="btm-row">
-    <button class="btn" id="copyBtn" onclick="copyTab()">Copia testo</button>
-    <button class="btn" onclick="exportPDF()">📄 Esporta PDF</button>
-    <button class="btn green" onclick="saveSession()">Salva sessione</button>
+    <button class="btn" id="copyBtn" onclick="copyTab()" data-i18n="copy"></button>
+    <button class="btn" onclick="exportPDF()">📄 <span data-i18n="export_pdf"></span></button>
+    <button class="btn green" onclick="saveSession()" data-i18n="save_session"></button>
   </div>
 </div>
 
 <!-- SESSIONI -->
 <div class="card">
   <div class="sess-hdr">
-    <h2>Sessioni salvate</h2>
-    <button class="btn" onclick="newSession()">+ Nuova sessione</button>
+    <h2 data-i18n="sessions"></h2>
+    <button class="btn" onclick="newSession()" data-i18n="new_session"></button>
   </div>
-  <div class="sess-list" id="sessList"><span class="sess-empty">Nessuna sessione salvata</span></div>
+  <div class="sess-list" id="sessList"></div>
 </div>
 
 </div>
 <script>
-// ── NOTE NAMES ──────────────────────────────────────────────────────────────
-const NNAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const mn = m => NNAMES[((m%12)+12)%12];
-const f2m = f => 69 + 12*Math.log2(f/440);
+// ── I18N ─────────────────────────────────────────────────────────────────────
+const I18N = {
+  it: {
+    title:'Harmonica Lab Tab Transcriber',
+    sub:'Armonica diatonica in',
+    key:'Tonalità:',
+    mic_start:'Attiva microfono', mic_stop:'Stop',
+    freq_idle:'Premi il microfono per iniziare', freq_listen:'Ascoltando...',
+    badge_idle:'in attesa', badge_silence:'silenzio', badge_intune:'in tune',
+    badge_high:'troppo alta', badge_low:'troppo bassa',
+    badge_blowbend:'blow bend', badge_drawbend:'bend rilevato', badge_oob:'fuori range',
+    leg_blow:'↑ soffiata', leg_draw:'↓ aspirata',
+    leg_drawbend:"↓' bend aspirato (1–6)", leg_blowbend:"↑' bend soffiato (7–10)",
+    row_bb1:"↑' bend", row_blow:'↑ Soffia', row_draw:'↓ Aspira',
+    row_db1:"↓' bend", row_db2:"↓'' bend", row_db3:"↓''' bend",
+    add:'+ Aggiungi', selected:'selezionate', delete:'Elimina',
+    undo:'↩ Annulla', redo:'↪ Ripristina', clear_all:'Cancella tutto',
+    copy:'Copia testo', export_pdf:'Esporta PDF', save_session:'Salva sessione',
+    sessions:'Sessioni salvate', new_session:'+ Nuova sessione',
+    no_sessions:'Nessuna sessione salvata', no_notes:'Nessuna nota ancora',
+    prompt_name:'Nome della sessione:', confirm_delete:'Eliminare questa sessione?',
+    no_notes_save:'Nessuna nota da salvare.', no_notes_export:'Nessuna nota da esportare.',
+    copied:'Copiato!',
+    pdf_legend:'Legenda', pdf_graphic:'Tablatura grafica', pdf_text:'Tablatura testo',
+    pdf_footer:'Generato con Harmonica Tab Transcriber',
+  },
+  en: {
+    title:'Harmonica Lab Tab Transcriber',
+    sub:'Diatonic harmonica in',
+    key:'Key:',
+    mic_start:'Enable microphone', mic_stop:'Stop',
+    freq_idle:'Press the microphone to start', freq_listen:'Listening...',
+    badge_idle:'waiting', badge_silence:'silence', badge_intune:'in tune',
+    badge_high:'too sharp', badge_low:'too flat',
+    badge_blowbend:'blow bend', badge_drawbend:'bend detected', badge_oob:'out of range',
+    leg_blow:'↑ blow', leg_draw:'↓ draw',
+    leg_drawbend:"↓' draw bend (1–6)", leg_blowbend:"↑' blow bend (7–10)",
+    row_bb1:"↑' bend", row_blow:'↑ Blow', row_draw:'↓ Draw',
+    row_db1:"↓' bend", row_db2:"↓'' bend", row_db3:"↓''' bend",
+    add:'+ Add', selected:'selected', delete:'Delete',
+    undo:'↩ Undo', redo:'↪ Redo', clear_all:'Clear all',
+    copy:'Copy text', export_pdf:'Export PDF', save_session:'Save session',
+    sessions:'Saved sessions', new_session:'+ New session',
+    no_sessions:'No saved sessions', no_notes:'No notes yet',
+    prompt_name:'Session name:', confirm_delete:'Delete this session?',
+    no_notes_save:'No notes to save.', no_notes_export:'No notes to export.',
+    copied:'Copied!',
+    pdf_legend:'Legend', pdf_graphic:'Graphic tab', pdf_text:'Text tab',
+    pdf_footer:'Generated with Harmonica Tab Transcriber',
+  }
+};
+let lang='it';
+function t(k){return I18N[lang][k]||k;}
 
-// ── KEYS & TUNINGS ───────────────────────────────────────────────────────────
-// Each key: offset in semitones from C. Richter tuning relative intervals kept.
-const KEYS = [
-  {name:'C', offset:0},  {name:'D', offset:2},  {name:'E', offset:4},
-  {name:'F', offset:5},  {name:'G', offset:7},  {name:'A', offset:9},
-  {name:'Bb',offset:10}, {name:'Ab',offset:8},  {name:'F#',offset:6},
+function setLang(l){
+  lang=l;
+  document.getElementById('btnIT').classList.toggle('active',l==='it');
+  document.getElementById('btnEN').classList.toggle('active',l==='en');
+  applyI18n();
+  buildHarpTable();
+  render();
+  renderSess();
+}
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(el.tagName==='BUTTON'||el.tagName==='LABEL'||el.tagName==='SPAN'||el.tagName==='H2')
+      el.textContent=t(k);
+  });
+  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
+  document.getElementById('freqSub').textContent=listening?t('freq_listen'):t('freq_idle');
+  document.getElementById('badge').textContent=t('badge_idle');
+  document.getElementById('micLbl').textContent=listening?t('mic_stop'):t('mic_start');
+  // addBtn special
+  const ab=document.getElementById('addBtn');
+  if(ab.disabled) ab.textContent=t('add');
+}
+
+// ── NOTES & TUNING ────────────────────────────────────────────────────────────
+const NNAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const mn=m=>NNAMES[((m%12)+12)%12];
+const f2m=f=>69+12*Math.log2(f/440);
+
+const KEYS=[
+  {name:'C',offset:0},{name:'D',offset:2},{name:'E',offset:4},
+  {name:'F',offset:5},{name:'G',offset:7},{name:'A',offset:9},
+  {name:'Bb',offset:10},{name:'Ab',offset:8},{name:'F#',offset:6},
   {name:'Low F',offset:-7},{name:'Low D',offset:-3},{name:'Low C',offset:0,low:true}
 ];
+// Richter tuning - intervalli in semitoni dal root (es. C4=60)
+// Foro:         1   2   3   4   5   6   7   8   9  10
+const BASE_BLOW=[0,  4,  7, 12, 16, 19, 24, 28, 31, 36]; // C E G C E G C E G C
+const BASE_DRAW=[2,  7, 11, 14, 17, 21, 23, 26, 29, 33]; // D G B D F A B D F A
 
-// Base intervals in semitones relative to key root (C=60 as anchor)
-const BASE_BLOW  = [0,4,7,12,12,16,19,24,28,36];
-const BASE_DRAW  = [2,7,11,14,11,14,17,21,23,26];
-// Draw bends (semitones below draw note): fori 1-6
-const BASE_DB1   = [1,6,10,13,null,null,null,null,null,null];
-const BASE_DB2   = [null,5,9,null,null,null,null,null,null,null];
-const BASE_DB3   = [null,null,8,null,null,null,null,null,null,null];
-// Blow bends (semitones below blow note): fori 7-10
-const BASE_BB1   = [null,null,null,null,null,null,22,22,27,35];
+// Draw bend (aspirati abbassati) - fori 1-6
+const BASE_DB1 =[1,  6, 10, 13, null,null,null,null,null,null]; // C# F# A# C# — —
+const BASE_DB2 =[null,5,  9,null,null,null,null,null,null,null]; // — F  A  — — —
+const BASE_DB3 =[null,null,8,null,null,null,null,null,null,null];// — —  G# — — —
 
-const BLOWBEND_HOLES = new Set([7,8,9,10]);
+// Blow bend (soffiati abbassati) - fori 7-10
+const BASE_BB1 =[null,null,null,null,null,null,22,27,30,35];    // — — — — — — B  F# F  B
 
-let currentKey = KEYS[0]; // default C
-let HMAP = [];
+let currentKey=KEYS[0], HMAP=[];
 
 function buildMap(key){
-  const root = 60 + key.offset + (key.low ? -12 : 0);
-  const m = [];
+  const root=60+key.offset+(key.low?-12:0), m=[];
   for(let i=0;i<10;i++){
     const h=i+1;
-    const bl = root+BASE_BLOW[i];
-    const dr = root+BASE_DRAW[i];
-    m.push({midi:bl, hole:h, dir:'blow',     sym:'↑',    semis:0, blowbend:false});
-    m.push({midi:dr, hole:h, dir:'draw',     sym:'↓',    semis:0, blowbend:false});
-    if(BASE_DB1[i]!=null) m.push({midi:root+BASE_DB1[i], hole:h, dir:'drawbend', sym:"↓'",   semis:1, blowbend:false});
-    if(BASE_DB2[i]!=null) m.push({midi:root+BASE_DB2[i], hole:h, dir:'drawbend', sym:"↓''",  semis:2, blowbend:false});
-    if(BASE_DB3[i]!=null) m.push({midi:root+BASE_DB3[i], hole:h, dir:'drawbend', sym:"↓'''", semis:3, blowbend:false});
-    if(BASE_BB1[i]!=null) m.push({midi:root+BASE_BB1[i], hole:h, dir:'blowbend', sym:"↑'",   semis:1, blowbend:true});
+    m.push({midi:root+BASE_BLOW[i],hole:h,dir:'blow',    sym:'↑',   semis:0,blowbend:false});
+    m.push({midi:root+BASE_DRAW[i],hole:h,dir:'draw',    sym:'↓',   semis:0,blowbend:false});
+    if(BASE_DB1[i]!=null) m.push({midi:root+BASE_DB1[i],hole:h,dir:'drawbend',sym:"↓'",  semis:1,blowbend:false});
+    if(BASE_DB2[i]!=null) m.push({midi:root+BASE_DB2[i],hole:h,dir:'drawbend',sym:"↓''", semis:2,blowbend:false});
+    if(BASE_DB3[i]!=null) m.push({midi:root+BASE_DB3[i],hole:h,dir:'drawbend',sym:"↓'''",semis:3,blowbend:false});
+    if(BASE_BB1[i]!=null) m.push({midi:root+BASE_BB1[i],hole:h,dir:'blowbend',sym:"↑'",  semis:1,blowbend:true});
   }
   return m;
 }
-
 function findClosest(midi){
-  let best=null, d=999;
+  let best=null,d=999;
   for(const e of HMAP){const x=Math.abs(e.midi-midi);if(x<d){d=x;best=e;}}
-  if(d>1.8) return null;
-  return {...best, cents:Math.round((midi-best.midi)*100)};
+  if(d>2.5)return null; // finestra più ampia per armoniche acute
+  return {...best,cents:Math.round((midi-best.midi)*100)};
 }
+HMAP=buildMap(currentKey);
 
-// ── KEY SELECTOR UI ──────────────────────────────────────────────────────────
+// ── KEY SELECTOR ──────────────────────────────────────────────────────────────
 function buildKeyBtns(){
-  const wrap = document.getElementById('keyBtns');
-  wrap.style.display='flex';wrap.style.gap='4px';wrap.style.flexWrap='wrap';
+  const wrap=document.getElementById('keyBtns');
+  wrap.style.cssText='display:flex;gap:4px;flex-wrap:wrap';
   wrap.innerHTML='';
   KEYS.forEach((k,i)=>{
     const b=document.createElement('button');
@@ -265,73 +337,54 @@ function buildKeyBtns(){
 }
 buildKeyBtns();
 
-function setKey(i, btn){
+function setKey(i,btn){
   document.querySelectorAll('.key-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   currentKey=KEYS[i];
   HMAP=buildMap(currentKey);
-  document.getElementById('subTitle').textContent=
-    `Armonica diatonica in ${currentKey.name}${currentKey.low?'  (ottava bassa)':''}`;
+  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
   buildHarpTable();
-  curMatch=null; highlight(null); setAddBtn(false,null);
+  curMatch=null;highlight(null);setAddBtn(false,null);
 }
 
-// Init
-HMAP = buildMap(currentKey);
-
-// ── HARP TABLE ───────────────────────────────────────────────────────────────
-// Rows (top→bottom): BB1, Blow, Draw, DB1, DB2, DB3
+// ── HARP TABLE ────────────────────────────────────────────────────────────────
 function buildHarpTable(){
-  const tbl = document.getElementById('harpTable');
+  const tbl=document.getElementById('harpTable');
   tbl.innerHTML='';
-
-  // Collect data per hole
+  const root=60+currentKey.offset+(currentKey.low?-12:0);
   const holes=[];
-  for(let i=0;i<10;i++){
-    const h=i+1, root=60+currentKey.offset+(currentKey.low?-12:0);
-    holes.push({
-      blow:   {midi:root+BASE_BLOW[i], dir:'blow'},
-      draw:   {midi:root+BASE_DRAW[i], dir:'draw'},
-      bb1:    BASE_BB1[i]!=null ? {midi:root+BASE_BB1[i], dir:'blowbend'} : null,
-      db1:    BASE_DB1[i]!=null ? {midi:root+BASE_DB1[i], dir:'drawbend'} : null,
-      db2:    BASE_DB2[i]!=null ? {midi:root+BASE_DB2[i], dir:'drawbend'} : null,
-      db3:    BASE_DB3[i]!=null ? {midi:root+BASE_DB3[i], dir:'drawbend'} : null,
-    });
-  }
-
+  for(let i=0;i<10;i++) holes.push({
+    blow:  {midi:root+BASE_BLOW[i],dir:'blow'},
+    draw:  {midi:root+BASE_DRAW[i],dir:'draw'},
+    bb1:   BASE_BB1[i]!=null?{midi:root+BASE_BB1[i],dir:'blowbend'}:null,
+    db1:   BASE_DB1[i]!=null?{midi:root+BASE_DB1[i],dir:'drawbend'}:null,
+    db2:   BASE_DB2[i]!=null?{midi:root+BASE_DB2[i],dir:'drawbend'}:null,
+    db3:   BASE_DB3[i]!=null?{midi:root+BASE_DB3[i],dir:'drawbend'}:null,
+  });
   const rows=[
-    {key:'bb1',  label:"↑' bend",  cls:'blowbend'},
-    {key:'blow', label:'↑ Soffia', cls:'blow'},
-    {key:'draw', label:'↓ Aspira', cls:'draw'},
-    {key:'db1',  label:"↓' bend",  cls:'drawbend'},
-    {key:'db2',  label:"↓'' bend", cls:'drawbend'},
-    {key:'db3',  label:"↓''' bend",cls:'drawbend'},
+    {key:'bb1', labelKey:'row_bb1', cls:'blowbend'},
+    {key:'blow',labelKey:'row_blow',cls:'blow'},
+    {key:'draw',labelKey:'row_draw',cls:'draw'},
+    {key:'db1', labelKey:'row_db1', cls:'drawbend'},
+    {key:'db2', labelKey:'row_db2', cls:'drawbend'},
+    {key:'db3', labelKey:'row_db3', cls:'drawbend'},
   ];
-
-  // Header row (hole numbers)
   const thead=document.createElement('thead');
   let hr='<tr><th></th>';
   for(let i=1;i<=10;i++) hr+=`<th>${i}</th>`;
-  hr+='</tr>';
-  thead.innerHTML=hr;
+  thead.innerHTML=hr+'</tr>';
   tbl.appendChild(thead);
-
   const tbody=document.createElement('tbody');
   rows.forEach(row=>{
     const tr=document.createElement('tr');
-    // row label
     const lbl=document.createElement('td');
-    lbl.className='row-label';lbl.textContent=row.label;
+    lbl.className='row-label';lbl.textContent=t(row.labelKey);
     tr.appendChild(lbl);
     holes.forEach((h,i)=>{
       const td=document.createElement('td');
       const info=h[row.key];
-      if(!info){td.className='empty';td.textContent='';}
-      else{
-        td.className=row.cls;
-        td.textContent=mn(info.midi);
-        td.id=`cell_${row.key}_${i+1}`;
-      }
+      if(!info){td.className='empty';}
+      else{td.className=row.cls;td.textContent=mn(info.midi);td.id=`cell_${row.key}_${i+1}`;}
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -340,19 +393,19 @@ function buildHarpTable(){
 }
 buildHarpTable();
 
-// ── HIGHLIGHT ────────────────────────────────────────────────────────────────
+// ── HIGHLIGHT ─────────────────────────────────────────────────────────────────
 let lastActId=null;
 function highlight(match){
   if(lastActId){const e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
   lastActId=null;
-  if(!match) return;
-  const rowKey = match.dir==='blow'?'blow':match.dir==='draw'?'draw':match.dir==='blowbend'?'bb1':'db'+match.semis;
+  if(!match)return;
+  const rowKey=match.dir==='blow'?'blow':match.dir==='draw'?'draw':match.dir==='blowbend'?'bb1':'db'+match.semis;
   const id=`cell_${rowKey}_${match.hole}`;
   const e=document.getElementById(id);
   if(e){e.classList.add('active');lastActId=id;}
 }
 
-// ── AUDIO ────────────────────────────────────────────────────────────────────
+// ── AUDIO ─────────────────────────────────────────────────────────────────────
 let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null;
 
 async function toggleMic(){
@@ -364,56 +417,52 @@ async function toggleMic(){
       actx.createMediaStreamSource(stream).connect(analyser);
       listening=true;
       document.getElementById('micBtn').classList.add('on');
-      document.getElementById('micLbl').textContent='Stop';
+      document.getElementById('micLbl').textContent=t('mic_stop');
       loop();
-    }catch(e){document.getElementById('freqSub').textContent='Errore: '+e.message;}
+    }catch(e){document.getElementById('freqSub').textContent='Error: '+e.message;}
   }else{stopMic();}
 }
-
 function stopMic(){
   listening=false;cancelAnimationFrame(raf);
   stream&&stream.getTracks().forEach(t=>t.stop());
   actx&&actx.close();
   document.getElementById('micBtn').classList.remove('on');
-  document.getElementById('micLbl').textContent='Attiva microfono';
+  document.getElementById('micLbl').textContent=t('mic_start');
   document.getElementById('pitchBig').textContent='—';
   document.getElementById('pitchBig').className='pitch-big';
-  document.getElementById('freqSub').textContent='Premi il microfono per iniziare';
+  document.getElementById('freqSub').textContent=t('freq_idle');
   document.getElementById('cFill').style.width='0';
   document.getElementById('cLbl').textContent='— ct';
-  setBadge('idle','in attesa');
+  setBadge('idle',t('badge_idle'));
   setAddBtn(false,null);highlight(null);curMatch=null;
 }
-
 function autoCorr(buf,sr){
   const N=buf.length;let rms=0;
   for(let i=0;i<N;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/N);
-  if(rms<0.008)return -1;
+  if(rms<0.005)return -1; // soglia abbassata per note più deboli
   let r1=0,r2=N-1;
-  for(let i=0;i<N/2;i++){if(Math.abs(buf[i])<0.15){r1=i;break;}}
-  for(let i=1;i<N/2;i++){if(Math.abs(buf[N-i])<0.15){r2=N-i;break;}}
+  for(let i=0;i<N/2;i++){if(Math.abs(buf[i])<0.1){r1=i;break;}}
+  for(let i=1;i<N/2;i++){if(Math.abs(buf[N-i])<0.1){r2=N-i;break;}}
   const b=buf.slice(r1,r2),L=b.length;
+  if(L<32)return -1;
   const c=new Float32Array(L);
   for(let i=0;i<L;i++)for(let j=0;j<L-i;j++)c[i]+=b[j]*b[j+i];
-  let d=0;while(c[d]>c[d+1])d++;
+  let d=0;while(d<L-1&&c[d]>c[d+1])d++;
   let mx=-1,mp=-1;for(let i=d;i<L;i++)if(c[i]>mx){mx=c[i];mp=i;}
+  if(mp<=0||mp>=L-1)return -1;
   const x1=c[mp-1],x2=c[mp],x3=c[mp+1];
   const a=(x1+x3-2*x2)/2,b2=(x3-x1)/2;
   return a===0?sr/mp:sr/(-b2/(2*a)+mp);
 }
-
 function setBadge(cls,txt){const b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
-
 function setAddBtn(on,match){
   const ab=document.getElementById('addBtn');
   ab.disabled=!on;
-  if(!on){ab.textContent='+ Aggiungi';ab.className='btn green';return;}
-  const ap="'".repeat(match.semis);
-  const isBB=match.blowbend, isDB=match.dir==='drawbend';
+  if(!on){ab.textContent=t('add');ab.className='btn green';return;}
+  const isBB=match.blowbend,isDB=match.dir==='drawbend';
   ab.className='btn green'+(isDB?' bend':isBB?' blowbend':'');
-  ab.textContent='+ '+match.sym+match.hole+(ap&&!isBB?'':ap)+' ('+mn(match.midi)+')';
+  ab.textContent='+ '+match.sym+match.hole+' ('+mn(match.midi)+')';
 }
-
 function loop(){
   if(!listening)return;
   raf=requestAnimationFrame(loop);
@@ -421,46 +470,43 @@ function loop(){
   analyser.getFloatTimeDomainData(buf);
   const freq=autoCorr(buf,actx.sampleRate);
   if(freq>60&&freq<2000){
-    const midi=f2m(freq);
-    const match=findClosest(midi);
+    const midi=f2m(freq), match=findClosest(midi);
     if(match){
       curMatch=match;
-      const ap="'".repeat(match.semis);
       const pb=document.getElementById('pitchBig');
       pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
       pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'on');
       document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
-      const ct=match.cents, pct=Math.min(Math.max((ct+50)/100,0),1);
+      const ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
       const fill=document.getElementById('cFill');
       if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}
       else{const w=(0.5-pct)*100;fill.style.left=(50-w)+'%';fill.style.width=w+'%';}
       fill.style.background=Math.abs(ct)<=20?'#1D9E75':'#BA7517';
       document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
       const tun=Math.abs(ct)<=20;
-      const badgeCls=tun?(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'intune'):(ct>20?'sharp':'flat');
-      setBadge(badgeCls, tun?(match.blowbend?'blow bend':'in tune'):(ct>20?'troppo alta':'troppo bassa'));
-      highlight(match); setAddBtn(true,match);
+      const bc=tun?(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'intune'):(ct>20?'sharp':'flat');
+      const bl=tun?(match.blowbend?t('badge_blowbend'):match.dir==='drawbend'?t('badge_drawbend'):t('badge_intune')):(ct>20?t('badge_high'):t('badge_low'));
+      setBadge(bc,bl); highlight(match); setAddBtn(true,match);
     }else{
       curMatch=null;
       document.getElementById('pitchBig').textContent='?';
       document.getElementById('pitchBig').className='pitch-big oob';
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz — fuori range';
-      setBadge('oob','fuori range'); highlight(null); setAddBtn(false,null);
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
+      setBadge('oob',t('badge_oob')); highlight(null); setAddBtn(false,null);
     }
   }else{
     curMatch=null;
     document.getElementById('pitchBig').textContent='—';
     document.getElementById('pitchBig').className='pitch-big';
-    document.getElementById('freqSub').textContent='Ascoltando...';
+    document.getElementById('freqSub').textContent=t('freq_listen');
     document.getElementById('cFill').style.width='0';
     document.getElementById('cLbl').textContent='— ct';
-    setBadge('idle','silenzio'); highlight(null); setAddBtn(false,null);
+    setBadge('idle',t('badge_silence')); highlight(null); setAddBtn(false,null);
   }
 }
 
 // ── TAB & UNDO ────────────────────────────────────────────────────────────────
 let tabList=[],selected=new Set(),hist=[[]],histIdx=0;
-
 function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(x=>({...x})));histIdx++;upUD();}
 function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
 function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
@@ -468,7 +514,6 @@ function upUD(){
   document.getElementById('undoBtn').disabled=histIdx<=0;
   document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;
 }
-
 function addNote(){if(!curMatch)return;snap();tabList.push({...curMatch});render();}
 function toggleSel(i){if(selected.has(i))selected.delete(i);else selected.add(i);render();}
 function clearSel(){selected.clear();render();}
@@ -476,21 +521,20 @@ function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter
 function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear();render();}
 
 function render(){
-  const cont=document.getElementById('tabNotes'), txt=document.getElementById('txtOut');
-  const sb=document.getElementById('selBar'), sc=document.getElementById('selCount');
+  const cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
+  const sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
   if(!tabList.length){
-    cont.innerHTML='<span class="empty-msg">Nessuna nota ancora</span>';
-    txt.textContent='—'; sb.classList.remove('on'); return;
+    cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;
+    txt.textContent='—';sb.classList.remove('on');return;
   }
-  cont.innerHTML=''; let str='';
-  tabList.forEach((t,i)=>{
+  cont.innerHTML='';let str='';
+  tabList.forEach((n,i)=>{
     const chip=document.createElement('div');
-    chip.className='chip '+t.dir+(selected.has(i)?' sel':'');
-    chip.title=selected.has(i)?'Clicca per deselezionare':'Clicca per selezionare';
+    chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
     chip.onclick=()=>toggleSel(i);
-    chip.innerHTML=`<span class="arr">${t.sym}</span><span class="hn">${t.hole}</span><span class="nn">${mn(t.midi)}</span>`;
+    chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
     cont.appendChild(chip);
-    str+=t.sym+t.hole+' ';
+    str+=n.sym+n.hole+' ';
   });
   txt.textContent=str.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}
@@ -498,11 +542,11 @@ function render(){
 }
 
 function copyTab(){
-  const t=document.getElementById('txtOut').textContent;
-  if(t==='—')return;
-  navigator.clipboard.writeText(t).then(()=>{
-    const b=document.getElementById('copyBtn');const o=b.textContent;
-    b.textContent='Copiato!';setTimeout(()=>b.textContent=o,1600);
+  const tx=document.getElementById('txtOut').textContent;
+  if(tx==='—')return;
+  navigator.clipboard.writeText(tx).then(()=>{
+    const b=document.getElementById('copyBtn'),o=b.textContent;
+    b.textContent=t('copied');setTimeout(()=>b.textContent=t('copy'),1600);
   });
 }
 
@@ -511,31 +555,30 @@ let sessions=JSON.parse(localStorage.getItem('harp_v4')||'[]'),activeSess=null;
 function saveSess(){localStorage.setItem('harp_v4',JSON.stringify(sessions));}
 
 function saveSession(){
-  if(!tabList.length){alert('Nessuna nota da salvare.');return;}
-  const str=tabList.map(t=>t.sym+t.hole).join(' ');
+  if(!tabList.length){alert(t('no_notes_save'));return;}
+  const str=tabList.map(n=>n.sym+n.hole).join(' ');
   if(activeSess!==null){
-    const newName=prompt('Nome della sessione:',sessions[activeSess].name);
+    const newName=prompt(t('prompt_name'),sessions[activeSess].name);
     if(newName===null)return;
     sessions[activeSess].name=newName.trim()||sessions[activeSess].name;
     sessions[activeSess].notes=[...tabList];sessions[activeSess].tab=str;
     sessions[activeSess].key=currentKey.name;sessions[activeSess].updated=Date.now();
   }else{
-    const defName='Sessione '+(sessions.length+1);
-    const newName=prompt('Nome della sessione:',defName);
+    const def=lang==='it'?'Sessione '+(sessions.length+1):'Session '+(sessions.length+1);
+    const newName=prompt(t('prompt_name'),def);
     if(newName===null)return;
-    sessions.push({id:Date.now(),name:newName.trim()||defName,notes:[...tabList],tab:str,key:currentKey.name,updated:Date.now()});
+    sessions.push({id:Date.now(),name:newName.trim()||def,notes:[...tabList],tab:str,key:currentKey.name,updated:Date.now()});
     activeSess=sessions.length-1;
   }
   saveSess();renderSess();
 }
-
 function loadSession(i){
-  activeSess=i; tabList=sessions[i].notes.map(x=>({...x})); selected.clear();
-  hist=[tabList.map(x=>({...x}))]; histIdx=0; upUD(); render(); renderSess();
+  activeSess=i;tabList=sessions[i].notes.map(x=>({...x}));selected.clear();
+  hist=[tabList.map(x=>({...x}))];histIdx=0;upUD();render();renderSess();
 }
 function deleteSession(i,e){
   e.stopPropagation();
-  if(!confirm('Eliminare questa sessione?'))return;
+  if(!confirm(t('confirm_delete')))return;
   sessions.splice(i,1);
   if(activeSess===i)activeSess=null;
   else if(activeSess>i)activeSess--;
@@ -555,65 +598,68 @@ function startRename(i,el,e){
 }
 function renderSess(){
   const list=document.getElementById('sessList');
-  if(!sessions.length){list.innerHTML='<span class="sess-empty">Nessuna sessione salvata</span>';return;}
+  if(!sessions.length){list.innerHTML=`<span class="sess-empty">${t('no_sessions')}</span>`;return;}
   list.innerHTML='';
   sessions.forEach((s,i)=>{
     const row=document.createElement('div');
     row.className='sess-row'+(activeSess===i?' active':'');
     row.onclick=()=>loadSession(i);
     const d=new Date(s.updated);
-    const ds=d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    const ds=d.toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString(lang==='it'?'it-IT':'en-GB',{hour:'2-digit',minute:'2-digit'});
     row.innerHTML=
       `<div class="sess-name" id="sn${i}" ondblclick="startRename(${i},this,event)">${s.name}</div>`+
-      `<div class="sess-meta">${s.key||'C'} · ${s.notes.length} note · ${ds}</div>`+
-      `<button class="sess-del" onclick="deleteSession(${i},event)" title="Elimina">✕</button>`;
+      `<div class="sess-meta">${s.key||'C'} · ${s.notes.length} ${lang==='it'?'note':'notes'} · ${ds}</div>`+
+      `<button class="sess-del" onclick="deleteSession(${i},event)" title="${lang==='it'?'Elimina':'Delete'}">✕</button>`;
     list.appendChild(row);
   });
 }
-renderSess();
 
 // ── EXPORT PDF ────────────────────────────────────────────────────────────────
 function exportPDF(){
-  if(!tabList.length){alert('Nessuna nota da esportare.');return;}
-  const date=new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'});
-  const sessName=activeSess!==null?sessions[activeSess].name:'Tablatura';
+  if(!tabList.length){alert(t('no_notes_export'));return;}
+  const date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
   const colors={blow:'#185FA5',draw:'#1D9E75',drawbend:'#BA7517',blowbend:'#534AB7'};
   const bgs={blow:'#E6F1FB',draw:'#E1F5EE',drawbend:'#FAEEDA',blowbend:'#EEEDFE'};
-  const chunkSize=16;
   const noteRows=[];
-  for(let i=0;i<tabList.length;i+=chunkSize){
-    const row=tabList.slice(i,i+chunkSize);
-    const cells=row.map(t=>{
-      const c=colors[t.dir]||'#333', b=bgs[t.dir]||'#f5f5f3';
-      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;font-size:13px;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33">`
-        +`<div style="font-size:10px;opacity:.8">${t.sym}</div>`
-        +`<div style="font-size:16px;font-weight:600">${t.hole}</div>`
-        +`<div style="font-size:9px;color:#888">${mn(t.midi)}</div>`
-        +`</td>`;
+  for(let i=0;i<tabList.length;i+=16){
+    const row=tabList.slice(i,i+16);
+    const cells=row.map(n=>{
+      const c=colors[n.dir]||'#333',b=bgs[n.dir]||'#f5f5f3';
+      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33">`
+        +`<div style="font-size:10px;opacity:.8">${n.sym}</div>`
+        +`<div style="font-size:16px;font-weight:600">${n.hole}</div>`
+        +`<div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
     }).join('<td style="width:3px"></td>');
     noteRows.push(`<tr>${cells}</tr><tr style="height:5px"></tr>`);
   }
-  const tabTxt=tabList.map(t=>t.sym+t.hole).join(' ');
+  const tabTxt=tabList.map(n=>n.sym+n.hole).join(' ');
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sessName}</title>
 <style>body{font-family:-apple-system,sans-serif;color:#1a1a1a;padding:32px 40px;max-width:800px;margin:0 auto}
 h1{font-size:20px;font-weight:500;margin-bottom:4px}.sub{font-size:13px;color:#888;margin-bottom:24px}
 .sec{margin-bottom:20px}.sec h2{font-size:12px;font-weight:500;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #eee}
 table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f3;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:1px;border:1px solid #e0e0de}
-.leg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}.li{display:flex;align-items:center;gap:5px;font-size:12px;color:#555}
+.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:12px;color:#555}
 .ls{width:11px;height:11px;border-radius:3px}.foot{margin-top:32px;font-size:11px;color:#bbb;text-align:center}</style></head><body>
-<h1>${sessName}</h1><div class="sub">Armonica in ${currentKey.name} · ${tabList.length} note · ${date}</div>
-<div class="sec"><h2>Legenda</h2><div class="leg">
-<div class="li"><div class="ls" style="background:#E6F1FB;border:1px solid #B5D4F4"></div>↑ soffiata</div>
-<div class="li"><div class="ls" style="background:#E1F5EE;border:1px solid #9FE1CB"></div>↓ aspirata</div>
-<div class="li"><div class="ls" style="background:#FAEEDA;border:1px solid #FAC775"></div>↓' draw bend</div>
-<div class="li"><div class="ls" style="background:#EEEDFE;border:1px solid #CECBF6"></div>↑' blow bend</div>
+<h1>${sessName}</h1>
+<div class="sub">${t('sub')} ${currentKey.name} · ${tabList.length} ${lang==='it'?'note':'notes'} · ${date}</div>
+<div class="sec"><h2>${t('pdf_legend')}</h2><div class="leg">
+<div class="li"><div class="ls" style="background:#E6F1FB;border:1px solid #B5D4F4"></div>${t('leg_blow')}</div>
+<div class="li"><div class="ls" style="background:#E1F5EE;border:1px solid #9FE1CB"></div>${t('leg_draw')}</div>
+<div class="li"><div class="ls" style="background:#FAEEDA;border:1px solid #FAC775"></div>${t('leg_drawbend')}</div>
+<div class="li"><div class="ls" style="background:#EEEDFE;border:1px solid #CECBF6"></div>${t('leg_blowbend')}</div>
 </div></div>
-<div class="sec"><h2>Tablatura grafica</h2><table><tbody>${noteRows.join('')}</tbody></table></div>
-<div class="sec"><h2>Tablatura testo</h2><div class="txt">${tabTxt}</div></div>
-<div class="foot">Generato con Harmonica Tab Transcriber</div></body></html>`;
+<div class="sec"><h2>${t('pdf_graphic')}</h2><table><tbody>${noteRows.join('')}</tbody></table></div>
+<div class="sec"><h2>${t('pdf_text')}</h2><div class="txt">${tabTxt}</div></div>
+<div class="foot">${t('pdf_footer')}</div></body></html>`;
   const win=window.open('','_blank');
   win.document.write(html);win.document.close();win.onload=()=>win.print();
 }
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+applyI18n();
+render();
+renderSess();
 </script>
 </body>
 </html>
