@@ -310,10 +310,10 @@ function findClosest(hz){
     const diff=Math.abs(e.hz-hz);
     if(diff<bestDiff){bestDiff=diff;best=e;}
   }
-  // Accetta solo se entro ±80 cents dalla nota più vicina
   if(!best) return null;
   const cents=Math.round(1200*Math.log2(hz/best.hz));
-  if(Math.abs(cents)>80) return null;
+  // Accetta ±150 cents — più ampio per catturare i bend in movimento
+  if(Math.abs(cents)>150) return null;
   return {...best,cents};
 }
 HMAP=buildMap(currentKey);
