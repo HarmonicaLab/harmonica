@@ -139,7 +139,8 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   <div class="leg-row">
     <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-bd)"></div>↑ soffiata</div>
     <div class="leg"><div class="leg-sq" style="background:var(--teal-bg);border:0.5px solid var(--teal-bd)"></div>↓ aspirata</div>
-    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div>' bend</div>
+    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div>↓' bend aspirato (1-6)</div>
+    <div class="leg"><div class="leg-sq" style="background:var(--purple-bg);border:0.5px solid var(--purple-bd)"></div>↑' bend soffiato (7-10)</div>
   </div>
   <div class="harp-scroll"><div class="harp-row" id="harpRow"></div></div>
 </div>
@@ -180,9 +181,12 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <script>
 const BLOW  = [60,64,67,72,72,76,79,84,88,96];
 const DRAW  = [62,67,71,74,71,74,77,81,83,86];
-const BEND1 = [61,66,70,null,null,null,null,null,null,null];
+// Draw bends fori 1-6, Blow bends fori 7-10
+const BEND1 = [61,66,70,73,null,null,82,83,87,95];
 const BEND2 = [null,65,69,null,null,null,null,null,null,null];
 const BEND3 = [null,null,68,null,null,null,null,null,null,null];
+// fori 7-10: bend è soffiato abbassato (blow bend)
+const BLOWBEND_HOLES = new Set([7,8,9,10]);
 const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const mn = m => NAMES[m%12];
 const f2m = f => 69+12*Math.log2(f/440);
@@ -190,11 +194,15 @@ const f2m = f => 69+12*Math.log2(f/440);
 function buildMap(){
   const m=[];
   for(let i=0;i<10;i++){
-    if(BLOW[i]!=null)  m.push({midi:BLOW[i], hole:i+1,dir:'blow', sym:'↑',semis:0});
-    if(DRAW[i]!=null)  m.push({midi:DRAW[i], hole:i+1,dir:'draw', sym:'↓',semis:0});
-    if(BEND1[i]!=null) m.push({midi:BEND1[i],hole:i+1,dir:'bend1',sym:"↓'",  semis:1});
-    if(BEND2[i]!=null) m.push({midi:BEND2[i],hole:i+1,dir:'bend2',sym:"↓''", semis:2});
-    if(BEND3[i]!=null) m.push({midi:BEND3[i],hole:i+1,dir:'bend3',sym:"↓'''",semis:3});
+    const h=i+1;
+    if(BLOW[i]!=null)  m.push({midi:BLOW[i], hole:h,dir:'blow', sym:'↑',semis:0});
+    if(DRAW[i]!=null)  m.push({midi:DRAW[i], hole:h,dir:'draw', sym:'↓',semis:0});
+    if(BEND1[i]!=null){
+      const bb=BLOWBEND_HOLES.has(h);
+      m.push({midi:BEND1[i],hole:h,dir:'bend1',sym:bb?"↑'":"↓'",  semis:1,blowbend:bb});
+    }
+    if(BEND2[i]!=null) m.push({midi:BEND2[i],hole:h,dir:'bend2',sym:"↓''", semis:2,blowbend:false});
+    if(BEND3[i]!=null) m.push({midi:BEND3[i],hole:h,dir:'bend3',sym:"↓'''",semis:3,blowbend:false});
   }
   return m;
 }
