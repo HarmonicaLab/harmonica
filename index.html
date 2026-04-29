@@ -141,6 +141,42 @@
   .cell-btn.draw.in-scale  { outline-color: var(--accent); }
   .cell-btn.bend.in-scale  { outline-color: #b87aff; color: #b87aff; }
 
+  /* ── DETECTED NOTE HIGHLIGHT ── */
+  .cell-btn.detected {
+    transform: scale(1.08);
+    z-index: 2;
+    position: relative;
+  }
+  .cell-btn.detected-intune {
+    border-color: #4ae8b4 !important;
+    background: rgba(74,232,180,0.30) !important;
+    color: #fff !important;
+    box-shadow: 0 0 18px rgba(74,232,180,0.6), 0 0 6px rgba(74,232,180,0.4) !important;
+  }
+  .cell-btn.detected-close {
+    border-color: #e8c84a !important;
+    background: rgba(232,200,74,0.25) !important;
+    color: #fff !important;
+    box-shadow: 0 0 14px rgba(232,200,74,0.5) !important;
+  }
+  .cell-btn.detected-off {
+    border-color: #e84a4a !important;
+    background: rgba(232,74,74,0.20) !important;
+    color: #fff !important;
+    box-shadow: 0 0 12px rgba(232,74,74,0.4) !important;
+  }
+
+  /* dot indicator above detected cell */
+  .cell-btn.detected::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%; transform: translateX(-50%);
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .cell-btn.detected-intune::before { background: #4ae8b4; box-shadow: 0 0 6px #4ae8b4; }
+  .cell-btn.detected-close::before  { background: #e8c84a; box-shadow: 0 0 6px #e8c84a; }
+  .cell-btn.detected-off::before    { background: #e84a4a; box-shadow: 0 0 6px #e84a4a; }
+
   .chart-legend { display: flex; gap: 16px; margin-top: 10px; font-size: 0.68rem; color: var(--muted); }
   .chart-legend span { display: flex; align-items: center; gap: 5px; }
   .leg-dot { width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid; }
@@ -715,6 +751,8 @@ function stopMic() {
 function resetMeter() {
   needle.style.left='50%'; needle.style.background='var(--muted)';
   meterNote.style.opacity='0'; meterCents.textContent='— ¢'; inTuneBadge.style.opacity='0';
+  document.querySelectorAll('.cell-btn.detected,.cell-btn.detected-intune,.cell-btn.detected-close,.cell-btn.detected-off')
+    .forEach(b => b.classList.remove('detected','detected-intune','detected-close','detected-off'));
 }
 
 function detectPitch() {
@@ -781,10 +819,33 @@ function updateMeter(det) {
   if(selectedMidi!==null&&Math.abs(cd-selectedMidi*100)<=8)
     statusText.textContent=t('correct');
 
+  // sync highlight on box 3
+  highlightDetectedNote(nm, abs);
+
   // push to history
   pitchHistory.push({cents:diff, color:histColor});
   if(pitchHistory.length>HISTORY_LEN) pitchHistory.shift();
   drawHistory();
+}
+
+// ─── SYNC HIGHLIGHT BOX 3 ───
+function highlightDetectedNote(detectedMidi, absCents) {
+  // Remove previous detected classes
+  document.querySelectorAll('.cell-btn.detected,.cell-btn.detected-intune,.cell-btn.detected-close,.cell-btn.detected-off')
+    .forEach(b => b.classList.remove('detected','detected-intune','detected-close','detected-off'));
+
+  // Find all cell buttons with this exact midi value
+  const targets = document.querySelectorAll(`.cell-btn[data-midi="${detectedMidi}"]`);
+  if (!targets.length) return;
+
+  let tuneClass;
+  if (absCents <= 8)       tuneClass = 'detected-intune';
+  else if (absCents <= 20) tuneClass = 'detected-close';
+  else                     tuneClass = 'detected-off';
+
+  targets.forEach(btn => {
+    btn.classList.add('detected', tuneClass);
+  });
 }
 
 // ─── PITCH HISTORY CANVAS ───
