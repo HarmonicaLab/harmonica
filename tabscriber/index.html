@@ -132,6 +132,12 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   </div>
 </div>
 
+<div class="card" style="font-family:monospace;font-size:12px;border:1px solid var(--amber-bd);background:var(--amber-bg)">
+  <strong style="color:var(--amber-dk)">🔍 Debug</strong><br>
+  <div id="dbHz" style="color:var(--text2)">Hz: —</div>
+  <div id="dbExpected" style="color:var(--text2);margin-top:4px;font-size:11px"></div>
+</div>
+
 <div class="card tuner">
   <div class="pitch-big" id="pitchBig">—</div>
   <div class="freq-sub" id="freqSub"></div>
@@ -324,6 +330,9 @@ function setKey(i,btn){
   btn.classList.add('active');
   currentKey=KEYS[i];
   HMAP=buildMap(currentKey);
+  // Mostra le prime note attese nel debug
+  const exp=HMAP.slice(0,4).map(e=>`${mn(e.midi)}${e.sym}${e.hole}=${e.hz.toFixed(1)}Hz`).join(' | ');
+  document.getElementById('dbExpected').textContent='Attese: '+exp;
   document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
   buildHarpTable();
   curMatch=null;highlight(null);setAddBtn(false,null);
@@ -476,6 +485,9 @@ function loop(){
   const freq=detectPitch(buf,actx.sampleRate);
 
   if(freq>100&&freq<2100){
+    // DEBUG
+    const nearest=HMAP.reduce((a,b)=>Math.abs(a.hz-freq)<Math.abs(b.hz-freq)?a:b);
+    document.getElementById('dbHz').textContent=`Hz rilevato: ${freq.toFixed(2)} | più vicino: ${mn(nearest.midi)} ${nearest.sym}${nearest.hole} (${nearest.hz.toFixed(2)} Hz) | diff: ${Math.abs(freq-nearest.hz).toFixed(2)} Hz`;
     const match=findClosest(freq);
     if(match){
       curMatch=match;
