@@ -830,17 +830,14 @@ function updateMeter(det) {
 
 // ─── SYNC HIGHLIGHT BOX 3 ───
 function highlightDetectedNote(detectedMidi, absCents) {
-  // Remove previous detected classes
   document.querySelectorAll('.cell-btn.detected,.cell-btn.detected-intune,.cell-btn.detected-close,.cell-btn.detected-off')
     .forEach(b => b.classList.remove('detected','detected-intune','detected-close','detected-off'));
 
-  // Match by pitch class (0-11) so it works in all keys
-  const detectedPC = ((detectedMidi % 12) + 12) % 12;
-
+  // Match by exact midi ±1 semitone (accounts for slight octave ambiguity in pitch detection)
   const targets = [...document.querySelectorAll('.cell-btn:not(.empty)')].filter(btn => {
     const midi = parseInt(btn.dataset.midi);
     if (isNaN(midi)) return false;
-    return ((midi % 12) + 12) % 12 === detectedPC;
+    return Math.abs(midi - detectedMidi) <= 1;
   });
 
   if (!targets.length) return;
