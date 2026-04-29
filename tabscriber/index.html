@@ -30,15 +30,22 @@
   }
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;padding:2rem 1rem 4rem}
-.wrap{max-width:720px;margin:0 auto}
+.wrap{max-width:760px;margin:0 auto}
 h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:1.5rem}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
 
+/* KEY SELECTOR */
+.key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.key-row label{font-size:13px;color:var(--text2)}
+.key-btn{padding:5px 12px;border-radius:999px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.key-btn:hover{background:var(--bg2);color:var(--text)}
+.key-btn.active{background:var(--teal-bg);border-color:var(--teal-bd);color:var(--teal-dk);font-weight:600}
+
 /* TUNER */
 .tuner{text-align:center}
-.pitch-big{font-size:58px;font-weight:500;font-family:'Courier New',monospace;line-height:1;min-height:64px;display:flex;align-items:center;justify-content:center;color:var(--text3);letter-spacing:-1px;transition:color .08s}
-.pitch-big.on{color:var(--teal)} .pitch-big.bend{color:var(--amber)} .pitch-big.oob{color:var(--red)}
+.pitch-big{font-size:54px;font-weight:500;font-family:'Courier New',monospace;line-height:1;min-height:60px;display:flex;align-items:center;justify-content:center;color:var(--text3);letter-spacing:-1px;transition:color .08s}
+.pitch-big.on{color:var(--teal)} .pitch-big.bend{color:var(--amber)} .pitch-big.blowbend{color:var(--purple)} .pitch-big.oob{color:var(--red)}
 .freq-sub{font-size:13px;color:var(--text2);font-family:'Courier New',monospace;margin-top:4px;min-height:18px}
 .cents-wrap{position:relative;height:6px;background:var(--bg3);border-radius:3px;margin:12px auto;max-width:300px}
 .cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
@@ -47,29 +54,30 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:999px;font-family:'Courier New',monospace;margin-top:6px}
 .badge.intune{background:var(--teal-bg);color:var(--teal-dk)}
 .badge.sharp,.badge.flat,.badge.bend{background:var(--amber-bg);color:var(--amber-dk)}
+.badge.blowbend{background:var(--purple-bg);color:var(--purple-dk)}
 .badge.idle{background:var(--bg2);color:var(--text3)}
 .badge.oob{background:var(--red-bg);color:var(--red)}
-.mic-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:14px;cursor:pointer;margin-top:12px;transition:background .12s}
+.mic-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:14px;cursor:pointer;margin-top:12px;transition:background .12s;font-family:inherit}
 .mic-btn:hover{background:var(--bg2)} .mic-btn.on{border-color:var(--teal);color:var(--teal)}
 .mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .mic-btn.on .mic-dot{animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* HARP */
-.leg-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+/* HARP GRID */
+.leg-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
 .leg-sq{width:11px;height:11px;border-radius:3px}
 .harp-scroll{overflow-x:auto;padding-bottom:4px}
-.harp-row{display:flex;gap:4px;align-items:flex-end;width:max-content}
-.hole-col{display:flex;flex-direction:column;align-items:center;gap:3px}
-.hole-num{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;margin-top:2px}
-.hole-cell{width:42px;height:27px;border-radius:var(--radius-sm);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'Courier New',monospace;color:var(--text3);background:var(--bg2);transition:transform .1s}
-.hole-cell.blow{background:var(--blue-bg);color:var(--blue-dk);border-color:var(--blue-bd)}
-.hole-cell.draw{background:var(--teal-bg);color:var(--teal-dk);border-color:var(--teal-bd)}
-.hole-cell.bend1,.hole-cell.bend2,.hole-cell.bend3{background:var(--amber-bg);color:var(--amber-dk);border-color:var(--amber-bd)}
-.hole-cell.bend2{opacity:.8} .hole-cell.bend3{opacity:.65}
-.hole-cell.active{transform:scale(1.18);font-weight:600;z-index:2}
-.hole-cell.ghost{opacity:0;pointer-events:none}
+.harp-table{border-collapse:separate;border-spacing:3px;width:max-content}
+.harp-table th{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;text-align:center;padding:2px 4px;font-weight:400}
+.harp-table td{width:54px;height:26px;border-radius:6px;text-align:center;font-size:11px;font-family:'Courier New',monospace;border:0.5px solid var(--border);background:var(--bg2);color:var(--text3);vertical-align:middle;transition:transform .1s,box-shadow .1s}
+.harp-table td.blow{background:var(--blue-bg);color:var(--blue-dk);border-color:var(--blue-bd)}
+.harp-table td.draw{background:var(--teal-bg);color:var(--teal-dk);border-color:var(--teal-bd)}
+.harp-table td.drawbend{background:var(--amber-bg);color:var(--amber-dk);border-color:var(--amber-bd)}
+.harp-table td.blowbend{background:var(--purple-bg);color:var(--purple-dk);border-color:var(--purple-bd)}
+.harp-table td.empty{background:transparent;border-color:transparent}
+.harp-table td.active{transform:scale(1.15);box-shadow:0 0 0 2px currentColor;font-weight:700;z-index:2;position:relative}
+.row-label{font-size:10px;color:var(--text3);font-family:'Courier New',monospace;text-align:right;padding-right:6px;white-space:nowrap}
 
 /* TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
@@ -77,6 +85,7 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .btn:hover:not(:disabled){background:var(--bg2)} .btn:disabled{opacity:.35;cursor:not-allowed}
 .btn.green{border-color:var(--teal);color:var(--teal)} .btn.green:hover:not(:disabled){background:var(--teal-bg)}
 .btn.green.bend{border-color:var(--amber);color:var(--amber)} .btn.green.bend:hover:not(:disabled){background:var(--amber-bg)}
+.btn.green.blowbend{border-color:var(--purple);color:var(--purple)} .btn.green.blowbend:hover:not(:disabled){background:var(--purple-bg)}
 .btn.red{border-color:var(--red-bd);color:var(--red)} .btn.red:hover:not(:disabled){background:var(--red-bg)}
 .spacer{flex:1}
 
@@ -86,6 +95,7 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .chip:hover{opacity:.65} .chip.sel{background:var(--purple-bg);border-color:var(--purple-bd)}
 .chip .arr{font-size:12px;line-height:1}
 .chip.blow .arr{color:var(--blue)} .chip.draw .arr{color:var(--teal)}
+.chip.drawbend .arr{color:var(--amber)} .chip.blowbend .arr{color:var(--purple)}
 .chip.bend1 .arr,.chip.bend2 .arr,.chip.bend3 .arr{color:var(--amber)}
 .chip .hn{font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:var(--text);line-height:1}
 .chip .nn{font-size:10px;color:var(--text2);font-family:'Courier New',monospace}
@@ -93,7 +103,6 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .empty-msg{font-size:13px;color:var(--text3);padding:6px 0}
 .sel-bar{display:none;align-items:center;gap:8px;font-size:12px;background:var(--purple-bg);color:var(--purple-dk);border:0.5px solid var(--purple-bd);border-radius:var(--radius-sm);padding:4px 10px}
 .sel-bar.on{display:inline-flex}
-
 .txt-out{padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);font-family:'Courier New',monospace;font-size:15px;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:38px;border:0.5px solid var(--border);user-select:all;margin-bottom:8px}
 .btm-row{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 
@@ -105,9 +114,8 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 .sess-row:hover{border-color:var(--border2)} .sess-row.active{border-color:var(--teal);background:var(--teal-bg)}
 .sess-name{flex:1;font-size:13px;color:var(--text)}
 .sess-name input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;font-family:inherit}
-.sess-row.active .sess-name{color:var(--teal-dk)}
+.sess-row.active .sess-name{color:var(--teal-dk)} .sess-row.active .sess-meta{color:var(--teal)}
 .sess-meta{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;white-space:nowrap}
-.sess-row.active .sess-meta{color:var(--teal)}
 .sess-del{font-size:13px;color:var(--text3);background:transparent;border:none;cursor:pointer;padding:2px 5px;border-radius:4px;line-height:1}
 .sess-del:hover{color:var(--red);background:var(--red-bg)}
 .sess-empty{font-size:13px;color:var(--text3);padding:2px 0}
@@ -117,7 +125,15 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 <div class="wrap">
 
 <h1>Harmonica Tab Transcriber</h1>
-<p class="sub">Armonica diatonica in Do · note e bend in tempo reale</p>
+<p class="sub" id="subTitle">Armonica diatonica in Do (C)</p>
+
+<!-- KEY SELECTOR -->
+<div class="card">
+  <div class="key-row">
+    <label>Tonalità:</label>
+    <div id="keyBtns"></div>
+  </div>
+</div>
 
 <!-- TUNER -->
 <div class="card tuner">
@@ -139,10 +155,12 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
   <div class="leg-row">
     <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-bd)"></div>↑ soffiata</div>
     <div class="leg"><div class="leg-sq" style="background:var(--teal-bg);border:0.5px solid var(--teal-bd)"></div>↓ aspirata</div>
-    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div>↓' bend aspirato (1-6)</div>
-    <div class="leg"><div class="leg-sq" style="background:var(--purple-bg);border:0.5px solid var(--purple-bd)"></div>↑' bend soffiato (7-10)</div>
+    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div>↓' bend aspirato (1–6)</div>
+    <div class="leg"><div class="leg-sq" style="background:var(--purple-bg);border:0.5px solid var(--purple-bd)"></div>↑' bend soffiato (7–10)</div>
   </div>
-  <div class="harp-scroll"><div class="harp-row" id="harpRow"></div></div>
+  <div class="harp-scroll">
+    <table class="harp-table" id="harpTable"></table>
+  </div>
 </div>
 
 <!-- TABLATURA -->
@@ -159,7 +177,7 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
     <button class="btn" id="redoBtn" onclick="redo()" disabled>↪ Ripristina</button>
     <button class="btn red" onclick="clearAll()">Cancella tutto</button>
   </div>
-  <div class="tab-notes" id="tabNotes"><span class="empty-msg">Nessuna nota — clicca le chip per selezionarle e cancellarle</span></div>
+  <div class="tab-notes" id="tabNotes"><span class="empty-msg">Nessuna nota ancora</span></div>
   <div class="txt-out" id="txtOut">—</div>
   <div class="btm-row">
     <button class="btn" id="copyBtn" onclick="copyTab()">Copia testo</button>
@@ -179,65 +197,162 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 
 </div>
 <script>
-const BLOW  = [60,64,67,72,72,76,79,84,88,96];
-const DRAW  = [62,67,71,74,71,74,77,81,83,86];
-// Draw bends fori 1-6, Blow bends fori 7-10
-const BEND1 = [61,66,70,73,null,null,82,83,87,95];
-const BEND2 = [null,65,69,null,null,null,null,null,null,null];
-const BEND3 = [null,null,68,null,null,null,null,null,null,null];
-// fori 7-10: bend è soffiato abbassato (blow bend)
-const BLOWBEND_HOLES = new Set([7,8,9,10]);
-const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const mn = m => NAMES[m%12];
-const f2m = f => 69+12*Math.log2(f/440);
+// ── NOTE NAMES ──────────────────────────────────────────────────────────────
+const NNAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const mn = m => NNAMES[((m%12)+12)%12];
+const f2m = f => 69 + 12*Math.log2(f/440);
 
-function buildMap(){
-  const m=[];
+// ── KEYS & TUNINGS ───────────────────────────────────────────────────────────
+// Each key: offset in semitones from C. Richter tuning relative intervals kept.
+const KEYS = [
+  {name:'C', offset:0},  {name:'D', offset:2},  {name:'E', offset:4},
+  {name:'F', offset:5},  {name:'G', offset:7},  {name:'A', offset:9},
+  {name:'Bb',offset:10}, {name:'Ab',offset:8},  {name:'F#',offset:6},
+  {name:'Low F',offset:-7},{name:'Low D',offset:-3},{name:'Low C',offset:0,low:true}
+];
+
+// Base intervals in semitones relative to key root (C=60 as anchor)
+const BASE_BLOW  = [0,4,7,12,12,16,19,24,28,36];
+const BASE_DRAW  = [2,7,11,14,11,14,17,21,23,26];
+// Draw bends (semitones below draw note): fori 1-6
+const BASE_DB1   = [1,6,10,13,null,null,null,null,null,null];
+const BASE_DB2   = [null,5,9,null,null,null,null,null,null,null];
+const BASE_DB3   = [null,null,8,null,null,null,null,null,null,null];
+// Blow bends (semitones below blow note): fori 7-10
+const BASE_BB1   = [null,null,null,null,null,null,22,22,27,35];
+
+const BLOWBEND_HOLES = new Set([7,8,9,10]);
+
+let currentKey = KEYS[0]; // default C
+let HMAP = [];
+
+function buildMap(key){
+  const root = 60 + key.offset + (key.low ? -12 : 0);
+  const m = [];
   for(let i=0;i<10;i++){
     const h=i+1;
-    if(BLOW[i]!=null)  m.push({midi:BLOW[i], hole:h,dir:'blow', sym:'↑',semis:0});
-    if(DRAW[i]!=null)  m.push({midi:DRAW[i], hole:h,dir:'draw', sym:'↓',semis:0});
-    if(BEND1[i]!=null){
-      const bb=BLOWBEND_HOLES.has(h);
-      m.push({midi:BEND1[i],hole:h,dir:'bend1',sym:bb?"↑'":"↓'",  semis:1,blowbend:bb});
-    }
-    if(BEND2[i]!=null) m.push({midi:BEND2[i],hole:h,dir:'bend2',sym:"↓''", semis:2,blowbend:false});
-    if(BEND3[i]!=null) m.push({midi:BEND3[i],hole:h,dir:'bend3',sym:"↓'''",semis:3,blowbend:false});
+    const bl = root+BASE_BLOW[i];
+    const dr = root+BASE_DRAW[i];
+    m.push({midi:bl, hole:h, dir:'blow',     sym:'↑',    semis:0, blowbend:false});
+    m.push({midi:dr, hole:h, dir:'draw',     sym:'↓',    semis:0, blowbend:false});
+    if(BASE_DB1[i]!=null) m.push({midi:root+BASE_DB1[i], hole:h, dir:'drawbend', sym:"↓'",   semis:1, blowbend:false});
+    if(BASE_DB2[i]!=null) m.push({midi:root+BASE_DB2[i], hole:h, dir:'drawbend', sym:"↓''",  semis:2, blowbend:false});
+    if(BASE_DB3[i]!=null) m.push({midi:root+BASE_DB3[i], hole:h, dir:'drawbend', sym:"↓'''", semis:3, blowbend:false});
+    if(BASE_BB1[i]!=null) m.push({midi:root+BASE_BB1[i], hole:h, dir:'blowbend', sym:"↑'",   semis:1, blowbend:true});
   }
   return m;
 }
-const HMAP = buildMap();
 
 function findClosest(midi){
-  let best=null,d=999;
+  let best=null, d=999;
   for(const e of HMAP){const x=Math.abs(e.midi-midi);if(x<d){d=x;best=e;}}
-  if(d>1.8)return null;
-  return {...best,cents:Math.round((midi-best.midi)*100)};
+  if(d>1.8) return null;
+  return {...best, cents:Math.round((midi-best.midi)*100)};
 }
 
-function buildUI(){
-  const row=document.getElementById('harpRow');row.innerHTML='';
+// ── KEY SELECTOR UI ──────────────────────────────────────────────────────────
+function buildKeyBtns(){
+  const wrap = document.getElementById('keyBtns');
+  wrap.style.display='flex';wrap.style.gap='4px';wrap.style.flexWrap='wrap';
+  wrap.innerHTML='';
+  KEYS.forEach((k,i)=>{
+    const b=document.createElement('button');
+    b.className='key-btn'+(i===0?' active':'');
+    b.textContent=k.name;
+    b.onclick=()=>setKey(i,b);
+    wrap.appendChild(b);
+  });
+}
+buildKeyBtns();
+
+function setKey(i, btn){
+  document.querySelectorAll('.key-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentKey=KEYS[i];
+  HMAP=buildMap(currentKey);
+  document.getElementById('subTitle').textContent=
+    `Armonica diatonica in ${currentKey.name}${currentKey.low?'  (ottava bassa)':''}`;
+  buildHarpTable();
+  curMatch=null; highlight(null); setAddBtn(false,null);
+}
+
+// Init
+HMAP = buildMap(currentKey);
+
+// ── HARP TABLE ───────────────────────────────────────────────────────────────
+// Rows (top→bottom): BB1, Blow, Draw, DB1, DB2, DB3
+function buildHarpTable(){
+  const tbl = document.getElementById('harpTable');
+  tbl.innerHTML='';
+
+  // Collect data per hole
+  const holes=[];
   for(let i=0;i<10;i++){
-    const col=document.createElement('div');col.className='hole-col';
-    const c=(midi,cls,id,suf)=>midi!=null?`<div class="hole-cell ${cls}" id="${id}">${mn(midi)}${suf}</div>`:`<div class="hole-cell ghost"></div>`;
-    col.innerHTML=
-      c(BLOW[i],'blow',`h${i+1}blow`,'')+c(DRAW[i],'draw',`h${i+1}draw`,'')+
-      c(BEND1[i],'bend1',`h${i+1}bend1`,"'")+c(BEND2[i],'bend2',`h${i+1}bend2`,"''")+
-      c(BEND3[i],'bend3',`h${i+1}bend3`,"'''")+`<div class="hole-num">${i+1}</div>`;
-    row.appendChild(col);
+    const h=i+1, root=60+currentKey.offset+(currentKey.low?-12:0);
+    holes.push({
+      blow:   {midi:root+BASE_BLOW[i], dir:'blow'},
+      draw:   {midi:root+BASE_DRAW[i], dir:'draw'},
+      bb1:    BASE_BB1[i]!=null ? {midi:root+BASE_BB1[i], dir:'blowbend'} : null,
+      db1:    BASE_DB1[i]!=null ? {midi:root+BASE_DB1[i], dir:'drawbend'} : null,
+      db2:    BASE_DB2[i]!=null ? {midi:root+BASE_DB2[i], dir:'drawbend'} : null,
+      db3:    BASE_DB3[i]!=null ? {midi:root+BASE_DB3[i], dir:'drawbend'} : null,
+    });
   }
-}
-buildUI();
 
-let lastAct=null;
+  const rows=[
+    {key:'bb1',  label:"↑' bend",  cls:'blowbend'},
+    {key:'blow', label:'↑ Soffia', cls:'blow'},
+    {key:'draw', label:'↓ Aspira', cls:'draw'},
+    {key:'db1',  label:"↓' bend",  cls:'drawbend'},
+    {key:'db2',  label:"↓'' bend", cls:'drawbend'},
+    {key:'db3',  label:"↓''' bend",cls:'drawbend'},
+  ];
+
+  // Header row (hole numbers)
+  const thead=document.createElement('thead');
+  let hr='<tr><th></th>';
+  for(let i=1;i<=10;i++) hr+=`<th>${i}</th>`;
+  hr+='</tr>';
+  thead.innerHTML=hr;
+  tbl.appendChild(thead);
+
+  const tbody=document.createElement('tbody');
+  rows.forEach(row=>{
+    const tr=document.createElement('tr');
+    // row label
+    const lbl=document.createElement('td');
+    lbl.className='row-label';lbl.textContent=row.label;
+    tr.appendChild(lbl);
+    holes.forEach((h,i)=>{
+      const td=document.createElement('td');
+      const info=h[row.key];
+      if(!info){td.className='empty';td.textContent='';}
+      else{
+        td.className=row.cls;
+        td.textContent=mn(info.midi);
+        td.id=`cell_${row.key}_${i+1}`;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+}
+buildHarpTable();
+
+// ── HIGHLIGHT ────────────────────────────────────────────────────────────────
+let lastActId=null;
 function highlight(match){
-  if(lastAct){const e=document.getElementById('h'+lastAct.hole+lastAct.dir);if(e)e.classList.remove('active');}
-  if(!match){lastAct=null;return;}
-  const e=document.getElementById('h'+match.hole+match.dir);
-  if(e){e.classList.add('active');lastAct=match;}
+  if(lastActId){const e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
+  lastActId=null;
+  if(!match) return;
+  const rowKey = match.dir==='blow'?'blow':match.dir==='draw'?'draw':match.dir==='blowbend'?'bb1':'db'+match.semis;
+  const id=`cell_${rowKey}_${match.hole}`;
+  const e=document.getElementById(id);
+  if(e){e.classList.add('active');lastActId=id;}
 }
 
-// AUDIO
+// ── AUDIO ────────────────────────────────────────────────────────────────────
 let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null;
 
 async function toggleMic(){
@@ -293,10 +408,10 @@ function setAddBtn(on,match){
   const ab=document.getElementById('addBtn');
   ab.disabled=!on;
   if(!on){ab.textContent='+ Aggiungi';ab.className='btn green';return;}
-  const isBend=match.dir.startsWith('bend');
   const ap="'".repeat(match.semis);
-  ab.className='btn green'+(isBend?' bend':'');
-  ab.textContent='+ '+match.sym+match.hole+ap+' ('+mn(match.midi)+ap+')';
+  const isBB=match.blowbend, isDB=match.dir==='drawbend';
+  ab.className='btn green'+(isDB?' bend':isBB?' blowbend':'');
+  ab.textContent='+ '+match.sym+match.hole+(ap&&!isBB?'':ap)+' ('+mn(match.midi)+')';
 }
 
 function loop(){
@@ -305,31 +420,32 @@ function loop(){
   const buf=new Float32Array(analyser.fftSize);
   analyser.getFloatTimeDomainData(buf);
   const freq=autoCorr(buf,actx.sampleRate);
-  if(freq>60&&freq<1400){
+  if(freq>60&&freq<2000){
     const midi=f2m(freq);
     const match=findClosest(midi);
     if(match){
       curMatch=match;
-      const isBend=match.dir.startsWith('bend'),ap="'".repeat(match.semis);
+      const ap="'".repeat(match.semis);
       const pb=document.getElementById('pitchBig');
-      pb.textContent=mn(match.midi)+ap+' '+match.sym+match.hole;
-      pb.className='pitch-big '+(isBend?'bend':'on');
+      pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
+      pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'on');
       document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
-      const ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
+      const ct=match.cents, pct=Math.min(Math.max((ct+50)/100,0),1);
       const fill=document.getElementById('cFill');
       if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}
       else{const w=(0.5-pct)*100;fill.style.left=(50-w)+'%';fill.style.width=w+'%';}
       fill.style.background=Math.abs(ct)<=20?'#1D9E75':'#BA7517';
       document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
       const tun=Math.abs(ct)<=20;
-      setBadge(tun?(isBend?'bend':'intune'):(ct>20?'sharp':'flat'),tun?(isBend?'bend rilevato':'in tune'):(ct>20?'troppo alta':'troppo bassa'));
-      highlight(match);setAddBtn(true,match);
+      const badgeCls=tun?(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'intune'):(ct>20?'sharp':'flat');
+      setBadge(badgeCls, tun?(match.blowbend?'blow bend':'in tune'):(ct>20?'troppo alta':'troppo bassa'));
+      highlight(match); setAddBtn(true,match);
     }else{
       curMatch=null;
       document.getElementById('pitchBig').textContent='?';
       document.getElementById('pitchBig').className='pitch-big oob';
       document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz — fuori range';
-      setBadge('oob','fuori range');highlight(null);setAddBtn(false,null);
+      setBadge('oob','fuori range'); highlight(null); setAddBtn(false,null);
     }
   }else{
     curMatch=null;
@@ -338,11 +454,11 @@ function loop(){
     document.getElementById('freqSub').textContent='Ascoltando...';
     document.getElementById('cFill').style.width='0';
     document.getElementById('cLbl').textContent='— ct';
-    setBadge('idle','silenzio');highlight(null);setAddBtn(false,null);
+    setBadge('idle','silenzio'); highlight(null); setAddBtn(false,null);
   }
 }
 
-// TAB & UNDO
+// ── TAB & UNDO ────────────────────────────────────────────────────────────────
 let tabList=[],selected=new Set(),hist=[[]],histIdx=0;
 
 function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(x=>({...x})));histIdx++;upUD();}
@@ -360,22 +476,21 @@ function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter
 function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear();render();}
 
 function render(){
-  const cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
-  const sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
+  const cont=document.getElementById('tabNotes'), txt=document.getElementById('txtOut');
+  const sb=document.getElementById('selBar'), sc=document.getElementById('selCount');
   if(!tabList.length){
-    cont.innerHTML='<span class="empty-msg">Nessuna nota — clicca le chip per selezionarle</span>';
-    txt.textContent='—';sb.classList.remove('on');return;
+    cont.innerHTML='<span class="empty-msg">Nessuna nota ancora</span>';
+    txt.textContent='—'; sb.classList.remove('on'); return;
   }
-  cont.innerHTML='';let str='';
+  cont.innerHTML=''; let str='';
   tabList.forEach((t,i)=>{
-    const ap="'".repeat(t.semis);
     const chip=document.createElement('div');
     chip.className='chip '+t.dir+(selected.has(i)?' sel':'');
     chip.title=selected.has(i)?'Clicca per deselezionare':'Clicca per selezionare';
     chip.onclick=()=>toggleSel(i);
-    chip.innerHTML=`<span class="arr">${t.sym}</span><span class="hn">${t.hole}${ap}</span><span class="nn">${mn(t.midi)}${ap}</span>`;
+    chip.innerHTML=`<span class="arr">${t.sym}</span><span class="hn">${t.hole}</span><span class="nn">${mn(t.midi)}</span>`;
     cont.appendChild(chip);
-    str+=t.sym+t.hole+ap+' ';
+    str+=t.sym+t.hole+' ';
   });
   txt.textContent=str.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}
@@ -391,27 +506,27 @@ function copyTab(){
   });
 }
 
-// SESSIONI
-let sessions=JSON.parse(localStorage.getItem('harp_v3')||'[]'),activeSess=null;
-function saveSess(){localStorage.setItem('harp_v3',JSON.stringify(sessions));}
+// ── SESSIONI ──────────────────────────────────────────────────────────────────
+let sessions=JSON.parse(localStorage.getItem('harp_v4')||'[]'),activeSess=null;
+function saveSess(){localStorage.setItem('harp_v4',JSON.stringify(sessions));}
 
 function saveSession(){
   if(!tabList.length){alert('Nessuna nota da salvare.');return;}
-  const str=tabList.map(t=>t.sym+t.hole+"'".repeat(t.semis)).join(' ');
+  const str=tabList.map(t=>t.sym+t.hole).join(' ');
   if(activeSess!==null){
-    sessions[activeSess].notes=[...tabList];sessions[activeSess].tab=str;sessions[activeSess].updated=Date.now();
+    sessions[activeSess].notes=[...tabList];sessions[activeSess].tab=str;
+    sessions[activeSess].key=currentKey.name;sessions[activeSess].updated=Date.now();
   }else{
-    sessions.push({id:Date.now(),name:'Sessione '+(sessions.length+1),notes:[...tabList],tab:str,updated:Date.now()});
+    sessions.push({id:Date.now(),name:'Sessione '+(sessions.length+1),notes:[...tabList],tab:str,key:currentKey.name,updated:Date.now()});
     activeSess=sessions.length-1;
   }
   saveSess();renderSess();
 }
 
 function loadSession(i){
-  activeSess=i;tabList=sessions[i].notes.map(x=>({...x}));selected.clear();
-  hist=[tabList.map(x=>({...x}))];histIdx=0;upUD();render();renderSess();
+  activeSess=i; tabList=sessions[i].notes.map(x=>({...x})); selected.clear();
+  hist=[tabList.map(x=>({...x}))]; histIdx=0; upUD(); render(); renderSess();
 }
-
 function deleteSession(i,e){
   e.stopPropagation();
   if(!confirm('Eliminare questa sessione?'))return;
@@ -420,12 +535,10 @@ function deleteSession(i,e){
   else if(activeSess>i)activeSess--;
   saveSess();renderSess();
 }
-
 function newSession(){
   activeSess=null;tabList=[];selected.clear();
   hist=[[]];histIdx=0;upUD();render();renderSess();
 }
-
 function startRename(i,el,e){
   e.stopPropagation();
   const inp=document.createElement('input');inp.value=sessions[i].name;
@@ -434,7 +547,6 @@ function startRename(i,el,e){
   inp.onblur=done;inp.onkeydown=ev=>{if(ev.key==='Enter')done();};
   el.innerHTML='';el.appendChild(inp);inp.focus();
 }
-
 function renderSess(){
   const list=document.getElementById('sessList');
   if(!sessions.length){list.innerHTML='<span class="sess-empty">Nessuna sessione salvata</span>';return;}
@@ -447,90 +559,55 @@ function renderSess(){
     const ds=d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
     row.innerHTML=
       `<div class="sess-name" id="sn${i}" ondblclick="startRename(${i},this,event)">${s.name}</div>`+
-      `<div class="sess-meta">${s.notes.length} note · ${ds}</div>`+
+      `<div class="sess-meta">${s.key||'C'} · ${s.notes.length} note · ${ds}</div>`+
       `<button class="sess-del" onclick="deleteSession(${i},event)" title="Elimina">✕</button>`;
     list.appendChild(row);
   });
 }
 renderSess();
 
+// ── EXPORT PDF ────────────────────────────────────────────────────────────────
 function exportPDF(){
   if(!tabList.length){alert('Nessuna nota da esportare.');return;}
-  const NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  const mn=m=>NAMES[m%12];
-  const lines=[];
-  // Raggruppa in righe da 16 note
-  const chunkSize=16;
-  for(let i=0;i<tabList.length;i+=chunkSize){
-    lines.push(tabList.slice(i,i+chunkSize));
-  }
   const date=new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'});
   const sessName=activeSess!==null?sessions[activeSess].name:'Tablatura';
-
-  // Colori per tipo
-  const colors={blow:'#185FA5',draw:'#1D9E75',bend1:'#BA7517',bend2:'#BA7517',bend3:'#BA7517'};
-  const bg={blow:'#E6F1FB',draw:'#E1F5EE',bend1:'#FAEEDA',bend2:'#FAEEDA',bend3:'#FAEEDA'};
-
-  const noteRows=lines.map(row=>{
+  const colors={blow:'#185FA5',draw:'#1D9E75',drawbend:'#BA7517',blowbend:'#534AB7'};
+  const bgs={blow:'#E6F1FB',draw:'#E1F5EE',drawbend:'#FAEEDA',blowbend:'#EEEDFE'};
+  const chunkSize=16;
+  const noteRows=[];
+  for(let i=0;i<tabList.length;i+=chunkSize){
+    const row=tabList.slice(i,i+chunkSize);
     const cells=row.map(t=>{
-      const ap="'".repeat(t.semis);
-      const c=colors[t.dir]||'#333';const b=bg[t.dir]||'#f5f5f3';
-      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;font-size:14px;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33;white-space:nowrap">`
-        +`<div style="font-size:10px;color:${c};opacity:.8">${t.sym}</div>`
-        +`<div style="font-size:16px;font-weight:600">${t.hole}${ap}</div>`
-        +`<div style="font-size:9px;color:#888">${mn(t.midi)}${ap}</div>`
+      const c=colors[t.dir]||'#333', b=bgs[t.dir]||'#f5f5f3';
+      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;font-size:13px;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33">`
+        +`<div style="font-size:10px;opacity:.8">${t.sym}</div>`
+        +`<div style="font-size:16px;font-weight:600">${t.hole}</div>`
+        +`<div style="font-size:9px;color:#888">${mn(t.midi)}</div>`
         +`</td>`;
-    }).join('<td style="width:4px"></td>');
-    return `<tr>${cells}</tr><tr style="height:6px"></tr>`;
-  }).join('');
-
-  const tabTxt=tabList.map(t=>t.sym+t.hole+"'".repeat(t.semis)).join(' ');
-
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>${sessName}</title>
-<style>
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;padding:32px 40px;max-width:800px;margin:0 auto}
-  h1{font-size:22px;font-weight:500;margin-bottom:4px}
-  .sub{font-size:13px;color:#888;margin-bottom:24px}
-  .section{margin-bottom:20px}
-  .section h2{font-size:13px;font-weight:500;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #eee}
-  table{border-collapse:separate;border-spacing:0}
-  .txt{font-family:monospace;font-size:13px;background:#f5f5f3;border-radius:8px;padding:12px 16px;color:#333;word-break:break-all;letter-spacing:1px;border:1px solid #e0e0de}
-  .leg{display:flex;gap:16px;margin-bottom:10px}
-  .leg-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#555}
-  .leg-sq{width:12px;height:12px;border-radius:3px}
-  .footer{margin-top:32px;font-size:11px;color:#bbb;text-align:center}
-</style></head><body>
-<h1>${sessName}</h1>
-<div class="sub">Armonica diatonica in Do &nbsp;·&nbsp; ${tabList.length} note &nbsp;·&nbsp; ${date}</div>
-
-<div class="section">
-  <h2>Legenda</h2>
-  <div class="leg">
-    <div class="leg-item"><div class="leg-sq" style="background:#E6F1FB;border:1px solid #B5D4F4"></div>↑ soffiata (blow)</div>
-    <div class="leg-item"><div class="leg-sq" style="background:#E1F5EE;border:1px solid #9FE1CB"></div>↓ aspirata (draw)</div>
-    <div class="leg-item"><div class="leg-sq" style="background:#FAEEDA;border:1px solid #FAC775"></div>↓' bend</div>
-  </div>
-</div>
-
-<div class="section">
-  <h2>Tablatura grafica</h2>
-  <table><tbody>${noteRows}</tbody></table>
-</div>
-
-<div class="section">
-  <h2>Tablatura testo</h2>
-  <div class="txt">${tabTxt}</div>
-</div>
-
-<div class="footer">Generato con Harmonica Tab Transcriber</div>
-</body></html>`;
-
+    }).join('<td style="width:3px"></td>');
+    noteRows.push(`<tr>${cells}</tr><tr style="height:5px"></tr>`);
+  }
+  const tabTxt=tabList.map(t=>t.sym+t.hole).join(' ');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sessName}</title>
+<style>body{font-family:-apple-system,sans-serif;color:#1a1a1a;padding:32px 40px;max-width:800px;margin:0 auto}
+h1{font-size:20px;font-weight:500;margin-bottom:4px}.sub{font-size:13px;color:#888;margin-bottom:24px}
+.sec{margin-bottom:20px}.sec h2{font-size:12px;font-weight:500;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #eee}
+table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f3;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:1px;border:1px solid #e0e0de}
+.leg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}.li{display:flex;align-items:center;gap:5px;font-size:12px;color:#555}
+.ls{width:11px;height:11px;border-radius:3px}.foot{margin-top:32px;font-size:11px;color:#bbb;text-align:center}</style></head><body>
+<h1>${sessName}</h1><div class="sub">Armonica in ${currentKey.name} · ${tabList.length} note · ${date}</div>
+<div class="sec"><h2>Legenda</h2><div class="leg">
+<div class="li"><div class="ls" style="background:#E6F1FB;border:1px solid #B5D4F4"></div>↑ soffiata</div>
+<div class="li"><div class="ls" style="background:#E1F5EE;border:1px solid #9FE1CB"></div>↓ aspirata</div>
+<div class="li"><div class="ls" style="background:#FAEEDA;border:1px solid #FAC775"></div>↓' draw bend</div>
+<div class="li"><div class="ls" style="background:#EEEDFE;border:1px solid #CECBF6"></div>↑' blow bend</div>
+</div></div>
+<div class="sec"><h2>Tablatura grafica</h2><table><tbody>${noteRows.join('')}</tbody></table></div>
+<div class="sec"><h2>Tablatura testo</h2><div class="txt">${tabTxt}</div></div>
+<div class="foot">Generato con Harmonica Tab Transcriber</div></body></html>`;
   const win=window.open('','_blank');
-  win.document.write(html);
-  win.document.close();
-  win.onload=()=>win.print();
+  win.document.write(html);win.document.close();win.onload=()=>win.print();
 }
-
+</script>
 </body>
 </html>
