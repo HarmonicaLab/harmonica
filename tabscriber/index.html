@@ -314,11 +314,22 @@ function buildMap(key){
   }
   return m;
 }
-function findClosest(midi){
-  let best=null,d=999;
-  for(const e of HMAP){const x=Math.abs(e.midi-midi);if(x<d){d=x;best=e;}}
-  if(d>2.5)return null; // finestra più ampia per armoniche acute
-  return {...best,cents:Math.round((midi-best.midi)*100)};
+
+// Converti midi in frequenza Hz
+const midi2hz = m => 440 * Math.pow(2,(m-69)/12);
+
+function findClosest(detectedHz){
+  let best=null, d=999;
+  for(const e of HMAP){
+    const eHz = midi2hz(e.midi);
+    // Confronta in cents (scala logaritmica) — funziona uguale per tutte le tonalità
+    const diffCents = Math.abs(1200 * Math.log2(detectedHz/eHz));
+    if(diffCents < d){d=diffCents; best=e;}
+  }
+  if(d > 250) return null; // accetta ±250 cents (un quarto di tono abbondante)
+  const eHz = midi2hz(best.midi);
+  const cents = Math.round(1200 * Math.log2(detectedHz/eHz));
+  return {...best, cents};
 }
 HMAP=buildMap(currentKey);
 
@@ -470,7 +481,7 @@ function loop(){
   analyser.getFloatTimeDomainData(buf);
   const freq=autoCorr(buf,actx.sampleRate);
   if(freq>60&&freq<2000){
-    const midi=f2m(freq), match=findClosest(midi);
+    const match=findClosest(freq); // passa Hz direttamente
     if(match){
       curMatch=match;
       const pb=document.getElementById('pitchBig');
