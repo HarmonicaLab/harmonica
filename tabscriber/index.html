@@ -514,10 +514,16 @@ function saveSession(){
   if(!tabList.length){alert('Nessuna nota da salvare.');return;}
   const str=tabList.map(t=>t.sym+t.hole).join(' ');
   if(activeSess!==null){
+    const newName=prompt('Nome della sessione:',sessions[activeSess].name);
+    if(newName===null)return;
+    sessions[activeSess].name=newName.trim()||sessions[activeSess].name;
     sessions[activeSess].notes=[...tabList];sessions[activeSess].tab=str;
     sessions[activeSess].key=currentKey.name;sessions[activeSess].updated=Date.now();
   }else{
-    sessions.push({id:Date.now(),name:'Sessione '+(sessions.length+1),notes:[...tabList],tab:str,key:currentKey.name,updated:Date.now()});
+    const defName='Sessione '+(sessions.length+1);
+    const newName=prompt('Nome della sessione:',defName);
+    if(newName===null)return;
+    sessions.push({id:Date.now(),name:newName.trim()||defName,notes:[...tabList],tab:str,key:currentKey.name,updated:Date.now()});
     activeSess=sessions.length-1;
   }
   saveSess();renderSess();
