@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+// Converti midi in frequenza Hz<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -132,6 +132,17 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
     <label data-i18n="key"></label>
     <div id="keyBtns"></div>
   </div>
+</div>
+
+<!-- DEBUG -->
+<div class="card" id="debugCard" style="font-family:monospace;font-size:12px;background:var(--bg3)">
+  <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+    <strong>Debug panel</strong>
+    <button class="btn" style="padding:2px 8px;font-size:11px" onclick="toggleDebug()">Nascondi</button>
+  </div>
+  <div id="debugFreq" style="color:var(--text2)">freq: —</div>
+  <div id="debugMidi" style="color:var(--text2)">midi rilevato: —</div>
+  <div id="debugMap" style="color:var(--text2);margin-top:6px">Note attese per tonalità corrente: —</div>
 </div>
 
 <!-- TUNER -->
@@ -315,7 +326,17 @@ function buildMap(key){
   return m;
 }
 
-// Converti midi in frequenza Hz
+function toggleDebug(){
+  const c=document.getElementById('debugCard');
+  c.style.display=c.style.display==='none'?'block':'none';
+}
+
+function updateDebugMap(){
+  const freqs=HMAP.slice(0,6).map(e=>`${mn(e.midi)}${e.sym}${e.hole}=${midi2hz(e.midi).toFixed(1)}Hz`).join('  ');
+  document.getElementById('debugMap').textContent='Attese: '+freqs;
+}
+
+
 const midi2hz = m => 440 * Math.pow(2,(m-69)/12);
 
 function findClosest(detectedHz){
@@ -355,6 +376,7 @@ function setKey(i,btn){
   HMAP=buildMap(currentKey);
   document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
   buildHarpTable();
+  updateDebugMap();
   curMatch=null;highlight(null);setAddBtn(false,null);
 }
 
@@ -521,6 +543,10 @@ function loop(){
 
   // Range frequenze armonica: ~130 Hz (C3 low) fino a ~2100 Hz (C7 high)
   if(freq>120&&freq<2200){
+    // Debug
+    const midiRel = 69+12*Math.log2(freq/440);
+    document.getElementById('debugFreq').textContent=`freq: ${freq.toFixed(2)} Hz`;
+    document.getElementById('debugMidi').textContent=`midi rilevato: ${midiRel.toFixed(2)} (nota: ${mn(Math.round(midiRel))})`;
     const match=findClosest(freq);
     if(match){
       curMatch=match;
