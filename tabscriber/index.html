@@ -4,192 +4,238 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Harmonica Lab Tab Transcriber</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg:#ffffff; --bg2:#f5f5f3; --bg3:#e8e8e6;
-  --text:#1a1a1a; --text2:#666660; --text3:#aaaaaa;
-  --border:rgba(0,0,0,0.10); --border2:rgba(0,0,0,0.20);
-  --radius:10px; --radius-sm:7px;
-  --teal:#1D9E75; --teal-bg:#E1F5EE; --teal-bd:#9FE1CB; --teal-dk:#085041;
-  --blue:#185FA5; --blue-bg:#E6F1FB; --blue-bd:#B5D4F4; --blue-dk:#0C447C;
-  --amber:#BA7517; --amber-bg:#FAEEDA; --amber-bd:#FAC775; --amber-dk:#633806;
-  --red:#A32D2D; --red-bg:#FCEBEB; --red-bd:#F7C1C1;
-  --purple:#534AB7; --purple-bg:#EEEDFE; --purple-bd:#CECBF6; --purple-dk:#3C3489;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14; --surface:#161922; --surface2:#1e2230; --border:#2a3040;
+  --accent:#e8c84a; --accent2:#4ae8b4; --danger:#e84a4a;
+  --text:#e8eaf0; --muted:#6b7280; --in-tune:#4ae8b4; --close:#e8c84a;
+  --purple:#b87aff;
 }
-@media (prefers-color-scheme:dark){
-  :root{
-    --bg:#1e1e1c; --bg2:#2a2a28; --bg3:#333331;
-    --text:#f0f0ee; --text2:#999994; --text3:#555552;
-    --border:rgba(255,255,255,0.09); --border2:rgba(255,255,255,0.18);
-    --teal-bg:#04342C; --teal-bd:#0F6E56; --teal-dk:#9FE1CB;
-    --blue-bg:#042C53; --blue-bd:#185FA5; --blue-dk:#B5D4F4;
-    --amber-bg:#412402; --amber-bd:#854F0B; --amber-dk:#FAC775;
-    --red-bg:#501313; --red-bd:#791F1F; --red:#F09595;
-    --purple-bg:#26215C; --purple-bd:#534AB7; --purple-dk:#CECBF6;
-  }
+body.light{
+  --bg:#f4f5f7; --surface:#ffffff; --surface2:#eef0f4; --border:#d0d5e0;
+  --text:#1a1d26; --muted:#7a828f; --in-tune:#1aaa80; --close:#c9a800;
+  --danger:#cc3333; --purple:#8855cc;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;padding:2rem 1rem 4rem}
-.wrap{max-width:760px;margin:0 auto}
-.top-bar{display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px}
-.lang-toggle{display:flex;border:0.5px solid var(--border2);border-radius:999px;overflow:hidden}
-.lang-toggle button{padding:4px 14px;font-size:12px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;transition:background .12s,color .12s}
-.lang-toggle button.active{background:var(--teal-bg);color:var(--teal-dk);font-weight:600}
-h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
-.sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:1.5rem}
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px 48px;transition:background .3s,color .3s;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% -10%,rgba(232,200,74,.04) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 30% at 80% 100%,rgba(74,232,180,.03) 0%,transparent 50%);
+}
+
+/* TOP BAR */
+.top-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;width:100%;max-width:720px;margin-bottom:12px}
+.toggle-pill{display:flex;border-radius:50px;border:1.5px solid var(--border);overflow:hidden;background:var(--surface2)}
+.toggle-pill button{padding:5px 11px;border:none;background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .15s}
+.toggle-pill button.active{background:var(--accent);color:var(--bg);font-weight:600}
+
+/* HEADER */
+header{text-align:center;margin-bottom:28px;width:100%;max-width:720px}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,7vw,3.4rem);letter-spacing:.05em;color:var(--accent);line-height:1;margin-bottom:6px}
+header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06em;text-transform:uppercase}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;width:100%;max-width:720px;margin-bottom:14px;transition:background .3s,border-color .3s}
+.section-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.12em;color:var(--muted);margin-bottom:14px}
+
+/* KEY SELECTOR */
 .key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.key-row label{font-size:13px;color:var(--text2)}
-.key-btn{padding:5px 12px;border-radius:999px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
-.key-btn:hover{background:var(--bg2);color:var(--text)}
-.key-btn.active{background:var(--teal-bg);border-color:var(--teal-bd);color:var(--teal-dk);font-weight:600}
-.tuner{text-align:center}
-.pitch-big{font-size:54px;font-weight:500;font-family:'Courier New',monospace;line-height:1;min-height:60px;display:flex;align-items:center;justify-content:center;color:var(--text3);letter-spacing:-1px;transition:color .08s}
-.pitch-big.on{color:var(--teal)}.pitch-big.bend{color:var(--amber)}.pitch-big.blowbend{color:var(--purple)}.pitch-big.oob{color:var(--red)}
-.freq-sub{font-size:13px;color:var(--text2);font-family:'Courier New',monospace;margin-top:4px;min-height:18px}
-.cents-wrap{position:relative;height:6px;background:var(--bg3);border-radius:3px;margin:12px auto;max-width:300px}
+.key-row .key-lbl{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.key-btns{display:flex;flex-wrap:wrap;gap:6px}
+.key-btn{padding:6px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.78rem;cursor:pointer;transition:all .15s}
+.key-btn:hover{border-color:var(--accent);color:var(--text)}
+.key-btn.active{border-color:var(--accent);background:rgba(232,200,74,.15);color:var(--accent);font-weight:500}
+
+/* TUNER */
+.tuner-inner{text-align:center}
+.pitch-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--muted);letter-spacing:.05em;min-height:80px;display:flex;align-items:center;justify-content:center;transition:color .1s}
+.pitch-big.on{color:var(--accent2)}
+.pitch-big.bend{color:var(--accent)}
+.pitch-big.blowbend{color:var(--purple)}
+.pitch-big.oob{color:var(--danger)}
+.freq-sub{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px;min-height:18px}
+.cents-wrap{position:relative;height:6px;background:var(--surface2);border-radius:3px;margin:14px auto;max-width:320px;border:1px solid var(--border)}
 .cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
-.cents-mid{position:absolute;left:50%;top:-3px;width:1.5px;height:12px;background:var(--border2);transform:translateX(-50%);border-radius:1px}
-.cents-lbl{font-size:12px;color:var(--text2);font-family:'Courier New',monospace}
-.badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:999px;font-family:'Courier New',monospace;margin-top:6px}
-.badge.intune{background:var(--teal-bg);color:var(--teal-dk)}
-.badge.sharp,.badge.flat,.badge.bend{background:var(--amber-bg);color:var(--amber-dk)}
-.badge.blowbend{background:var(--purple-bg);color:var(--purple-dk)}
-.badge.idle{background:var(--bg2);color:var(--text3)}
-.badge.oob{background:var(--red-bg);color:var(--red)}
-.mic-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:14px;cursor:pointer;margin-top:12px;transition:background .12s;font-family:inherit}
-.mic-btn:hover{background:var(--bg2)}.mic-btn.on{border-color:var(--teal);color:var(--teal)}
-.mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
-.mic-btn.on .mic-dot{animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.leg-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
-.leg-sq{width:11px;height:11px;border-radius:3px}
+.cents-mid{position:absolute;left:50%;top:-4px;width:2px;height:14px;background:var(--border);transform:translateX(-50%);border-radius:1px}
+.cents-lbl{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace}
+.badge{display:inline-block;font-size:.72rem;padding:3px 12px;border-radius:999px;font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:.06em;border:1px solid transparent}
+.badge.intune{background:rgba(74,232,180,.12);color:var(--in-tune);border-color:rgba(74,232,180,.3)}
+.badge.sharp,.badge.flat,.badge.bend{background:rgba(232,200,74,.12);color:var(--close);border-color:rgba(232,200,74,.3)}
+.badge.blowbend{background:rgba(184,122,255,.12);color:var(--purple);border-color:rgba(184,122,255,.3)}
+.badge.idle{background:var(--surface2);color:var(--muted);border-color:var(--border)}
+.badge.oob{background:rgba(232,74,74,.12);color:var(--danger);border-color:rgba(232,74,74,.3)}
+.mic-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 24px;border-radius:50px;border:2px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;margin-top:14px;transition:all .2s}
+.mic-btn:hover{border-color:var(--accent2);color:var(--text)}
+.mic-btn.on{border-color:var(--in-tune);color:var(--in-tune);background:rgba(74,232,180,.08)}
+.mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+.mic-btn.on .mic-dot{box-shadow:0 0 8px var(--in-tune);animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* HARP TABLE */
+.leg-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.leg{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--muted)}
+.leg-sq{width:11px;height:11px;border-radius:3px;border:1.5px solid}
 .harp-scroll{overflow-x:auto;padding-bottom:4px}
 .harp-table{border-collapse:separate;border-spacing:3px;width:max-content}
-.harp-table th{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;text-align:center;padding:2px 4px;font-weight:400}
-.harp-table td{width:54px;height:26px;border-radius:6px;text-align:center;font-size:11px;font-family:'Courier New',monospace;border:0.5px solid var(--border);background:var(--bg2);color:var(--text3);vertical-align:middle;transition:transform .1s,box-shadow .1s}
-.harp-table td.blow{background:var(--blue-bg);color:var(--blue-dk);border-color:var(--blue-bd)}
-.harp-table td.draw{background:var(--teal-bg);color:var(--teal-dk);border-color:var(--teal-bd)}
-.harp-table td.drawbend{background:var(--amber-bg);color:var(--amber-dk);border-color:var(--amber-bd)}
-.harp-table td.blowbend{background:var(--purple-bg);color:var(--purple-dk);border-color:var(--purple-bd)}
-.harp-table td.empty{background:transparent;border-color:transparent}
-.harp-table td.active{transform:scale(1.15);box-shadow:0 0 0 2px currentColor;font-weight:700;z-index:2;position:relative}
-.row-label{font-size:10px;color:var(--text3);font-family:'Courier New',monospace;text-align:right;padding-right:6px;white-space:nowrap}
-.toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:13px;cursor:pointer;transition:background .12s;white-space:nowrap;font-family:inherit}
-.btn:hover:not(:disabled){background:var(--bg2)}.btn:disabled{opacity:.35;cursor:not-allowed}
-.btn.green{border-color:var(--teal);color:var(--teal)}.btn.green:hover:not(:disabled){background:var(--teal-bg)}
-.btn.green.bend{border-color:var(--amber);color:var(--amber)}.btn.green.bend:hover:not(:disabled){background:var(--amber-bg)}
-.btn.green.blowbend{border-color:var(--purple);color:var(--purple)}.btn.green.blowbend:hover:not(:disabled){background:var(--purple-bg)}
-.btn.red{border-color:var(--red-bd);color:var(--red)}.btn.red:hover:not(:disabled){background:var(--red-bg)}
+.harp-table th{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);text-align:center;padding:4px 2px 6px;font-weight:500}
+.harp-table th.hole-th{background:var(--surface2);border-radius:6px;color:var(--text);font-size:.7rem}
+.harp-table td{text-align:center;padding:0}
+.row-label{font-size:.65rem;color:var(--muted);text-align:right;padding-right:8px;white-space:nowrap;width:70px;font-family:'DM Sans',sans-serif}
+.cell{width:56px;height:28px;border-radius:7px;border:1.5px solid transparent;font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--muted);transition:all .13s}
+.cell.blow{border-color:rgba(74,232,180,.28);color:var(--accent2);background:rgba(74,232,180,.08)}
+.cell.draw{border-color:rgba(232,200,74,.28);color:var(--accent);background:rgba(232,200,74,.08)}
+.cell.drawbend{border-color:rgba(184,122,255,.2);color:var(--purple);background:rgba(184,122,255,.06);font-size:.65rem}
+.cell.blowbend{border-color:rgba(184,122,255,.2);color:var(--purple);background:rgba(184,122,255,.06);font-size:.65rem}
+.cell.empty{background:transparent;border-color:transparent;color:transparent}
+.cell.active{transform:scale(1.12);font-weight:700;position:relative;z-index:2}
+.cell.blow.active{border-color:var(--accent2);background:rgba(74,232,180,.24);box-shadow:0 0 12px rgba(74,232,180,.4)}
+.cell.draw.active{border-color:var(--accent);background:rgba(232,200,74,.24);box-shadow:0 0 12px rgba(232,200,74,.4)}
+.cell.drawbend.active,.cell.blowbend.active{border-color:var(--purple);background:rgba(184,122,255,.18);box-shadow:0 0 12px rgba(184,122,255,.4)}
+
+/* TABLATURA */
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.btn:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.primary{border-color:var(--accent2);color:var(--accent2)}
+.btn.primary:hover:not(:disabled){background:rgba(74,232,180,.1)}
+.btn.primary.bend{border-color:var(--accent);color:var(--accent)}
+.btn.primary.bend:hover:not(:disabled){background:rgba(232,200,74,.1)}
+.btn.primary.blowbend{border-color:var(--purple);color:var(--purple)}
+.btn.primary.blowbend:hover:not(:disabled){background:rgba(184,122,255,.1)}
+.btn.danger{border-color:rgba(232,74,74,.4);color:var(--danger)}
+.btn.danger:hover:not(:disabled){background:rgba(232,74,74,.1)}
 .spacer{flex:1}
-.tab-notes{display:flex;flex-wrap:wrap;gap:5px;min-height:50px;align-items:flex-start;padding:4px 0;margin-bottom:12px}
-.chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;min-width:38px;cursor:pointer;transition:opacity .12s,border-color .12s,background .12s;user-select:none}
-.chip:hover{opacity:.65}.chip.sel{background:var(--purple-bg);border-color:var(--purple-bd)}
-.chip .arr{font-size:12px;line-height:1}
-.chip.blow .arr{color:var(--blue)}.chip.draw .arr{color:var(--teal)}
-.chip.drawbend .arr{color:var(--amber)}.chip.blowbend .arr{color:var(--purple)}
-.chip .hn{font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:var(--text);line-height:1}
-.chip .nn{font-size:10px;color:var(--text2);font-family:'Courier New',monospace}
-.chip.sel .hn,.chip.sel .nn{color:var(--purple-dk)}
-.empty-msg{font-size:13px;color:var(--text3);padding:6px 0}
-.sel-bar{display:none;align-items:center;gap:8px;font-size:12px;background:var(--purple-bg);color:var(--purple-dk);border:0.5px solid var(--purple-bd);border-radius:var(--radius-sm);padding:4px 10px}
+.sel-bar{display:none;align-items:center;gap:8px;font-size:.75rem;background:rgba(184,122,255,.08);color:var(--purple);border:1px solid rgba(184,122,255,.3);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace}
 .sel-bar.on{display:inline-flex}
-.txt-out{padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);font-family:'Courier New',monospace;font-size:15px;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:38px;border:0.5px solid var(--border);user-select:all;margin-bottom:8px}
-.btm-row{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-.sess-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.sess-hdr h2{font-size:14px;font-weight:500}
+
+.tab-notes{display:flex;flex-wrap:wrap;gap:6px;min-height:52px;align-items:flex-start;padding:4px 0;margin-bottom:14px}
+.chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;min-width:40px;cursor:pointer;transition:all .13s;user-select:none}
+.chip:hover{border-color:var(--muted)}
+.chip.sel{background:rgba(184,122,255,.1);border-color:var(--purple)}
+.chip .arr{font-size:.65rem;line-height:1;font-family:'DM Mono',monospace}
+.chip.blow .arr{color:var(--accent2)}
+.chip.draw .arr{color:var(--accent)}
+.chip.drawbend .arr,.chip.blowbend .arr{color:var(--purple)}
+.chip .hn{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);line-height:1}
+.chip .nn{font-size:.6rem;color:var(--muted);font-family:'DM Mono',monospace}
+.chip.sel .hn,.chip.sel .nn{color:var(--purple)}
+.empty-msg{font-size:.8rem;color:var(--muted);padding:6px 0;font-family:'DM Mono',monospace}
+
+.txt-out{padding:10px 14px;background:var(--surface2);border-radius:8px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:40px;border:1px solid var(--border);user-select:all;margin-bottom:10px}
+.btm-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* SESSIONI */
+.sess-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sess-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.12em;color:var(--muted)}
 .sess-list{display:flex;flex-direction:column;gap:6px}
-.sess-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .12s}
-.sess-row:hover{border-color:var(--border2)}.sess-row.active{border-color:var(--teal);background:var(--teal-bg)}
-.sess-name{flex:1;font-size:13px;color:var(--text)}
-.sess-name input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;font-family:inherit}
-.sess-row.active .sess-name{color:var(--teal-dk)}.sess-row.active .sess-meta{color:var(--teal)}
-.sess-meta{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;white-space:nowrap}
-.sess-del{font-size:13px;color:var(--text3);background:transparent;border:none;cursor:pointer;padding:2px 5px;border-radius:4px;line-height:1}
-.sess-del:hover{color:var(--red);background:var(--red-bg)}
-.sess-empty{font-size:13px;color:var(--text3);padding:2px 0}
+.sess-row{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s}
+.sess-row:hover{border-color:var(--muted)}
+.sess-row.active{border-color:var(--accent2);background:rgba(74,232,180,.06)}
+.sess-name{flex:1;font-size:.82rem;color:var(--text);font-family:'DM Sans',sans-serif}
+.sess-name input{background:transparent;border:none;outline:none;color:var(--text);font-size:.82rem;width:100%;font-family:'DM Sans',sans-serif}
+.sess-row.active .sess-name{color:var(--accent2)}
+.sess-row.active .sess-meta{color:var(--accent2);opacity:.6}
+.sess-meta{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap}
+.sess-del{font-size:.8rem;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;line-height:1;transition:all .15s}
+.sess-del:hover{color:var(--danger);background:rgba(232,74,74,.1)}
+.sess-empty{font-size:.8rem;color:var(--muted);font-family:'DM Mono',monospace}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div style="width:100%;max-width:720px">
 
+<!-- TOP BAR -->
 <div class="top-bar">
-  <div class="lang-toggle">
+  <div class="toggle-pill">
     <button id="btnIT" class="active" onclick="setLang('it')">🇮🇹 IT</button>
     <button id="btnEN" onclick="setLang('en')">🇬🇧 EN</button>
   </div>
+  <div class="toggle-pill">
+    <button id="themeDark" class="active" onclick="setTheme('dark')">🌙</button>
+    <button id="themeLight" onclick="setTheme('light')">☀️</button>
+  </div>
 </div>
 
-<h1 data-i18n="title">Harmonica Lab Tab Transcriber</h1>
-<p class="sub" id="subTitle"></p>
+<!-- HEADER -->
+<header>
+  <h1>Harmonica Lab Tab Transcriber</h1>
+  <p id="subTitle"></p>
+</header>
 
+<!-- KEY -->
 <div class="card">
   <div class="key-row">
-    <label data-i18n="key"></label>
-    <div id="keyBtns"></div>
+    <span class="key-lbl" data-i18n="key"></span>
+    <div class="key-btns" id="keyBtns"></div>
   </div>
 </div>
 
-<div class="card" style="font-family:monospace;font-size:12px;border:1px solid var(--amber-bd);background:var(--amber-bg)">
-  <strong style="color:var(--amber-dk)">🔍 Debug</strong><br>
-  <div id="dbHz" style="color:var(--text2)">Hz: —</div>
-  <div id="dbExpected" style="color:var(--text2);margin-top:4px;font-size:11px"></div>
-</div>
-
-<div class="card tuner">
-  <div class="pitch-big" id="pitchBig">—</div>
-  <div class="freq-sub" id="freqSub"></div>
-  <div class="cents-wrap">
-    <div class="cents-fill" id="cFill" style="left:50%;width:0;background:var(--teal)"></div>
-    <div class="cents-mid"></div>
-  </div>
-  <div class="cents-lbl" id="cLbl">— ct</div><br>
-  <span class="badge idle" id="badge"></span><br>
-  <button class="mic-btn" id="micBtn" onclick="toggleMic()">
-    <span class="mic-dot"></span><span id="micLbl"></span>
-  </button>
-</div>
-
+<!-- TUNER -->
 <div class="card">
+  <div class="tuner-inner">
+    <div class="pitch-big" id="pitchBig">—</div>
+    <div class="freq-sub" id="freqSub"></div>
+    <div class="cents-wrap">
+      <div class="cents-fill" id="cFill" style="left:50%;width:0"></div>
+      <div class="cents-mid"></div>
+    </div>
+    <div class="cents-lbl" id="cLbl">— ct</div><br>
+    <span class="badge idle" id="badge"></span><br>
+    <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+      <span class="mic-dot"></span><span id="micLbl"></span>
+    </button>
+  </div>
+</div>
+
+<!-- HARP GRID -->
+<div class="card">
+  <h2 class="section-label" data-i18n="grid_title"></h2>
   <div class="leg-row">
-    <div class="leg"><div class="leg-sq" style="background:var(--blue-bg);border:0.5px solid var(--blue-bd)"></div><span data-i18n="leg_blow"></span></div>
-    <div class="leg"><div class="leg-sq" style="background:var(--teal-bg);border:0.5px solid var(--teal-bd)"></div><span data-i18n="leg_draw"></span></div>
-    <div class="leg"><div class="leg-sq" style="background:var(--amber-bg);border:0.5px solid var(--amber-bd)"></div><span data-i18n="leg_drawbend"></span></div>
-    <div class="leg"><div class="leg-sq" style="background:var(--purple-bg);border:0.5px solid var(--purple-bd)"></div><span data-i18n="leg_blowbend"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(74,232,180,.5);background:rgba(74,232,180,.08)"></div><span data-i18n="leg_blow"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,200,74,.5);background:rgba(232,200,74,.08)"></div><span data-i18n="leg_draw"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(184,122,255,.4);background:rgba(184,122,255,.06)"></div><span data-i18n="leg_drawbend"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(184,122,255,.4);background:rgba(184,122,255,.06)"></div><span data-i18n="leg_blowbend"></span></div>
   </div>
   <div class="harp-scroll">
     <table class="harp-table" id="harpTable"></table>
   </div>
 </div>
 
+<!-- TABLATURA -->
 <div class="card">
+  <h2 class="section-label" data-i18n="tab_title"></h2>
   <div class="toolbar">
-    <button class="btn green" id="addBtn" onclick="addNote()" disabled data-i18n="add"></button>
+    <button class="btn primary" id="addBtn" onclick="addNote()" disabled data-i18n="add"></button>
     <span class="sel-bar" id="selBar">
-      <span id="selCount">0</span> <span data-i18n="selected"></span> &nbsp;
-      <button class="btn red" style="padding:2px 9px;font-size:11px" onclick="deleteSelected()" data-i18n="delete"></button>
-      <button class="btn" style="padding:2px 9px;font-size:11px" onclick="clearSel()">✕</button>
+      <span id="selCount">0</span> <span data-i18n="selected"></span>&nbsp;
+      <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" data-i18n="delete"></button>
+      <button class="btn" style="padding:2px 9px;font-size:.7rem" onclick="clearSel()">✕</button>
     </span>
     <div class="spacer"></div>
     <button class="btn" id="undoBtn" onclick="undo()" disabled data-i18n="undo"></button>
     <button class="btn" id="redoBtn" onclick="redo()" disabled data-i18n="redo"></button>
-    <button class="btn red" onclick="clearAll()" data-i18n="clear_all"></button>
+    <button class="btn danger" onclick="clearAll()" data-i18n="clear_all"></button>
   </div>
   <div class="tab-notes" id="tabNotes"></div>
   <div class="txt-out" id="txtOut">—</div>
   <div class="btm-row">
     <button class="btn" id="copyBtn" onclick="copyTab()" data-i18n="copy"></button>
     <button class="btn" onclick="exportPDF()">📄 <span data-i18n="export_pdf"></span></button>
-    <button class="btn green" onclick="saveSession()" data-i18n="save_session"></button>
+    <button class="btn primary" onclick="saveSession()" data-i18n="save_session"></button>
   </div>
 </div>
 
+<!-- SESSIONI -->
 <div class="card">
   <div class="sess-hdr">
     <h2 data-i18n="sessions"></h2>
-    <button class="btn" onclick="newSession()" data-i18n="new_session"></button>
+    <button class="btn primary" onclick="newSession()" data-i18n="new_session"></button>
   </div>
   <div class="sess-list" id="sessList"></div>
 </div>
@@ -199,6 +245,7 @@ h1{font-size:22px;font-weight:500;text-align:center;margin-bottom:4px}
 // ── I18N ──────────────────────────────────────────────────────────────────────
 const I18N={
   it:{title:'Harmonica Lab Tab Transcriber',sub:'Armonica diatonica in',key:'Tonalità:',
+    grid_title:'Griglia note',tab_title:'Tablatura',
     mic_start:'Attiva microfono',mic_stop:'Stop',
     freq_idle:'Premi il microfono per iniziare',freq_listen:'Ascoltando...',
     badge_idle:'in attesa',badge_silence:'silenzio',badge_intune:'in tune',
@@ -218,6 +265,7 @@ const I18N={
     copied:'Copiato!',pdf_legend:'Legenda',pdf_graphic:'Tablatura grafica',
     pdf_text:'Tablatura testo',pdf_footer:'Generato con Harmonica Lab Tab Transcriber'},
   en:{title:'Harmonica Lab Tab Transcriber',sub:'Diatonic harmonica in',key:'Key:',
+    grid_title:'Note grid',tab_title:'Tab',
     mic_start:'Enable microphone',mic_stop:'Stop',
     freq_idle:'Press the microphone to start',freq_listen:'Listening...',
     badge_idle:'waiting',badge_silence:'silence',badge_intune:'in tune',
@@ -244,19 +292,21 @@ function setLang(l){
   lang=l;
   document.getElementById('btnIT').classList.toggle('active',l==='it');
   document.getElementById('btnEN').classList.toggle('active',l==='en');
-  applyI18n(); buildHarpTable(); render(); renderSess();
+  applyI18n();buildHarpTable();render();renderSess();
+}
+function setTheme(th){
+  document.body.classList.toggle('light',th==='light');
+  document.getElementById('themeDark').classList.toggle('active',th==='dark');
+  document.getElementById('themeLight').classList.toggle('active',th==='light');
+  localStorage.setItem('harp_theme',th);
 }
 function applyI18n(){
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.getAttribute('data-i18n');
-    el.textContent=t(k);
-  });
-  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n')));
+  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name;
   document.getElementById('freqSub').textContent=listening?t('freq_listen'):t('freq_idle');
   document.getElementById('badge').textContent=t('badge_idle');
   document.getElementById('micLbl').textContent=listening?t('mic_stop'):t('mic_start');
-  const ab=document.getElementById('addBtn');
-  if(ab.disabled) ab.textContent=t('add');
+  const ab=document.getElementById('addBtn');if(ab.disabled)ab.textContent=t('add');
 }
 
 // ── TUNING ────────────────────────────────────────────────────────────────────
@@ -264,127 +314,100 @@ const NNAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 const mn=m=>NNAMES[((m%12)+12)%12];
 const midi2hz=m=>440*Math.pow(2,(m-69)/12);
 
-// Richter tuning - intervalli semitoni dal root
-// Foro:         1   2   3   4   5   6   7   8   9  10
-const BASE_BLOW=[0,  4,  7, 12, 16, 19, 24, 28, 31, 36];
-const BASE_DRAW=[2,  7, 11, 14, 17, 21, 23, 26, 29, 33];
-const BASE_DB1 =[1,  6, 10, 13,null,null,null,null,null,null];
-const BASE_DB2 =[null,5,  9,null,null,null,null,null,null,null];
+const BASE_BLOW=[0,4,7,12,16,19,24,28,31,36];
+const BASE_DRAW=[2,7,11,14,17,21,23,26,29,33];
+const BASE_DB1 =[1,6,10,13,null,null,null,null,null,null];
+const BASE_DB2 =[null,5,9,null,null,null,null,null,null,null];
 const BASE_DB3 =[null,null,8,null,null,null,null,null,null,null];
 const BASE_BB1 =[null,null,null,null,null,null,22,27,30,35];
 
 const KEYS=[
-  {name:'C',  root:60}, // C4
-  {name:'D',  root:62}, // D4
-  {name:'E',  root:64}, // E4
-  {name:'F',  root:65}, // F4
-  {name:'G',  root:67}, // G4
-  {name:'A',  root:57}, // A3 ← foro 1 soffiato è A3, non A4!
-  {name:'Bb', root:58}, // Bb3
-  {name:'Ab', root:56}, // Ab3
-  {name:'F#', root:66}, // F#4
-  {name:'Low F', root:53}, // F3
-  {name:'Low D', root:50}, // D3
-  {name:'Low C', root:48}, // C3
+  {name:'C',root:60},{name:'D',root:62},{name:'E',root:64},
+  {name:'F',root:65},{name:'G',root:67},{name:'A',root:57},
+  {name:'Bb',root:58},{name:'Ab',root:56},{name:'F#',root:66},
+  {name:'Low F',root:53},{name:'Low D',root:50},{name:'Low C',root:48}
 ];
-let currentKey=KEYS[0], HMAP=[];
+let currentKey=KEYS[0],HMAP=[];
 
 function buildMap(key){
-  const root=key.root, m=[];
+  const r=key.root,m=[];
   for(let i=0;i<10;i++){
     const h=i+1;
-    m.push({midi:root+BASE_BLOW[i],hz:midi2hz(root+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
-    m.push({midi:root+BASE_DRAW[i],hz:midi2hz(root+BASE_DRAW[i]),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
-    if(BASE_DB1[i]!=null) m.push({midi:root+BASE_DB1[i],hz:midi2hz(root+BASE_DB1[i]),hole:h,dir:'drawbend',sym:"↓'",semis:1,blowbend:false});
-    if(BASE_DB2[i]!=null) m.push({midi:root+BASE_DB2[i],hz:midi2hz(root+BASE_DB2[i]),hole:h,dir:'drawbend',sym:"↓''",semis:2,blowbend:false});
-    if(BASE_DB3[i]!=null) m.push({midi:root+BASE_DB3[i],hz:midi2hz(root+BASE_DB3[i]),hole:h,dir:'drawbend',sym:"↓'''",semis:3,blowbend:false});
-    if(BASE_BB1[i]!=null) m.push({midi:root+BASE_BB1[i],hz:midi2hz(root+BASE_BB1[i]),hole:h,dir:'blowbend',sym:"↑'",semis:1,blowbend:true});
+    m.push({midi:r+BASE_BLOW[i],hz:midi2hz(r+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
+    m.push({midi:r+BASE_DRAW[i],hz:midi2hz(r+BASE_DRAW[i]),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
+    if(BASE_DB1[i]!=null)m.push({midi:r+BASE_DB1[i],hz:midi2hz(r+BASE_DB1[i]),hole:h,dir:'drawbend',sym:"↓'",semis:1,blowbend:false});
+    if(BASE_DB2[i]!=null)m.push({midi:r+BASE_DB2[i],hz:midi2hz(r+BASE_DB2[i]),hole:h,dir:'drawbend',sym:"↓''",semis:2,blowbend:false});
+    if(BASE_DB3[i]!=null)m.push({midi:r+BASE_DB3[i],hz:midi2hz(r+BASE_DB3[i]),hole:h,dir:'drawbend',sym:"↓'''",semis:3,blowbend:false});
+    if(BASE_BB1[i]!=null)m.push({midi:r+BASE_BB1[i],hz:midi2hz(r+BASE_BB1[i]),hole:h,dir:'blowbend',sym:"↑'",semis:1,blowbend:true});
   }
   return m;
 }
-
-// Confronto diretto in Hz - nessuna conversione midi, nessun octave error
 function findClosest(hz){
-  let best=null, bestDiff=9999;
-  for(const e of HMAP){
-    const diff=Math.abs(e.hz-hz);
-    if(diff<bestDiff){bestDiff=diff;best=e;}
-  }
-  if(!best) return null;
+  let best=null,bd=9999;
+  for(const e of HMAP){const d=Math.abs(e.hz-hz);if(d<bd){bd=d;best=e;}}
+  if(!best)return null;
   const cents=Math.round(1200*Math.log2(hz/best.hz));
-  // Accetta ±150 cents — più ampio per catturare i bend in movimento
-  if(Math.abs(cents)>150) return null;
-  return {...best,cents};
+  if(Math.abs(cents)>150)return null;
+  return{...best,cents};
 }
 HMAP=buildMap(currentKey);
 
-// ── KEY SELECTOR ──────────────────────────────────────────────────────────────
+// ── KEY BTNS ──────────────────────────────────────────────────────────────────
 function buildKeyBtns(){
-  const wrap=document.getElementById('keyBtns');
-  wrap.style.cssText='display:flex;gap:4px;flex-wrap:wrap';
-  wrap.innerHTML='';
+  const w=document.getElementById('keyBtns');
+  w.innerHTML='';
   KEYS.forEach((k,i)=>{
     const b=document.createElement('button');
     b.className='key-btn'+(i===0?' active':'');
     b.textContent=k.name;
     b.onclick=()=>setKey(i,b);
-    wrap.appendChild(b);
+    w.appendChild(b);
   });
 }
 buildKeyBtns();
-
 function setKey(i,btn){
   document.querySelectorAll('.key-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  currentKey=KEYS[i];
-  HMAP=buildMap(currentKey);
-  // Mostra le prime note attese nel debug
-  const exp=HMAP.slice(0,4).map(e=>`${mn(e.midi)}${e.sym}${e.hole}=${e.hz.toFixed(1)}Hz`).join(' | ');
-  document.getElementById('dbExpected').textContent='Attese: '+exp;
-  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name+(currentKey.low?' (low)':'');
-  buildHarpTable();
-  curMatch=null;highlight(null);setAddBtn(false,null);
+  btn.classList.add('active');currentKey=KEYS[i];HMAP=buildMap(currentKey);
+  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name;
+  buildHarpTable();curMatch=null;highlight(null);setAddBtn(false,null);
 }
 
 // ── HARP TABLE ────────────────────────────────────────────────────────────────
 function buildHarpTable(){
-  const tbl=document.getElementById('harpTable');
-  tbl.innerHTML='';
-  const root=currentKey.root;
+  const tbl=document.getElementById('harpTable');tbl.innerHTML='';
+  const r=currentKey.root;
   const holes=[];
-  for(let i=0;i<10;i++) holes.push({
-    blow:{midi:root+BASE_BLOW[i],dir:'blow'},
-    draw:{midi:root+BASE_DRAW[i],dir:'draw'},
-    bb1:BASE_BB1[i]!=null?{midi:root+BASE_BB1[i],dir:'blowbend'}:null,
-    db1:BASE_DB1[i]!=null?{midi:root+BASE_DB1[i],dir:'drawbend'}:null,
-    db2:BASE_DB2[i]!=null?{midi:root+BASE_DB2[i],dir:'drawbend'}:null,
-    db3:BASE_DB3[i]!=null?{midi:root+BASE_DB3[i],dir:'drawbend'}:null,
+  for(let i=0;i<10;i++)holes.push({
+    blow:{midi:r+BASE_BLOW[i],dir:'blow'},draw:{midi:r+BASE_DRAW[i],dir:'draw'},
+    bb1:BASE_BB1[i]!=null?{midi:r+BASE_BB1[i],dir:'blowbend'}:null,
+    db1:BASE_DB1[i]!=null?{midi:r+BASE_DB1[i],dir:'drawbend'}:null,
+    db2:BASE_DB2[i]!=null?{midi:r+BASE_DB2[i],dir:'drawbend'}:null,
+    db3:BASE_DB3[i]!=null?{midi:r+BASE_DB3[i],dir:'drawbend'}:null,
   });
   const rows=[
-    {key:'bb1',labelKey:'row_bb1',cls:'blowbend'},
-    {key:'blow',labelKey:'row_blow',cls:'blow'},
-    {key:'draw',labelKey:'row_draw',cls:'draw'},
-    {key:'db1',labelKey:'row_db1',cls:'drawbend'},
-    {key:'db2',labelKey:'row_db2',cls:'drawbend'},
-    {key:'db3',labelKey:'row_db3',cls:'drawbend'},
+    {key:'bb1',lk:'row_bb1',cls:'blowbend'},
+    {key:'blow',lk:'row_blow',cls:'blow'},
+    {key:'draw',lk:'row_draw',cls:'draw'},
+    {key:'db1',lk:'row_db1',cls:'drawbend'},
+    {key:'db2',lk:'row_db2',cls:'drawbend'},
+    {key:'db3',lk:'row_db3',cls:'drawbend'},
   ];
   const thead=document.createElement('thead');
   let hr='<tr><th></th>';
-  for(let i=1;i<=10;i++) hr+=`<th>${i}</th>`;
-  thead.innerHTML=hr+'</tr>';
-  tbl.appendChild(thead);
+  for(let i=1;i<=10;i++)hr+=`<th class="hole-th">${i}</th>`;
+  thead.innerHTML=hr+'</tr>';tbl.appendChild(thead);
   const tbody=document.createElement('tbody');
   rows.forEach(row=>{
     const tr=document.createElement('tr');
     const lbl=document.createElement('td');
-    lbl.className='row-label';lbl.textContent=t(row.labelKey);
-    tr.appendChild(lbl);
+    lbl.className='row-label';lbl.textContent=t(row.lk);tr.appendChild(lbl);
     holes.forEach((h,i)=>{
       const td=document.createElement('td');
       const info=h[row.key];
-      if(!info){td.className='empty';}
-      else{td.className=row.cls;td.textContent=mn(info.midi);td.id=`cell_${row.key}_${i+1}`;}
-      tr.appendChild(td);
+      const cell=document.createElement('div');
+      if(!info){cell.className='cell empty';}
+      else{cell.className='cell '+row.cls;cell.textContent=mn(info.midi);cell.id=`cell_${row.key}_${i+1}`;}
+      td.appendChild(cell);tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
@@ -396,53 +419,32 @@ buildHarpTable();
 let lastActId=null;
 function highlight(match){
   if(lastActId){const e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
-  lastActId=null;
-  if(!match)return;
-  const rowKey=match.dir==='blow'?'blow':match.dir==='draw'?'draw':match.dir==='blowbend'?'bb1':'db'+match.semis;
-  const id=`cell_${rowKey}_${match.hole}`;
+  lastActId=null;if(!match)return;
+  const rk=match.dir==='blow'?'blow':match.dir==='draw'?'draw':match.dir==='blowbend'?'bb1':'db'+match.semis;
+  const id=`cell_${rk}_${match.hole}`;
   const e=document.getElementById(id);
   if(e){e.classList.add('active');lastActId=id;}
 }
 
-// ── AUDIO: autocorrelazione semplice e affidabile ─────────────────────────────
+// ── AUDIO ─────────────────────────────────────────────────────────────────────
 let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null;
 
-// Autocorrelazione classica - semplice, stabile, ben testata
 function detectPitch(buf,sr){
-  const N=buf.length;
-  // RMS
-  let rms=0;
-  for(let i=0;i<N;i++) rms+=buf[i]*buf[i];
-  rms=Math.sqrt(rms/N);
-  if(rms<0.002) return -1;
-
-  // Autocorrelazione
-  const corr=new Float32Array(N);
-  for(let lag=0;lag<N;lag++)
-    for(let i=0;i<N-lag;i++)
-      corr[lag]+=buf[i]*buf[i+lag];
-
-  // Trova il primo zero-crossing discendente dopo il picco centrale
+  let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
+  if(rms<0.002)return -1;
+  const corr=new Float32Array(buf.length);
+  for(let lag=0;lag<buf.length;lag++)for(let i=0;i<buf.length-lag;i++)corr[lag]+=buf[i]*buf[i+lag];
   let start=1;
-  while(start<N/2 && corr[start]>corr[start-1]) start++;
-  while(start<N/2 && corr[start]<=0) start++;
-
-  // Trova il massimo dopo start
-  let maxVal=-1, maxIdx=start;
-  for(let i=start;i<N/2;i++){
-    if(corr[i]>maxVal){maxVal=corr[i];maxIdx=i;}
-  }
-  if(maxIdx===0) return -1;
-
-  // Interpolazione parabolica
-  if(maxIdx>0&&maxIdx<N-1){
+  while(start<buf.length/2&&corr[start]>corr[start-1])start++;
+  while(start<buf.length/2&&corr[start]<=0)start++;
+  let maxVal=-1,maxIdx=start;
+  for(let i=start;i<buf.length/2;i++)if(corr[i]>maxVal){maxVal=corr[i];maxIdx=i;}
+  if(maxIdx===0)return -1;
+  if(maxIdx>0&&maxIdx<buf.length-1){
     const x0=corr[maxIdx-1],x1=corr[maxIdx],x2=corr[maxIdx+1];
-    const d=2*x1-x0-x2;
-    if(d>0) maxIdx+=(x2-x0)/(2*d)*0.5;
+    const d=2*x1-x0-x2;if(d>0)maxIdx+=(x2-x0)/(2*d)*.5;
   }
-
-  const freq=sr/maxIdx;
-  return freq;
+  return sr/maxIdx;
 }
 
 async function toggleMic(){
@@ -450,8 +452,7 @@ async function toggleMic(){
     try{
       stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
       actx=new(window.AudioContext||window.webkitAudioContext)();
-      analyser=actx.createAnalyser();
-      analyser.fftSize=8192; // buffer grande per bassa freq risoluzione
+      analyser=actx.createAnalyser();analyser.fftSize=8192;
       actx.createMediaStreamSource(stream).connect(analyser);
       listening=true;
       document.getElementById('micBtn').classList.add('on');
@@ -462,8 +463,7 @@ async function toggleMic(){
 }
 function stopMic(){
   listening=false;cancelAnimationFrame(raf);
-  stream&&stream.getTracks().forEach(tr=>tr.stop());
-  actx&&actx.close();
+  stream&&stream.getTracks().forEach(tr=>tr.stop());actx&&actx.close();
   document.getElementById('micBtn').classList.remove('on');
   document.getElementById('micLbl').textContent=t('mic_start');
   document.getElementById('pitchBig').textContent='—';
@@ -471,31 +471,33 @@ function stopMic(){
   document.getElementById('freqSub').textContent=t('freq_idle');
   document.getElementById('cFill').style.width='0';
   document.getElementById('cLbl').textContent='— ct';
-  setBadge('idle',t('badge_idle'));
-  setAddBtn(false,null);highlight(null);curMatch=null;
+  setBadge('idle',t('badge_idle'));setAddBtn(false,null);highlight(null);curMatch=null;
 }
-
 function setBadge(cls,txt){const b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
 function setAddBtn(on,match){
-  const ab=document.getElementById('addBtn');
-  ab.disabled=!on;
-  if(!on){ab.textContent=t('add');ab.className='btn green';return;}
+  const ab=document.getElementById('addBtn');ab.disabled=!on;
+  if(!on){ab.textContent=t('add');ab.className='btn primary';return;}
   const isBB=match.blowbend,isDB=match.dir==='drawbend';
-  ab.className='btn green'+(isDB?' bend':isBB?' blowbend':'');
+  ab.className='btn primary'+(isDB?' bend':isBB?' blowbend':'');
   ab.textContent='+ '+match.sym+match.hole+' ('+mn(match.midi)+')';
 }
-
 function loop(){
   if(!listening)return;
   raf=requestAnimationFrame(loop);
   const buf=new Float32Array(analyser.fftSize);
   analyser.getFloatTimeDomainData(buf);
+  let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
+  if(rms<0.002){
+    curMatch=null;
+    document.getElementById('pitchBig').textContent='—';
+    document.getElementById('pitchBig').className='pitch-big';
+    document.getElementById('freqSub').textContent=t('freq_listen');
+    document.getElementById('cFill').style.width='0';
+    document.getElementById('cLbl').textContent='— ct';
+    setBadge('idle',t('badge_silence'));highlight(null);setAddBtn(false,null);return;
+  }
   const freq=detectPitch(buf,actx.sampleRate);
-
   if(freq>100&&freq<2100){
-    // DEBUG
-    const nearest=HMAP.reduce((a,b)=>Math.abs(a.hz-freq)<Math.abs(b.hz-freq)?a:b);
-    document.getElementById('dbHz').textContent=`Hz rilevato: ${freq.toFixed(2)} | più vicino: ${mn(nearest.midi)} ${nearest.sym}${nearest.hole} (${nearest.hz.toFixed(2)} Hz) | diff: ${Math.abs(freq-nearest.hz).toFixed(2)} Hz`;
     const match=findClosest(freq);
     if(match){
       curMatch=match;
@@ -507,7 +509,7 @@ function loop(){
       const fill=document.getElementById('cFill');
       if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}
       else{const w=(0.5-pct)*100;fill.style.left=(50-w)+'%';fill.style.width=w+'%';}
-      fill.style.background=Math.abs(ct)<=20?'#1D9E75':'#BA7517';
+      fill.style.background=Math.abs(ct)<=20?'#4ae8b4':'#e8c84a';
       document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
       const tun=Math.abs(ct)<=20;
       const bc=tun?(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'intune'):(ct>20?'sharp':'flat');
@@ -517,16 +519,9 @@ function loop(){
       curMatch=null;
       document.getElementById('pitchBig').textContent='?';
       document.getElementById('pitchBig').className='pitch-big oob';
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz — '+t('badge_oob');
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
       setBadge('oob',t('badge_oob'));highlight(null);setAddBtn(false,null);
     }
-  }else if(freq>0){
-    // frequenza rilevata ma fuori range strumento
-    curMatch=null;
-    document.getElementById('pitchBig').textContent='?';
-    document.getElementById('pitchBig').className='pitch-big oob';
-    document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz — '+t('badge_oob');
-    setBadge('oob',t('badge_oob'));highlight(null);setAddBtn(false,null);
   }else{
     curMatch=null;
     document.getElementById('pitchBig').textContent='—';
@@ -538,15 +533,12 @@ function loop(){
   }
 }
 
-// ── TAB & UNDO ────────────────────────────────────────────────────────────────
+// ── TAB ───────────────────────────────────────────────────────────────────────
 let tabList=[],selected=new Set(),hist=[[]],histIdx=0;
 function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(x=>({...x})));histIdx++;upUD();}
 function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
 function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
-function upUD(){
-  document.getElementById('undoBtn').disabled=histIdx<=0;
-  document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;
-}
+function upUD(){document.getElementById('undoBtn').disabled=histIdx<=0;document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;}
 function addNote(){if(!curMatch)return;snap();tabList.push({...curMatch});render();}
 function toggleSel(i){if(selected.has(i))selected.delete(i);else selected.add(i);render();}
 function clearSel(){selected.clear();render();}
@@ -556,31 +548,21 @@ function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear()
 function render(){
   const cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
   const sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
-  if(!tabList.length){
-    cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;
-    txt.textContent='—';sb.classList.remove('on');return;
-  }
+  if(!tabList.length){cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;txt.textContent='—';sb.classList.remove('on');return;}
   cont.innerHTML='';let str='';
   tabList.forEach((n,i)=>{
     const chip=document.createElement('div');
     chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
     chip.onclick=()=>toggleSel(i);
     chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
-    cont.appendChild(chip);
-    str+=n.sym+n.hole+' ';
+    cont.appendChild(chip);str+=n.sym+n.hole+' ';
   });
   txt.textContent=str.trim();
-  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}
-  else sb.classList.remove('on');
+  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
 }
-
 function copyTab(){
-  const tx=document.getElementById('txtOut').textContent;
-  if(tx==='—')return;
-  navigator.clipboard.writeText(tx).then(()=>{
-    const b=document.getElementById('copyBtn'),o=b.textContent;
-    b.textContent=t('copied');setTimeout(()=>b.textContent=t('copy'),1600);
-  });
+  const tx=document.getElementById('txtOut').textContent;if(tx==='—')return;
+  navigator.clipboard.writeText(tx).then(()=>{const b=document.getElementById('copyBtn'),o=b.textContent;b.textContent=t('copied');setTimeout(()=>b.textContent=t('copy'),1600);});
 }
 
 // ── SESSIONI ──────────────────────────────────────────────────────────────────
@@ -590,39 +572,27 @@ function saveSession(){
   if(!tabList.length){alert(t('no_notes_save'));return;}
   const str=tabList.map(n=>n.sym+n.hole).join(' ');
   if(activeSess!==null){
-    const newName=prompt(t('prompt_name'),sessions[activeSess].name);
-    if(newName===null)return;
+    const newName=prompt(t('prompt_name'),sessions[activeSess].name);if(newName===null)return;
     sessions[activeSess].name=newName.trim()||sessions[activeSess].name;
     sessions[activeSess].notes=[...tabList];sessions[activeSess].tab=str;
     sessions[activeSess].key=currentKey.name;sessions[activeSess].updated=Date.now();
   }else{
     const def=lang==='it'?'Sessione '+(sessions.length+1):'Session '+(sessions.length+1);
-    const newName=prompt(t('prompt_name'),def);
-    if(newName===null)return;
+    const newName=prompt(t('prompt_name'),def);if(newName===null)return;
     sessions.push({id:Date.now(),name:newName.trim()||def,notes:[...tabList],tab:str,key:currentKey.name,updated:Date.now()});
     activeSess=sessions.length-1;
   }
   saveSess();renderSess();
 }
-function loadSession(i){
-  activeSess=i;tabList=sessions[i].notes.map(x=>({...x}));selected.clear();
-  hist=[tabList.map(x=>({...x}))];histIdx=0;upUD();render();renderSess();
-}
+function loadSession(i){activeSess=i;tabList=sessions[i].notes.map(x=>({...x}));selected.clear();hist=[tabList.map(x=>({...x}))];histIdx=0;upUD();render();renderSess();}
 function deleteSession(i,e){
-  e.stopPropagation();
-  if(!confirm(t('confirm_delete')))return;
-  sessions.splice(i,1);
-  if(activeSess===i)activeSess=null;
-  else if(activeSess>i)activeSess--;
+  e.stopPropagation();if(!confirm(t('confirm_delete')))return;
+  sessions.splice(i,1);if(activeSess===i)activeSess=null;else if(activeSess>i)activeSess--;
   saveSess();renderSess();
 }
-function newSession(){
-  activeSess=null;tabList=[];selected.clear();
-  hist=[[]];histIdx=0;upUD();render();renderSess();
-}
+function newSession(){activeSess=null;tabList=[];selected.clear();hist=[[]];histIdx=0;upUD();render();renderSess();}
 function startRename(i,el,e){
-  e.stopPropagation();
-  const inp=document.createElement('input');inp.value=sessions[i].name;
+  e.stopPropagation();const inp=document.createElement('input');inp.value=sessions[i].name;
   inp.onclick=ev=>ev.stopPropagation();
   const done=()=>{sessions[i].name=inp.value.trim()||sessions[i].name;saveSess();renderSess();};
   inp.onblur=done;inp.onkeydown=ev=>{if(ev.key==='Enter')done();};
@@ -638,9 +608,9 @@ function renderSess(){
     row.onclick=()=>loadSession(i);
     const d=new Date(s.updated);
     const ds=d.toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString(lang==='it'?'it-IT':'en-GB',{hour:'2-digit',minute:'2-digit'});
-    row.innerHTML=`<div class="sess-name" id="sn${i}" ondblclick="startRename(${i},this,event)">${s.name}</div>`+
+    row.innerHTML=`<div class="sess-name" ondblclick="startRename(${i},this,event)">${s.name}</div>`+
       `<div class="sess-meta">${s.key||'C'} · ${s.notes.length} ${lang==='it'?'note':'notes'} · ${ds}</div>`+
-      `<button class="sess-del" onclick="deleteSession(${i},event)" title="${lang==='it'?'Elimina':'Delete'}">✕</button>`;
+      `<button class="sess-del" onclick="deleteSession(${i},event)">✕</button>`;
     list.appendChild(row);
   });
 }
@@ -650,44 +620,48 @@ function exportPDF(){
   if(!tabList.length){alert(t('no_notes_export'));return;}
   const date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
   const sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
-  const colors={blow:'#185FA5',draw:'#1D9E75',drawbend:'#BA7517',blowbend:'#534AB7'};
-  const bgs={blow:'#E6F1FB',draw:'#E1F5EE',drawbend:'#FAEEDA',blowbend:'#EEEDFE'};
+  const colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend:'#b87aff',blowbend:'#b87aff'};
+  const bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend:'rgba(184,122,255,.1)',blowbend:'rgba(184,122,255,.1)'};
   const noteRows=[];
   for(let i=0;i<tabList.length;i+=16){
     const row=tabList.slice(i,i+16);
     const cells=row.map(n=>{
-      const c=colors[n.dir]||'#333',b=bgs[n.dir]||'#f5f5f3';
-      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}33">`+
+      const c=colors[n.dir]||'#888',b=bgs[n.dir]||'transparent';
+      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}44">`+
         `<div style="font-size:10px;opacity:.8">${n.sym}</div>`+
-        `<div style="font-size:16px;font-weight:600">${n.hole}</div>`+
+        `<div style="font-size:16px;font-weight:700">${n.hole}</div>`+
         `<div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
     }).join('<td style="width:3px"></td>');
     noteRows.push(`<tr>${cells}</tr><tr style="height:5px"></tr>`);
   }
   const tabTxt=tabList.map(n=>n.sym+n.hole).join(' ');
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sessName}</title>
-<style>body{font-family:-apple-system,sans-serif;color:#1a1a1a;padding:32px 40px;max-width:800px;margin:0 auto}
-h1{font-size:20px;font-weight:500;margin-bottom:4px}.sub{font-size:13px;color:#888;margin-bottom:24px}
-.sec{margin-bottom:20px}.sec h2{font-size:12px;font-weight:500;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #eee}
-table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f3;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:1px;border:1px solid #e0e0de}
-.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:12px;color:#555}
-.ls{width:11px;height:11px;border-radius:3px}.foot{margin-top:32px;font-size:11px;color:#bbb;text-align:center}</style></head><body>
+<style>body{font-family:-apple-system,sans-serif;background:#0d0f14;color:#e8eaf0;padding:32px 40px;max-width:800px;margin:0 auto}
+h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#e8c84a;letter-spacing:.05em}
+.sub{font-size:12px;color:#6b7280;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}
+.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#6b7280;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #2a3040}
+table{border-collapse:separate;border-spacing:0}
+.txt{font-family:monospace;font-size:13px;background:#161922;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #2a3040;color:#e8eaf0}
+.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#6b7280}
+.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}
+.foot{margin-top:32px;font-size:11px;color:#2a3040;text-align:center}
+@media print{body{background:#fff;color:#1a1d26}h1{color:#c9a800}.txt{background:#f5f5f5;color:#1a1d26;border-color:#ddd}.sec h2{border-color:#ddd}.foot{color:#ccc}}</style></head><body>
 <h1>${sessName}</h1>
 <div class="sub">${t('sub')} ${currentKey.name} · ${tabList.length} ${lang==='it'?'note':'notes'} · ${date}</div>
 <div class="sec"><h2>${t('pdf_legend')}</h2><div class="leg">
-<div class="li"><div class="ls" style="background:#E6F1FB;border:1px solid #B5D4F4"></div>${t('leg_blow')}</div>
-<div class="li"><div class="ls" style="background:#E1F5EE;border:1px solid #9FE1CB"></div>${t('leg_draw')}</div>
-<div class="li"><div class="ls" style="background:#FAEEDA;border:1px solid #FAC775"></div>${t('leg_drawbend')}</div>
-<div class="li"><div class="ls" style="background:#EEEDFE;border:1px solid #CECBF6"></div>${t('leg_blowbend')}</div>
+<div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>${t('leg_blow')}</div>
+<div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>${t('leg_draw')}</div>
+<div class="li"><div class="ls" style="border-color:#b87aff;background:rgba(184,122,255,.1)"></div>${t('leg_drawbend')}</div>
 </div></div>
 <div class="sec"><h2>${t('pdf_graphic')}</h2><table><tbody>${noteRows.join('')}</tbody></table></div>
 <div class="sec"><h2>${t('pdf_text')}</h2><div class="txt">${tabTxt}</div></div>
 <div class="foot">${t('pdf_footer')}</div></body></html>`;
-  const win=window.open('','_blank');
-  win.document.write(html);win.document.close();win.onload=()=>win.print();
+  const win=window.open('','_blank');win.document.write(html);win.document.close();win.onload=()=>win.print();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+const savedTheme=localStorage.getItem('harp_theme')||'light';
+setTheme(savedTheme);
 applyI18n();render();renderSess();
 </script>
 </body>
