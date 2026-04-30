@@ -212,6 +212,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   <h2 class="section-label" data-i18n="tab_title"></h2>
   <div class="toolbar">
     <button class="btn primary" id="addBtn" onclick="addNote()" disabled></button>
+    <button class="btn" onclick="addSeparator()" id="sepBtn" title="|">| <span data-i18n="separator"></span></button>
+    <button class="btn" onclick="addNewline()" id="nlBtn" title="↵">↵ <span data-i18n="newline"></span></button>
     <span class="sel-bar" id="selBar">
       <span id="selCount">0</span> <span data-i18n="selected"></span>&nbsp;
       <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" data-i18n="delete"></button>
@@ -268,7 +270,7 @@ const I18N={
     no_sessions:'Nessuna sessione salvata',no_notes:'Nessuna nota ancora',
     prompt_name:'Nome della sessione:',confirm_delete:'Eliminare questa sessione?',
     no_notes_save:'Nessuna nota da salvare.',no_notes_export:'Nessuna nota da esportare.',
-    copied:'Copiato!',pdf_legend:'Legenda',pdf_graphic:'Tablatura grafica',
+    separator:'Battuta', newline:'A capo',
     pdf_text:'Tablatura testo',pdf_footer:'Generato con Harmonica Lab Tab Transcriber'},
   en:{title:'Harmonica Lab Tab Transcriber',sub:'Diatonic harmonica in',key:'Key:',
     grid_title:'Note grid',tab_title:'Tab',
@@ -288,7 +290,7 @@ const I18N={
     no_sessions:'No saved sessions',no_notes:'No notes yet',
     prompt_name:'Session name:',confirm_delete:'Delete this session?',
     no_notes_save:'No notes to save.',no_notes_export:'No notes to export.',
-    copied:'Copied!',pdf_legend:'Legend',pdf_graphic:'Graphic tab',
+    separator:'Bar', newline:'New line',
     pdf_text:'Text tab',pdf_footer:'Generated with Harmonica Lab Tab Transcriber'}
 };
 let lang='it';
@@ -610,6 +612,8 @@ function addNote(){
   const note = curMatch || lastStableMatch;
   snap(); tabList.push({...note}); render();
 }
+function addSeparator(){snap();tabList.push({type:'separator'});render();}
+function addNewline(){snap();tabList.push({type:'newline'});render();}
 function toggleSel(i){if(selected.has(i))selected.delete(i);else selected.add(i);render();}
 function clearSel(){selected.clear();render();}
 function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter((_,i)=>!selected.has(i));selected.clear();render();}
@@ -621,11 +625,23 @@ function render(){
   if(!tabList.length){cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;txt.textContent='—';sb.classList.remove('on');return;}
   cont.innerHTML='';let str='';
   tabList.forEach((n,i)=>{
-    const chip=document.createElement('div');
-    chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
-    chip.onclick=()=>toggleSel(i);
-    chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
-    cont.appendChild(chip);str+=n.sym+n.hole+' ';
+    if(n.type==='separator'){
+      const chip=document.createElement('div');
+      chip.className='chip separator'+(selected.has(i)?' sel':'');
+      chip.textContent='|';chip.onclick=()=>toggleSel(i);
+      cont.appendChild(chip);str+='| ';
+    } else if(n.type==='newline'){
+      const br=document.createElement('div');
+      br.className='newline-break'+(selected.has(i)?' sel':'');
+      br.onclick=()=>toggleSel(i);
+      cont.appendChild(br);str+='\n';
+    } else {
+      const chip=document.createElement('div');
+      chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
+      chip.onclick=()=>toggleSel(i);
+      chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
+      cont.appendChild(chip);str+=n.sym+n.hole+' ';
+    }
   });
   txt.textContent=str.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
