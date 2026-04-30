@@ -259,6 +259,18 @@
   .level-done-btn { margin-top: 10px; padding: 7px 18px; border-radius: 8px; border: 1.5px solid var(--in-tune); background: transparent; color: var(--in-tune); font-family: 'DM Sans', sans-serif; font-size: 0.78rem; cursor: pointer; transition: all 0.15s; }
   .level-done-btn:hover { background: var(--in-tune); color: var(--bg); }
 
+  /* ── CIRCLE OF FIFTHS ── */
+  .cof-subtitle { font-size: 0.72rem; color: var(--muted); margin-bottom: 14px; }
+  .cof-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
+  #cofSvg { width: 100%; max-width: 360px; height: auto; }
+  .cof-info {
+    min-height: 48px; padding: 10px 14px;
+    background: var(--surface2); border-radius: 10px;
+    border-left: 3px solid var(--accent);
+    font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+  }
+  .cof-info strong { color: var(--accent); font-size: 0.85rem; }
+
   @media (max-width:500px) {
     .levels-grid { grid-template-columns: repeat(4,1fr); }
     .note-chart { min-width: 420px; }
@@ -266,7 +278,7 @@
   }
 </style>
 </head>
-<body>
+<body class="light">
 
 <div class="top-bar">
   <div class="toggle-pill">
@@ -274,8 +286,8 @@
     <button id="langEn" onclick="setLang('en')">EN</button>
   </div>
   <div class="toggle-pill">
-    <button id="themeDark" class="active" onclick="setTheme('dark')">🌙</button>
-    <button id="themeLight" onclick="setTheme('light')">☀️</button>
+    <button id="themeDark" onclick="setTheme('dark')">🌙</button>
+    <button id="themeLight" class="active" onclick="setTheme('light')">☀️</button>
   </div>
 </div>
 
@@ -377,6 +389,16 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- CIRCLE OF FIFTHS -->
+<div class="card">
+  <h2 class="section-label" id="cofTitle">Circolo delle Quinte</h2>
+  <p class="cof-subtitle" id="cofSubtitle">Clicca una tonalità per selezionarla. La chiave evidenziata è quella attiva.</p>
+  <div class="cof-wrap">
+    <svg id="cofSvg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="cof-info" id="cofInfo"></div>
 </div>
 
 <!-- LEVELS -->
@@ -605,6 +627,7 @@ function buildKeySelector() {
       stopTone();
       buildChart();
       refreshScaleLegend();
+      buildCOF();
     });
     c.appendChild(b);
   });
@@ -1044,6 +1067,179 @@ function updateScaleHighlight() {
 }
 
 // ═══════════════════════════════════════
+//  CIRCLE OF FIFTHS
+// ═══════════════════════════════════════
+
+// Keys in circle of fifths order (clockwise from top = C)
+const COF_KEYS = ['C','G','D','A','E','B','F#','Db','Ab','Eb','Bb','F'];
+
+// Positions info for harmonica: given harp key, what song key for each position
+const COF_POSITIONS = [
+  { pos:1, label:'1ª pos.',  desc:'Straight harp — suoni nella stessa tonalità dell\'armonica' },
+  { pos:2, label:'2ª pos.',  desc:'Cross harp — un passo in senso orario: ideale per blues e rock' },
+  { pos:3, label:'3ª pos.',  desc:'Double cross — due passi in senso orario: perfetto per minore e jazz' },
+  { pos:4, label:'4ª pos.',  desc:'Tre passi orario — sound minore naturale' },
+  { pos:12,label:'12ª pos.', desc:'Un passo antiorario — draw bend position' },
+];
+
+// Steps clockwise on CoF for each position
+const POS_STEPS = { 1:0, 2:1, 3:2, 4:3, 12:-1 };
+
+function cofIndexOf(key) {
+  // normalize key name to CoF
+  const map = {'C#':'Db','D#':'Eb','F#':'F#','G#':'Ab','A#':'Bb','Gb':'F#','Cb':'B','Fb':'E'};
+  return COF_KEYS.indexOf(map[key] || key);
+}
+
+function buildCOF() {
+  const svg = document.getElementById('cofSvg');
+  svg.innerHTML = '';
+  const cx=200, cy=200, r1=155, r2=110, r3=70;
+  const n = COF_KEYS.length;
+
+  COF_KEYS.forEach((key, i) => {
+    const angle = (i / n) * 2 * Math.PI - Math.PI/2;
+    const nextAngle = ((i+1)/n)*2*Math.PI - Math.PI/2;
+    const midAngle = angle + Math.PI/n;
+
+    // ── outer segment (major keys) ──
+    const x1o=cx+r1*Math.cos(angle), y1o=cy+r1*Math.sin(angle);
+    const x2o=cx+r1*Math.cos(nextAngle), y2o=cy+r1*Math.sin(nextAngle);
+    const x1i=cx+r2*Math.cos(angle), y1i=cy+r2*Math.sin(angle);
+    const x2i=cx+r2*Math.cos(nextAngle), y2i=cy+r2*Math.sin(nextAngle);
+
+    const activeIdx = cofIndexOf(KEYS.find(k=>k.offset===currentOffset)?.name || 'C');
+    const isActive = i === activeIdx;
+
+    // segment path
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    const d = `M${x1i},${y1i} L${x1o},${y1o} A${r1},${r1} 0 0,1 ${x2o},${y2o} L${x2i},${y2i} A${r2},${r2} 0 0,0 ${x1i},${y1i}`;
+    path.setAttribute('d', d);
+    path.setAttribute('fill', isActive ? '#e8c84a' : 'var(--surface2)');
+    path.setAttribute('stroke', 'var(--border)');
+    path.setAttribute('stroke-width', '1.5');
+    path.style.cursor = 'pointer';
+    path.style.transition = 'fill 0.2s';
+    path.addEventListener('click', () => selectCOFKey(key));
+    path.addEventListener('mouseenter', () => { if(!isActive) path.setAttribute('fill','var(--border)'); });
+    path.addEventListener('mouseleave', () => { if(!isActive) path.setAttribute('fill','var(--surface2)'); });
+    svg.appendChild(path);
+
+    // key label
+    const lx = cx + (r2+r1)/2*Math.cos(midAngle);
+    const ly = cy + (r2+r1)/2*Math.sin(midAngle);
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', lx); text.setAttribute('y', ly);
+    text.setAttribute('text-anchor','middle'); text.setAttribute('dominant-baseline','middle');
+    text.setAttribute('font-size','14'); text.setAttribute('font-weight','700');
+    text.setAttribute('font-family','Bebas Neue, sans-serif');
+    text.setAttribute('fill', isActive ? '#0d0f14' : 'var(--text)');
+    text.style.cursor='pointer'; text.style.pointerEvents='none';
+    text.textContent = key;
+    svg.appendChild(text);
+
+    // ── inner segment (relative minor) ──
+    const minorKey = getRelativeMinor(key);
+    const x1r=cx+r3*Math.cos(angle), y1r=cy+r3*Math.sin(angle);
+    const x2r=cx+r3*Math.cos(nextAngle), y2r=cy+r3*Math.sin(nextAngle);
+
+    const pathInner = document.createElementNS('http://www.w3.org/2000/svg','path');
+    const di = `M${x1r},${y1r} L${x1i},${y1i} A${r2},${r2} 0 0,1 ${x2i},${y2i} L${x2r},${y2r} A${r3},${r3} 0 0,0 ${x1r},${y1r}`;
+    pathInner.setAttribute('d',di);
+    pathInner.setAttribute('fill', isActive ? 'rgba(232,200,74,0.25)' : 'rgba(74,232,180,0.05)');
+    pathInner.setAttribute('stroke','var(--border)');
+    pathInner.setAttribute('stroke-width','1');
+    svg.appendChild(pathInner);
+
+    const mx=cx+(r2+r3)/2*Math.cos(midAngle), my=cy+(r2+r3)/2*Math.sin(midAngle);
+    const tmin=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tmin.setAttribute('x',mx); tmin.setAttribute('y',my);
+    tmin.setAttribute('text-anchor','middle'); tmin.setAttribute('dominant-baseline','middle');
+    tmin.setAttribute('font-size','9'); tmin.setAttribute('font-family','DM Mono, monospace');
+    tmin.setAttribute('fill', isActive ? '#e8c84a' : 'var(--accent2)');
+    tmin.style.pointerEvents='none';
+    tmin.textContent = minorKey+'m';
+    svg.appendChild(tmin);
+  });
+
+  // center circle
+  const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r3-2);
+  circle.setAttribute('fill','var(--surface)'); circle.setAttribute('stroke','var(--border)'); circle.setAttribute('stroke-width','1.5');
+  svg.appendChild(circle);
+
+  // center text
+  const activeKey = KEYS.find(k=>k.offset===currentOffset)?.name || 'C';
+  const ct=document.createElementNS('http://www.w3.org/2000/svg','text');
+  ct.setAttribute('x',cx); ct.setAttribute('y',cy-8);
+  ct.setAttribute('text-anchor','middle'); ct.setAttribute('dominant-baseline','middle');
+  ct.setAttribute('font-size','22'); ct.setAttribute('font-family','Bebas Neue, sans-serif');
+  ct.setAttribute('fill','var(--accent)');
+  ct.textContent = activeKey;
+  svg.appendChild(ct);
+
+  const ct2=document.createElementNS('http://www.w3.org/2000/svg','text');
+  ct2.setAttribute('x',cx); ct2.setAttribute('y',cy+14);
+  ct2.setAttribute('text-anchor','middle'); ct2.setAttribute('dominant-baseline','middle');
+  ct2.setAttribute('font-size','9'); ct2.setAttribute('font-family','DM Mono, sans-serif');
+  ct2.setAttribute('fill','var(--muted)');
+  ct2.textContent = 'armonica';
+  svg.appendChild(ct2);
+
+  // update info box
+  updateCOFInfo(activeKey);
+}
+
+function getRelativeMinor(major) {
+  const minors = {C:'A',G:'E',D:'B',A:'F#',E:'C#',B:'G#','F#':'D#',Db:'Bb',Ab:'F',Eb:'C',Bb:'G',F:'D'};
+  return minors[major] || '?';
+}
+
+function selectCOFKey(keyName) {
+  const k = KEYS.find(x=>x.name===keyName);
+  if (!k) return;
+  currentOffset = k.offset;
+  // sync key selector buttons
+  document.querySelectorAll('.key-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent===keyName);
+  });
+  document.getElementById('keyLabel').textContent = keyName;
+  selectedMidi=null;
+  document.getElementById('selectedNoteName').textContent='—';
+  document.getElementById('selectedFreq').textContent='— Hz';
+  document.getElementById('toneBtn').disabled=true;
+  stopTone();
+  buildChart();
+  refreshScaleLegend();
+  buildCOF();
+}
+
+function updateCOFInfo(keyName) {
+  const info = document.getElementById('cofInfo');
+  const idx  = cofIndexOf(keyName);
+  if (idx < 0) return;
+
+  // 2nd position = song key one step clockwise
+  const pos2  = COF_KEYS[(idx+1)%12];
+  // 3rd position = two steps clockwise
+  const pos3  = COF_KEYS[(idx+2)%12];
+  // 12th position = one step counter-clockwise
+  const pos12 = COF_KEYS[(idx+11)%12];
+  // 1st position = same key
+  const relMin = getRelativeMinor(keyName);
+
+  const isIT = lang === 'it';
+  info.innerHTML = `
+    <strong>${isIT?'Armonica in':'Harmonica in'} ${keyName}</strong><br>
+    🎵 <b>${isIT?'1ª posizione':'1st position'}:</b> ${isIT?'suoni in':'plays in'} <b>${keyName}</b> — ${isIT?'straight harp':'straight harp'}<br>
+    🎸 <b>${isIT?'2ª posizione (cross harp)':'2nd position (cross harp)'}:</b> ${isIT?'suoni in':'plays in'} <b>${pos2}</b> — ${isIT?'ideale per blues':'ideal for blues & rock'}<br>
+    🎷 <b>${isIT?'3ª posizione':'3rd position'}:</b> ${isIT?'suoni in':'plays in'} <b>${pos3}</b> — ${isIT?'ideale per minore/jazz':'ideal for minor & jazz'}<br>
+    🔄 <b>${isIT?'12ª posizione':'12th position'}:</b> ${isIT?'suoni in':'plays in'} <b>${pos12}</b> — ${isIT?'draw bend position':'draw bend position'}<br>
+    🎶 <b>${isIT?'Relativa minore':'Relative minor'}:</b> <b>${relMin}m</b>
+  `;
+}
+
+// ═══════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════
 buildKeySelector();
@@ -1051,6 +1247,7 @@ buildChart();
 buildScaleSelector();
 buildLevels();
 buildMetroBeats();
+buildCOF();
 window.addEventListener('resize', drawHistory);
 </script>
 </body>
