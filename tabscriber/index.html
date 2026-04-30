@@ -427,7 +427,7 @@ function highlight(match){
 }
 
 // ── AUDIO ─────────────────────────────────────────────────────────────────────
-let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null;
+let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null,lastStableMatch=null;
 
 function detectPitch(buf, sr) {
   const N = buf.length;
@@ -558,6 +558,7 @@ function loop(){
     const match=findClosest(freq);
     if(match){
       curMatch=match;
+      lastStableMatch=match;
       const pb=document.getElementById('pitchBig');
       pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
       pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'on');
@@ -596,7 +597,11 @@ function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(x=>({...x})))
 function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
 function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
 function upUD(){document.getElementById('undoBtn').disabled=histIdx<=0;document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;}
-function addNote(){if(!curMatch)return;snap();tabList.push({...curMatch});render();}
+function addNote(){
+  if(!curMatch && !lastStableMatch) return;
+  const note = curMatch || lastStableMatch;
+  snap(); tabList.push({...note}); render();
+}
 function toggleSel(i){if(selected.has(i))selected.delete(i);else selected.add(i);render();}
 function clearSel(){selected.clear();render();}
 function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter((_,i)=>!selected.has(i));selected.clear();render();}
