@@ -622,36 +622,42 @@ function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear()
 function render(){
   const cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
   const sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
-  if(!tabList.length){cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;txt.textContent='—';sb.classList.remove('on');return;}
+  if(!tabList.length){
+    cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;
+    txt.textContent='—';sb.classList.remove('on');return;
+  }
   cont.innerHTML='';let str='';
+
+  // Dividi tabList in righe basandosi sui newline
+  const rows=[[]];
   tabList.forEach((n,i)=>{
-    if(n.type==='separator'){
-      const chip=document.createElement('div');
-      chip.className='chip separator'+(selected.has(i)?' sel':'');
-      chip.textContent='|';chip.onclick=()=>toggleSel(i);
-      cont.appendChild(chip);str+='| ';
-    } else if(n.type==='newline'){
-      // Elemento invisibile che forza il wrap + linea visiva cliccabile
-      const wrap=document.createElement('div');
-      wrap.style.cssText='flex-basis:100%;width:100%;display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 0';
-      wrap.onclick=()=>toggleSel(i);
-      const line=document.createElement('div');
-      line.style.cssText=`flex:1;height:1.5px;background:${selected.has(i)?'var(--purple)':'var(--border)'};border-radius:2px`;
-      const lbl=document.createElement('span');
-      lbl.style.cssText=`font-size:.6rem;font-family:'DM Mono',monospace;color:${selected.has(i)?'var(--purple)':'var(--muted)'};white-space:nowrap`;
-      lbl.textContent='↵';
-      wrap.appendChild(line);wrap.appendChild(lbl);
-      cont.appendChild(wrap);str+='\n';
-    } else {
-      const chip=document.createElement('div');
-      chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
-      chip.onclick=()=>toggleSel(i);
-      chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
-      cont.appendChild(chip);str+=n.sym+n.hole+' ';
-    }
+    if(n.type==='newline'){rows.push([]);str+='\n';}
+    else{rows[rows.length-1].push({n,i});str+=(n.type==='separator'?'| ':n.sym+n.hole+' ');}
   });
+
+  rows.forEach(row=>{
+    const rowEl=document.createElement('div');
+    rowEl.className='tab-row';
+    row.forEach(({n,i})=>{
+      if(n.type==='separator'){
+        const chip=document.createElement('div');
+        chip.className='chip separator'+(selected.has(i)?' sel':'');
+        chip.textContent='|';chip.onclick=()=>toggleSel(i);
+        rowEl.appendChild(chip);
+      } else {
+        const chip=document.createElement('div');
+        chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
+        chip.onclick=()=>toggleSel(i);
+        chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
+        rowEl.appendChild(chip);
+      }
+    });
+    cont.appendChild(rowEl);
+  });
+
   txt.textContent=str.trim();
-  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
+  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}
+  else sb.classList.remove('on');
 }
 function copyTab(){
   const tx=document.getElementById('txtOut').textContent;if(tx==='—')return;
