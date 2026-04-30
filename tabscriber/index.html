@@ -429,22 +429,79 @@ function highlight(match){
 // ── AUDIO ─────────────────────────────────────────────────────────────────────
 let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null;
 
-function detectPitch(buf,sr){
-  let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
-  if(rms<0.002)return -1;
-  const corr=new Float32Array(buf.length);
-  for(let lag=0;lag<buf.length;lag++)for(let i=0;i<buf.length-lag;i++)corr[lag]+=buf[i]*buf[i+lag];
-  let start=1;
-  while(start<buf.length/2&&corr[start]>corr[start-1])start++;
-  while(start<buf.length/2&&corr[start]<=0)start++;
-  let maxVal=-1,maxIdx=start;
-  for(let i=start;i<buf.length/2;i++)if(corr[i]>maxVal){maxVal=corr[i];maxIdx=i;}
-  if(maxIdx===0)return -1;
-  if(maxIdx>0&&maxIdx<buf.length-1){
-    const x0=corr[maxIdx-1],x1=corr[maxIdx],x2=corr[maxIdx+1];
-    const d=2*x1-x0-x2;if(d>0)maxIdx+=(x2-x0)/(2*d)*.5;
+function detectPitch(buf, sr) {
+  const N = buf.length;
+
+  // RMS check
+  let rms = 0;
+  for (let i = 0; i < N; i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / N);
+  if (rms < 0.002) return -1;
+
+  // ── YIN algorithm ──────────────────────────────────────────────────────
+  // Limiti tau basati sul range fisico dell'armonica (80 Hz – 2200 Hz)
+  const tauMin = Math.floor(sr / 2200); // ~20 @ 44100
+  const tauMax = Math.floor(sr / 80);   // ~551 @ 44100
+  const W = Math.min(Math.floor(N / 2), tauMax + 1);
+
+  // Passo 1 – differenza quadratica
+  const d = new Float32Array(W);
+  for (let tau = tauMin; tau < W; tau++) {
+    for (let j = 0; j < W; j++) {
+      const diff = buf[j] - buf[j + tau];
+      d[tau] += diff * diff;
+    }
   }
-  return sr/maxIdx;
+
+  // Passo 2 – media cumulativa normalizzata (CMNDF)
+  const dn = new Float32Array(W);
+  dn[0] = 1;
+  let runSum = 0;
+  for (let tau = 1; tau < W; tau++) {
+    runSum += d[tau];
+    dn[tau] = runSum === 0 ? 0 : (d[tau] * tau) / runSum;
+  }
+
+  // Passo 3 – primo minimo sotto soglia nel range valido
+  const threshold = 0.15;
+  let tau = -1;
+  for (let t = tauMin; t < W - 1; t++) {
+    if (dn[t] < threshold && dn[t] <= dn[t + 1]) {
+      tau = t;
+      break;
+    }
+  }
+
+  // Fallback – minimo assoluto nel range
+  if (tau === -1) {
+    let minVal = Infinity, minIdx = tauMin;
+    for (let t = tauMin; t < W; t++) {
+      if (dn[t] < minVal) { minVal = dn[t]; minIdx = t; }
+    }
+    if (minVal > 0.35) return -1;
+    tau = minIdx;
+  }
+
+  // Passo 4 – interpolazione parabolica (sub-sample precision)
+  if (tau <= 0 || tau >= W - 1) return sr / tau;
+  const x1 = dn[tau - 1], x2 = dn[tau], x3 = dn[tau + 1];
+  const denom = 2 * x2 - x1 - x3;
+  const adj = denom === 0 ? 0 : (x3 - x1) / (2 * denom);
+  const refinedTau = tau + adj;
+
+  // Passo 5 – verifica anti-octave-error
+  // Se esiste un tau/2 con valore CMNDF simile, la freq reale è doppia
+  const halfTau = Math.round(refinedTau / 2);
+  if (halfTau >= tauMin && halfTau < W && dn[halfTau] < threshold * 1.5) {
+    // Confronta quale delle due frequenze è più vicina alla mappa note
+    const fHalf = sr / halfTau;
+    const fFull = sr / refinedTau;
+    const dHalf = HMAP.reduce((a, e) => Math.min(a, Math.abs(e.hz - fHalf)), 9999);
+    const dFull = HMAP.reduce((a, e) => Math.min(a, Math.abs(e.hz - fFull)), 9999);
+    if (dHalf < dFull) return fHalf;
+  }
+
+  return sr / refinedTau;
 }
 
 async function toggleMic(){
