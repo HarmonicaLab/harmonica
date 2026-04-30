@@ -631,10 +631,17 @@ function render(){
       chip.textContent='|';chip.onclick=()=>toggleSel(i);
       cont.appendChild(chip);str+='| ';
     } else if(n.type==='newline'){
-      const br=document.createElement('div');
-      br.className='newline-break'+(selected.has(i)?' sel':'');
-      br.onclick=()=>toggleSel(i);
-      cont.appendChild(br);str+='\n';
+      // Elemento invisibile che forza il wrap + linea visiva cliccabile
+      const wrap=document.createElement('div');
+      wrap.style.cssText='flex-basis:100%;width:100%;display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 0';
+      wrap.onclick=()=>toggleSel(i);
+      const line=document.createElement('div');
+      line.style.cssText=`flex:1;height:1.5px;background:${selected.has(i)?'var(--purple)':'var(--border)'};border-radius:2px`;
+      const lbl=document.createElement('span');
+      lbl.style.cssText=`font-size:.6rem;font-family:'DM Mono',monospace;color:${selected.has(i)?'var(--purple)':'var(--muted)'};white-space:nowrap`;
+      lbl.textContent='↵';
+      wrap.appendChild(line);wrap.appendChild(lbl);
+      cont.appendChild(wrap);str+='\n';
     } else {
       const chip=document.createElement('div');
       chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
