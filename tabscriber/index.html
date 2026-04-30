@@ -531,12 +531,14 @@ function stopMic(){
   setBadge('idle',t('badge_idle'));setAddBtn(false,null);highlight(null);curMatch=null;
 }
 function setBadge(cls,txt){const b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
-function setAddBtn(on,match){
-  const ab=document.getElementById('addBtn');ab.disabled=!on;
-  if(!on){ab.textContent=t('add');ab.className='btn primary';return;}
-  const isBB=match.blowbend,isDB=match.dir==='drawbend';
-  ab.className='btn primary'+(isDB?' bend':isBB?' blowbend':'');
-  ab.textContent='+ '+match.sym+match.hole+' ('+mn(match.midi)+')';
+function setAddBtn(on, match) {
+  const ab = document.getElementById('addBtn');
+  ab.disabled = !on;
+  ab.style.pointerEvents = on ? 'all' : 'none';
+  if (!on) { ab.textContent = t('add'); ab.className = 'btn primary'; return; }
+  const isBB = match.blowbend, isDB = match.dir === 'drawbend';
+  ab.className = 'btn primary' + (isDB ? ' bend' : isBB ? ' blowbend' : '');
+  ab.textContent = '+ ' + match.sym + match.hole + ' (' + mn(match.midi) + ')';
 }
 function loop(){
   if(!listening)return;
