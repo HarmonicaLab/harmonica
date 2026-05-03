@@ -742,12 +742,18 @@ function exportPDF(){
   if(!tabList.length){alert(t('no_notes_export'));return;}
   const date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
   const sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
-  const colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend:'#b87aff',blowbend:'#b87aff'};
-  const bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend:'rgba(184,122,255,.1)',blowbend:'rgba(184,122,255,.1)'};
+  const colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b'};
+  const bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)'};
   const noteRows=[];
-  for(let i=0;i<tabList.length;i+=16){
-    const row=tabList.slice(i,i+16);
-    const cells=row.map(n=>{
+  // Dividi in righe per i newline
+  const lines=[[]];
+  tabList.forEach(n=>{
+    if(n.type==='newline') lines.push([]);
+    else lines[lines.length-1].push(n);
+  });
+  lines.forEach(line=>{
+    if(!line.length) return;
+    const cells=line.map(n=>{
       if(n.type==='separator'){
         return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:transparent;color:#888;border:1.5px dashed #444;min-width:24px"><div style="font-size:18px;font-weight:700">|</div></td>`;
       }
@@ -757,9 +763,9 @@ function exportPDF(){
         `<div style="font-size:20px;font-weight:700">${n.hole}</div>`+
         `<div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
     }).join('<td style="width:3px"></td>');
-    noteRows.push(`<tr>${cells}</tr><tr style="height:5px"></tr>`);
-  }
-  const tabTxt=tabList.map(n=>n.sym+n.hole).join(' ');
+    noteRows.push(`<tr>${cells}</tr><tr style="height:8px"></tr>`);
+  });
+  const tabTxt=tabList.filter(n=>n.type!=='newline').map(n=>n.type==='separator'?'|':n.sym+n.hole).join(' ');
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sessName}</title>
 <style>body{font-family:-apple-system,sans-serif;background:#0d0f14;color:#e8eaf0;padding:32px 40px;max-width:800px;margin:0 auto}
 h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#e8c84a;letter-spacing:.05em}
