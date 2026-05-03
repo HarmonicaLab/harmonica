@@ -541,11 +541,14 @@ function setBadge(cls,txt){const b=document.getElementById('badge');b.className=
 function setAddBtn(on, match) {
   const ab = document.getElementById('addBtn');
   ab.disabled = !on;
-  ab.style.pointerEvents = on ? 'all' : 'none';
-  if (!on) { ab.textContent = t('add'); ab.className = 'btn primary'; return; }
+  if (!on) {
+    ab.innerHTML = `<span style="pointer-events:none;display:block;width:100%;text-align:center">${t('add')}</span>`;
+    ab.className = 'btn primary';
+    return;
+  }
   const isBB = match.blowbend, isDB = match.dir === 'drawbend';
   ab.className = 'btn primary' + (isDB ? ' bend' : isBB ? ' blowbend' : '');
-  ab.textContent = '+ ' + match.sym + match.hole + ' (' + mn(match.midi) + ')';
+  ab.innerHTML = `<span style="pointer-events:none;display:block;width:100%;text-align:center">+ ${match.sym}${match.hole} (${mn(match.midi)})</span>`;
 }
 function loop(){
   if(!listening)return;
