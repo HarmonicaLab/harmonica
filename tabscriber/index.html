@@ -114,7 +114,9 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .sel-bar{display:none;align-items:center;gap:8px;font-size:.75rem;background:rgba(184,122,255,.08);color:var(--purple);border:1px solid rgba(184,122,255,.3);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace}
 .sel-bar.on{display:inline-flex}
 
-.tab-notes{display:flex;flex-wrap:wrap;gap:6px;min-height:52px;align-items:flex-start;padding:4px 0;margin-bottom:14px}
+.tab-notes{display:block;min-height:52px;padding:4px 0;margin-bottom:14px}
+.tab-row{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;min-height:44px;padding:4px 0 10px;border-bottom:1.5px dashed var(--border)}
+.tab-row:last-child{border-bottom:none}
 .chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;min-width:40px;cursor:pointer;transition:all .13s;user-select:none}
 .chip:hover{border-color:var(--muted)}
 .chip.sel{background:rgba(184,122,255,.1);border-color:var(--purple)}
@@ -212,7 +214,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   <h2 class="section-label" data-i18n="tab_title"></h2>
   <div class="toolbar">
     <button class="btn primary" id="addBtn" onclick="addNote()" disabled></button>
-    <button class="btn" onclick="addSeparator()">| <span data-i18n="separator"></span></button>
+    <button class="btn" onclick="addSeparator()"><span style="pointer-events:none;display:block;width:100%;text-align:center">| <span data-i18n="separator"></span></span></button>
+    <button class="btn" onclick="addNewline()"><span style="pointer-events:none;display:block;width:100%;text-align:center">↵ <span data-i18n="newline"></span></span></button>
     <span class="sel-bar" id="selBar">
       <span id="selCount">0</span> <span data-i18n="selected"></span>&nbsp;
       <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" data-i18n="delete"></button>
@@ -269,7 +272,7 @@ const I18N={
     no_sessions:'Nessuna sessione salvata',no_notes:'Nessuna nota ancora',
     prompt_name:'Nome della sessione:',confirm_delete:'Eliminare questa sessione?',
     no_notes_save:'Nessuna nota da salvare.',no_notes_export:'Nessuna nota da esportare.',
-    separator:'Battuta', newline:'A capo',
+    separator:'Battuta', newline:'A capo', newline:'A capo',
     pdf_text:'Tablatura testo',pdf_footer:'Generato con Harmonica Lab Tab Transcriber'},
   en:{title:'Harmonica Lab Tab Transcriber',sub:'Diatonic harmonica in',key:'Key:',
     grid_title:'Note grid',tab_title:'Tab',
@@ -289,7 +292,7 @@ const I18N={
     no_sessions:'No saved sessions',no_notes:'No notes yet',
     prompt_name:'Session name:',confirm_delete:'Delete this session?',
     no_notes_save:'No notes to save.',no_notes_export:'No notes to export.',
-    separator:'Bar', newline:'New line',
+    separator:'Bar', newline:'New line', newline:'New line',
     pdf_text:'Text tab',pdf_footer:'Generated with Harmonica Lab Tab Transcriber'}
 };
 let lang='it';
