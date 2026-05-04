@@ -55,6 +55,17 @@
     display: flex; justify-content: flex-end; align-items: center;
     gap: 8px; width: 100%; max-width: 720px; margin-bottom: 12px;
   }
+  .version-badge {
+    margin-right: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    letter-spacing: 0.06em;
+  }
 
   /* ── HEADER ── */
   header { text-align: center; margin-bottom: 28px; width: 100%; max-width: 720px; }
@@ -113,11 +124,31 @@
 
   /* ── NOTE CHART ── */
   .chart-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .note-chart { width: 100%; min-width: 500px; border-collapse: separate; border-spacing: 4px; }
-  .note-chart th { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); text-align: center; padding: 4px 2px 6px; font-weight: 500; }
-  .note-chart th.hole-th { background: var(--surface2); border-radius: 6px; color: var(--text); font-size: 0.7rem; }
-  .note-chart td { text-align: center; padding: 0; }
-  .note-chart td.row-label { font-family: 'DM Sans', sans-serif; font-size: 0.64rem; color: var(--muted); text-align: left; padding: 2px 8px 2px 0; white-space: nowrap; width: 72px; }
+  .note-chart {
+    width: 100%; min-width: 500px;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .note-chart td { text-align: center; padding: 2px 1px; }
+  .note-chart td.row-label {
+    font-family: 'DM Sans', sans-serif; font-size: 0.58rem;
+    color: var(--muted); text-align: left;
+    padding: 2px 4px 2px 0; white-space: nowrap;
+    width: 64px; min-width: 64px; max-width: 64px;
+  }
+
+  /* ── HOLE NUMBER CENTER BAR ── */
+  .hole-number-cell {
+    display: block; width: 100%;
+    background: #1e2035; color: #ffffff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    text-align: center; padding: 8px 0;
+    letter-spacing: 0.04em; user-select: none;
+  }
+  body.light .hole-number-cell { background: #2a2a3e; }
+  .hole-row td { padding: 3px 0 !important; }
+  .hole-row td:first-child { padding-right: 4px !important; }
 
   .cell-btn {
     width: 100%; padding: 9px 2px; border-radius: 7px;
@@ -133,13 +164,29 @@
   .cell-btn.draw { border-color: rgba(232,200,74,0.28); color: var(--accent); background: rgba(232,200,74,0.08); }
   .cell-btn.draw:hover { border-color: var(--accent); background: rgba(232,200,74,0.18); }
   .cell-btn.draw.active { border-color: var(--accent); background: rgba(232,200,74,0.24); box-shadow: 0 0 10px rgba(232,200,74,0.28); }
-  .cell-btn.bend { border-color: rgba(128,128,200,0.2); color: #8a92a6; background: rgba(128,128,200,0.05); font-size: clamp(0.5rem,1.3vw,0.66rem); }
-  .cell-btn.bend:hover { border-color: rgba(180,140,255,0.4); color: var(--text); }
-  .cell-btn.bend.active { border-color: rgba(180,140,255,0.6); color: var(--text); background: rgba(180,140,255,0.1); }
+  .cell-btn.bend { font-size: clamp(0.5rem,1.3vw,0.66rem); }
+
+  /* Bend 1 semitono — Arancione */
+  .cell-btn.bend1 { border-color: rgba(255,140,0,0.35); color: #e07800; background: rgba(255,140,0,0.08); }
+  .cell-btn.bend1:hover { border-color: #e07800; background: rgba(255,140,0,0.18); }
+  .cell-btn.bend1.active { border-color: #e07800; background: rgba(255,140,0,0.24); box-shadow: 0 0 10px rgba(255,140,0,0.35); }
+
+  /* Bend 2 semitoni — Rosso */
+  .cell-btn.bend2 { border-color: rgba(220,50,50,0.35); color: #cc2222; background: rgba(220,50,50,0.08); }
+  .cell-btn.bend2:hover { border-color: #cc2222; background: rgba(220,50,50,0.18); }
+  .cell-btn.bend2.active { border-color: #cc2222; background: rgba(220,50,50,0.24); box-shadow: 0 0 10px rgba(220,50,50,0.35); }
+
+  /* Bend 3 semitoni — Marrone */
+  .cell-btn.bend3 { border-color: rgba(139,69,19,0.4); color: #7a3a0a; background: rgba(139,69,19,0.08); }
+  .cell-btn.bend3:hover { border-color: #7a3a0a; background: rgba(139,69,19,0.18); }
+  .cell-btn.bend3.active { border-color: #7a3a0a; background: rgba(139,69,19,0.24); box-shadow: 0 0 10px rgba(139,69,19,0.3); }
+
   .cell-btn.in-scale { outline: 2.5px solid; outline-offset: 1px; }
   .cell-btn.blow.in-scale  { outline-color: var(--accent2); }
   .cell-btn.draw.in-scale  { outline-color: var(--accent); }
-  .cell-btn.bend.in-scale  { outline-color: #b87aff; color: #b87aff; }
+  .cell-btn.bend1.in-scale { outline-color: #e07800; }
+  .cell-btn.bend2.in-scale { outline-color: #cc2222; }
+  .cell-btn.bend3.in-scale { outline-color: #7a3a0a; }
 
   /* ── DETECTED NOTE HIGHLIGHT ── */
   .cell-btn.detected {
@@ -180,9 +227,11 @@
   .chart-legend { display: flex; gap: 16px; margin-top: 10px; font-size: 0.68rem; color: var(--muted); }
   .chart-legend span { display: flex; align-items: center; gap: 5px; }
   .leg-dot { width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid; }
-  .leg-dot.blow { border-color: var(--accent2); background: rgba(74,232,180,0.12); }
-  .leg-dot.draw { border-color: var(--accent); background: rgba(232,200,74,0.12); }
-  .leg-dot.bend { border-color: rgba(180,140,255,0.4); background: rgba(180,140,255,0.06); }
+  .leg-dot.blow  { border-color: var(--accent2); background: rgba(74,232,180,0.12); }
+  .leg-dot.draw  { border-color: var(--accent);  background: rgba(232,200,74,0.12); }
+  .leg-dot.bend1 { border-color: #e07800; background: rgba(255,140,0,0.15); }
+  .leg-dot.bend2 { border-color: #cc2222; background: rgba(220,50,50,0.15); }
+  .leg-dot.bend3 { border-color: #7a3a0a; background: rgba(139,69,19,0.15); }
 
   /* ── SCALE SELECTOR ── */
   .scale-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
@@ -260,22 +309,37 @@
   .level-done-btn:hover { background: var(--in-tune); color: var(--bg); }
 
   /* ── HOLE NUMBER CENTER BAR ── */
+  .chart-inner { display: flex; flex-direction: column; gap: 0; min-width: 500px; }
+  .hole-bar {
+    display: flex; align-items: stretch;
+    margin: 2px 0;
+  }
+  .hole-bar-spacer {
+    width: 68px; min-width: 68px; max-width: 68px;
+    flex-shrink: 0;
+  }
+  .hole-bar-track {
+    display: flex; flex: 1;
+    background: #1e2035;
+    border-radius: 8px;
+    overflow: hidden;
+  }
   .hole-number-cell {
-    background: #1a1a2e;
+    flex: 1;
+    background: #1e2035;
     color: #ffffff;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     text-align: center;
-    padding: 7px 2px;
-    border-radius: 4px;
-    letter-spacing: 0.05em;
+    padding: 8px 0;
+    letter-spacing: 0.04em;
     user-select: none;
+    border-right: 1px solid rgba(255,255,255,0.07);
   }
-  body.light .hole-number-cell {
-    background: #2a2a3e;
-    color: #ffffff;
-  }
+  .hole-number-cell:last-child { border-right: none; }
+  body.light .hole-bar-track  { background: #2a2a3e; }
+  body.light .hole-number-cell { background: #2a2a3e; border-right-color: rgba(255,255,255,0.1); }
 
   /* ── CIRCLE OF FIFTHS ── */
   .cof-subtitle { font-size: 0.72rem; color: var(--muted); margin-bottom: 14px; }
@@ -299,6 +363,7 @@
 <body class="light">
 
 <div class="top-bar">
+  <div class="version-badge">v1.0.0</div>
   <div class="toggle-pill">
     <button id="langIt" class="active" onclick="setLang('it')">IT</button>
     <button id="langEn" onclick="setLang('en')">EN</button>
@@ -355,14 +420,16 @@
   <div class="scale-legend" id="scaleLegend"></div>
   <div class="chart-wrap">
     <table class="note-chart" id="noteChart">
-      <thead><tr id="chartHeader"></tr></thead>
+      <colgroup id="chartCols"></colgroup>
       <tbody id="chartBody"></tbody>
     </table>
   </div>
   <div class="chart-legend">
     <span><div class="leg-dot blow"></div> <span data-i18n="blow">Soffiata (blow)</span></span>
     <span><div class="leg-dot draw"></div> <span data-i18n="draw">Aspirata (draw)</span></span>
-    <span><div class="leg-dot bend"></div> <span data-i18n="bend">Bend / semitono</span></span>
+    <span><div class="leg-dot bend1"></div> <span>Bend 1 semitono</span></span>
+    <span><div class="leg-dot bend2"></div> <span>Bend 2 semitoni</span></span>
+    <span><div class="leg-dot bend3"></div> <span>Bend 3 semitoni</span></span>
   </div>
 </div>
 
@@ -652,82 +719,97 @@ function buildKeySelector() {
 }
 
 // ═══════════════════════════════════════
-//  NOTE CHART
+//  NOTE CHART — singola tabella
 // ═══════════════════════════════════════
 function buildChart() {
   const holes = getHoles();
   const body  = document.getElementById('chartBody');
-  const hdr   = document.getElementById('chartHeader');
+  const cols  = document.getElementById('chartCols');
+  body.innerHTML = ''; cols.innerHTML = '';
 
-  // Nascondi header originale — usiamo la barra fori centrale
-  hdr.innerHTML = '';
+  // Colgroup — 1 col label + 10 col note, larghezza uguale
+  const colLabel = document.createElement('col');
+  colLabel.style.width = '64px';
+  cols.appendChild(colLabel);
+  holes.forEach(() => {
+    const col = document.createElement('col');
+    col.style.width = '9%';
+    cols.appendChild(col);
+  });
 
-  body.innerHTML = '';
-
-  // Righe sopra (blow bends + blow)
   const ROWS_TOP = [
-    {labelKey:'rowBlowB2', type:'bend', get:h=>h.blowBends[1]??null},
-    {labelKey:'rowBlowB1', type:'bend', get:h=>h.blowBends[0]??null},
-    {labelKey:'rowBlow',   type:'blow', get:h=>h.blow},
+    {labelKey:'rowBlowB2', type:'bend2', get:h=>h.blowBends[1]??null},
+    {labelKey:'rowBlowB1', type:'bend1', get:h=>h.blowBends[0]??null},
+    {labelKey:'rowBlow',   type:'blow',  get:h=>h.blow},
   ];
-
-  // Righe sotto (draw + draw bends)
   const ROWS_BOT = [
-    {labelKey:'rowDraw',   type:'draw', get:h=>h.draw},
-    {labelKey:'rowDrawB1', type:'bend', get:h=>h.drawBends[0]??null},
-    {labelKey:'rowDrawB2', type:'bend', get:h=>h.drawBends[1]??null},
-    {labelKey:'rowDrawB3', type:'bend', get:h=>h.drawBends[2]??null},
+    {labelKey:'rowDraw',   type:'draw',  get:h=>h.draw},
+    {labelKey:'rowDrawB1', type:'bend1', get:h=>h.drawBends[0]??null},
+    {labelKey:'rowDrawB2', type:'bend2', get:h=>h.drawBends[1]??null},
+    {labelKey:'rowDrawB3', type:'bend3', get:h=>h.drawBends[2]??null},
   ];
 
   function makeRow(row) {
-    const vals = holes.map(h=>row.get(h));
-    if (vals.every(v=>v===null)) return null;
-    const tr = document.createElement('tr');
-    // empty label cell
-    const tdL = document.createElement('td'); tdL.className='row-label'; tdL.textContent=t(row.labelKey); tr.appendChild(tdL);
-    holes.forEach((h,i) => {
+    const vals = holes.map(h => row.get(h));
+    if (vals.every(v => v === null)) return;
+    const tr  = document.createElement('tr');
+    const tdL = document.createElement('td');
+    tdL.className = 'row-label';
+    tdL.textContent = t(row.labelKey);
+    tr.appendChild(tdL);
+    holes.forEach((h, i) => {
       const midi = vals[i];
       const td   = document.createElement('td');
+      td.style.padding = '2px 1px';
       const btn  = document.createElement('button');
-      if (midi!==null) {
-        btn.className = 'cell-btn '+row.type;
+      if (midi !== null) {
+        btn.className = 'cell-btn ' + row.type;
         btn.textContent = nl(midi);
         btn.dataset.midi = midi;
-        btn.addEventListener('click', ()=>selectNote(midi,btn));
-        if (midi===selectedMidi) btn.classList.add('active');
+        btn.addEventListener('click', () => selectNote(midi, btn));
+        if (midi === selectedMidi) btn.classList.add('active');
       } else {
-        btn.className='cell-btn empty'; btn.textContent='·'; btn.disabled=true;
+        btn.className = 'cell-btn empty';
+        btn.textContent = '·';
+        btn.disabled = true;
       }
-      td.appendChild(btn); tr.appendChild(td);
+      td.appendChild(btn);
+      tr.appendChild(td);
     });
-    return tr;
+    body.appendChild(tr);
   }
 
-  // Aggiungi righe TOP
-  ROWS_TOP.forEach(row => { const tr=makeRow(row); if(tr) body.appendChild(tr); });
+  // Righe sopra
+  ROWS_TOP.forEach(row => makeRow(row));
 
-  // ── BARRA FORI CENTRALE ──
-  const trHoles = document.createElement('tr');
-  const tdHoleLabel = document.createElement('td');
-  tdHoleLabel.className = 'row-label';
-  tdHoleLabel.style.cssText = 'font-size:0.6rem;color:var(--muted);';
-  tdHoleLabel.textContent = t('holeLabel');
-  trHoles.appendChild(tdHoleLabel);
+  // ── Riga fori centrale ──
+  const trH = document.createElement('tr');
+  trH.className = 'hole-row';
 
-  holes.forEach(h => {
+  const tdHL = document.createElement('td');
+  tdHL.className = 'row-label';
+  tdHL.style.cssText = 'font-size:0.55rem;color:var(--muted);padding-right:4px;';
+  tdHL.textContent = t('holeLabel');
+  trH.appendChild(tdHL);
+
+  holes.forEach((h, i) => {
     const td  = document.createElement('td');
+    td.style.padding = '0 1px';
     const div = document.createElement('div');
     div.className = 'hole-number-cell';
+    // Angoli arrotondati solo ai bordi
+    if (i === 0)              div.style.borderRadius = '6px 0 0 6px';
+    if (i === holes.length-1) div.style.borderRadius = '0 6px 6px 0';
     div.textContent = h.n;
     td.appendChild(div);
-    trHoles.appendChild(td);
+    trH.appendChild(td);
   });
-  body.appendChild(trHoles);
+  body.appendChild(trH);
 
-  // Aggiungi righe BOTTOM
-  ROWS_BOT.forEach(row => { const tr=makeRow(row); if(tr) body.appendChild(tr); });
+  // Righe sotto
+  ROWS_BOT.forEach(row => makeRow(row));
 
-  if (typeof updateScaleHighlight==='function') updateScaleHighlight();
+  if (typeof updateScaleHighlight === 'function') updateScaleHighlight();
 }
 
 // ═══════════════════════════════════════
