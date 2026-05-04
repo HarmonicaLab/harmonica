@@ -361,12 +361,27 @@ function buildMap(key){
   const r=key.root,m=[];
   for(let i=0;i<10;i++){
     const h=i+1;
-    m.push({midi:r+BASE_BLOW[i],hz:midi2hz(r+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
-    m.push({midi:r+BASE_DRAW[i],hz:midi2hz(r+BASE_DRAW[i]),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
+    const blow=r+BASE_BLOW[i];
+    const draw=r+BASE_DRAW[i];
+    m.push({midi:blow,hz:midi2hz(blow),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
+    m.push({midi:draw,hz:midi2hz(draw),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
     if(BASE_DB1[i]!=null)m.push({midi:r+BASE_DB1[i],hz:midi2hz(r+BASE_DB1[i]),hole:h,dir:'drawbend1',sym:"↓'",semis:1,blowbend:false});
     if(BASE_DB2[i]!=null)m.push({midi:r+BASE_DB2[i],hz:midi2hz(r+BASE_DB2[i]),hole:h,dir:'drawbend2',sym:"↓''",semis:2,blowbend:false});
     if(BASE_DB3[i]!=null)m.push({midi:r+BASE_DB3[i],hz:midi2hz(r+BASE_DB3[i]),hole:h,dir:'drawbend3',sym:"↓'''",semis:3,blowbend:false});
     if(BASE_BB1[i]!=null)m.push({midi:r+BASE_BB1[i],hz:midi2hz(r+BASE_BB1[i]),hole:h,dir:'blowbend1',sym:"↑'",semis:1,blowbend:true});
+  }
+  // Per tonalità con root >= 65 (F4 e sopra), aggiungi anche le note
+  // dei fori 1-3 un'ottava sotto per catturare YIN che rileva ottava bassa
+  if(key.root>=65){
+    const rLow=key.root-12;
+    for(let i=0;i<3;i++){
+      const h=i+1;
+      m.push({midi:rLow+BASE_BLOW[i],hz:midi2hz(rLow+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
+      m.push({midi:rLow+BASE_DRAW[i],hz:midi2hz(rLow+BASE_DRAW[i]),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
+      if(BASE_DB1[i]!=null)m.push({midi:rLow+BASE_DB1[i],hz:midi2hz(rLow+BASE_DB1[i]),hole:h,dir:'drawbend1',sym:"↓'",semis:1,blowbend:false});
+      if(BASE_DB2[i]!=null)m.push({midi:rLow+BASE_DB2[i],hz:midi2hz(rLow+BASE_DB2[i]),hole:h,dir:'drawbend2',sym:"↓''",semis:2,blowbend:false});
+      if(BASE_DB3[i]!=null)m.push({midi:rLow+BASE_DB3[i],hz:midi2hz(rLow+BASE_DB3[i]),hole:h,dir:'drawbend3',sym:"↓'''",semis:3,blowbend:false});
+    }
   }
   return m;
 }
