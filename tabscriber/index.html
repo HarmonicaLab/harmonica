@@ -587,7 +587,7 @@ function loop(){
     setBadge('idle',t('badge_silence'));highlight(null);setAddBtn(false,null);return;
   }
   const freq=detectPitch(buf,actx.sampleRate);
-  if(freq>100&&freq<2100){
+  if(freq>80&&freq<2100){
     const match=findClosest(freq);
     if(match){
       curMatch=match;
