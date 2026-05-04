@@ -363,7 +363,7 @@
 <body class="light">
 
 <div class="top-bar">
-  <div class="version-badge">v1.0.0</div>
+  <div class="version-badge">v1.2</div>
   <div class="toggle-pill">
     <button id="langIt" class="active" onclick="setLang('it')">IT</button>
     <button id="langEn" onclick="setLang('en')">EN</button>
@@ -841,13 +841,13 @@ toneBtn.addEventListener('click', ()=>tonePlaying?stopTone():playTone());
 function playTone() {
   if (selectedMidi===null) return;
   const ctx=getCtx(); stopTone();
-  toneGain=ctx.createGain(); toneGain.gain.setValueAtTime(0,ctx.currentTime); toneGain.gain.linearRampToValueAtTime(0.7,ctx.currentTime+0.05);
+  toneGain=ctx.createGain(); toneGain.gain.setValueAtTime(0,ctx.currentTime); toneGain.gain.linearRampToValueAtTime(1.0,ctx.currentTime+0.05);
   toneOsc=ctx.createOscillator(); toneOsc.type='sine'; toneOsc.frequency.value=midiToFreq(selectedMidi);
   toneOsc.connect(toneGain); toneGain.connect(ctx.destination); toneOsc.start();
   tonePlaying=true; toneBtn.classList.add('playing');
   toneBtn.querySelector('svg').innerHTML='<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
   toneBtn.querySelector('span').textContent=' Stop';
-  setTimeout(()=>{if(tonePlaying)stopTone();},3000);
+  setTimeout(()=>{if(tonePlaying)stopTone();},5000);
 }
 
 function stopTone() {
