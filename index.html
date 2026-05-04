@@ -259,6 +259,24 @@
   .level-done-btn { margin-top: 10px; padding: 7px 18px; border-radius: 8px; border: 1.5px solid var(--in-tune); background: transparent; color: var(--in-tune); font-family: 'DM Sans', sans-serif; font-size: 0.78rem; cursor: pointer; transition: all 0.15s; }
   .level-done-btn:hover { background: var(--in-tune); color: var(--bg); }
 
+  /* ── HOLE NUMBER CENTER BAR ── */
+  .hole-number-cell {
+    background: #1a1a2e;
+    color: #ffffff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 7px 2px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+  body.light .hole-number-cell {
+    background: #2a2a3e;
+    color: #ffffff;
+  }
+
   /* ── CIRCLE OF FIFTHS ── */
   .cof-subtitle { font-size: 0.72rem; color: var(--muted); margin-bottom: 14px; }
   .cof-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
@@ -342,8 +360,8 @@
     </table>
   </div>
   <div class="chart-legend">
-    <span><div class="leg-dot blow"></div> <span data-i18n="blow">Espira (blow)</span></span>
-    <span><div class="leg-dot draw"></div> <span data-i18n="draw">Aspira (draw)</span></span>
+    <span><div class="leg-dot blow"></div> <span data-i18n="blow">Soffiata (blow)</span></span>
+    <span><div class="leg-dot draw"></div> <span data-i18n="draw">Aspirata (draw)</span></span>
     <span><div class="leg-dot bend"></div> <span data-i18n="bend">Bend / semitono</span></span>
   </div>
 </div>
@@ -432,8 +450,8 @@ const I18N = {
     inTune:       '✓ In tune!',
     correct:      '🎯 Nota corretta — In tune!',
     noteTitle:    'Note — Clicca per selezionare e ascoltare',
-    blow:         'Espira (blow)',
-    draw:         'Aspira (draw)',
+    blow:         'Soffiata (blow)',
+    draw:         'Aspirata (draw)',
     bend:         'Bend / semitono',
     selectedNote: 'Nota selezionata',
     listenNote:   'Ascolta la nota',
@@ -451,8 +469,8 @@ const I18N = {
     scaleMixo:    'Mixolydian',
     rowBlowB2:    '▲ Bend 2',
     rowBlowB1:    '▲ Bend 1',
-    rowBlow:      '▲ Espira',
-    rowDraw:      '▼ Aspira',
+    rowBlow:      '▲ Soffiata',
+    rowDraw:      '▼ Aspirata',
     rowDrawB1:    '▼ Bend 1',
     rowDrawB2:    '▼ Bend 2',
     rowDrawB3:    '▼ Bend 3',
@@ -638,30 +656,34 @@ function buildKeySelector() {
 // ═══════════════════════════════════════
 function buildChart() {
   const holes = getHoles();
+  const body  = document.getElementById('chartBody');
   const hdr   = document.getElementById('chartHeader');
-  hdr.innerHTML = '';
-  const thE = document.createElement('th'); thE.style.width='72px'; hdr.appendChild(thE);
-  holes.forEach(h => {
-    const th = document.createElement('th'); th.className='hole-th'; th.textContent=h.n; hdr.appendChild(th);
-  });
 
-  const ROWS = [
+  // Nascondi header originale — usiamo la barra fori centrale
+  hdr.innerHTML = '';
+
+  body.innerHTML = '';
+
+  // Righe sopra (blow bends + blow)
+  const ROWS_TOP = [
     {labelKey:'rowBlowB2', type:'bend', get:h=>h.blowBends[1]??null},
     {labelKey:'rowBlowB1', type:'bend', get:h=>h.blowBends[0]??null},
     {labelKey:'rowBlow',   type:'blow', get:h=>h.blow},
+  ];
+
+  // Righe sotto (draw + draw bends)
+  const ROWS_BOT = [
     {labelKey:'rowDraw',   type:'draw', get:h=>h.draw},
     {labelKey:'rowDrawB1', type:'bend', get:h=>h.drawBends[0]??null},
     {labelKey:'rowDrawB2', type:'bend', get:h=>h.drawBends[1]??null},
     {labelKey:'rowDrawB3', type:'bend', get:h=>h.drawBends[2]??null},
   ];
 
-  const body = document.getElementById('chartBody');
-  body.innerHTML = '';
-
-  ROWS.forEach(row => {
+  function makeRow(row) {
     const vals = holes.map(h=>row.get(h));
-    if (vals.every(v=>v===null)) return;
+    if (vals.every(v=>v===null)) return null;
     const tr = document.createElement('tr');
+    // empty label cell
     const tdL = document.createElement('td'); tdL.className='row-label'; tdL.textContent=t(row.labelKey); tr.appendChild(tdL);
     holes.forEach((h,i) => {
       const midi = vals[i];
@@ -678,8 +700,32 @@ function buildChart() {
       }
       td.appendChild(btn); tr.appendChild(td);
     });
-    body.appendChild(tr);
+    return tr;
+  }
+
+  // Aggiungi righe TOP
+  ROWS_TOP.forEach(row => { const tr=makeRow(row); if(tr) body.appendChild(tr); });
+
+  // ── BARRA FORI CENTRALE ──
+  const trHoles = document.createElement('tr');
+  const tdHoleLabel = document.createElement('td');
+  tdHoleLabel.className = 'row-label';
+  tdHoleLabel.style.cssText = 'font-size:0.6rem;color:var(--muted);';
+  tdHoleLabel.textContent = t('holeLabel');
+  trHoles.appendChild(tdHoleLabel);
+
+  holes.forEach(h => {
+    const td  = document.createElement('td');
+    const div = document.createElement('div');
+    div.className = 'hole-number-cell';
+    div.textContent = h.n;
+    td.appendChild(div);
+    trHoles.appendChild(td);
   });
+  body.appendChild(trHoles);
+
+  // Aggiungi righe BOTTOM
+  ROWS_BOT.forEach(row => { const tr=makeRow(row); if(tr) body.appendChild(tr); });
 
   if (typeof updateScaleHighlight==='function') updateScaleHighlight();
 }
