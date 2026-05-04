@@ -841,7 +841,7 @@ toneBtn.addEventListener('click', ()=>tonePlaying?stopTone():playTone());
 function playTone() {
   if (selectedMidi===null) return;
   const ctx=getCtx(); stopTone();
-  toneGain=ctx.createGain(); toneGain.gain.setValueAtTime(0,ctx.currentTime); toneGain.gain.linearRampToValueAtTime(0.35,ctx.currentTime+0.05);
+  toneGain=ctx.createGain(); toneGain.gain.setValueAtTime(0,ctx.currentTime); toneGain.gain.linearRampToValueAtTime(0.7,ctx.currentTime+0.05);
   toneOsc=ctx.createOscillator(); toneOsc.type='sine'; toneOsc.frequency.value=midiToFreq(selectedMidi);
   toneOsc.connect(toneGain); toneGain.connect(ctx.destination); toneOsc.start();
   tonePlaying=true; toneBtn.classList.add('playing');
