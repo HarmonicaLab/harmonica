@@ -378,7 +378,7 @@ function findClosest(hz){
   }
   if(!best) return null;
   const cents=Math.round(1200*Math.log2(hz/best.hz));
-  if(Math.abs(cents)>100) return null;
+  if(Math.abs(cents)>150) return null;
   return{...best,cents};
 }
 HMAP=buildMap(currentKey);
