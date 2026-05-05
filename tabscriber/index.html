@@ -157,7 +157,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
         <span class="mic-dot"></span><span id="micLbl"></span>
       </button>
       <button class="mic-btn" id="autoBtn" onclick="toggleAuto()">
-        <span class="mic-dot"></span><span id="autoLbl">Auto 2s</span>
+        <span class="mic-dot"></span>      <span id="autoLbl">Auto 1s</span>
       </button>
     </div>
   </div>
@@ -453,7 +453,7 @@ function toggleAuto() {
     lbl.textContent = 'Auto ON';
   } else {
     btn.classList.remove('auto-on');
-    lbl.textContent = 'Auto 2s';
+            lbl.textContent = 'Auto 1s';
     resetAutoTimer();
   }
 }
@@ -469,7 +469,7 @@ function tickAuto(match) {
     resetAutoTimer();
     autoHoldMatch = match;
     var start = Date.now();
-    var HOLD = 2000;
+    var HOLD = 1000;
     function tick() {
       var pct = Math.min((Date.now() - start) / HOLD, 1);
       var fill = document.getElementById('cFill');
