@@ -8,44 +8,34 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0f14; --surface:#161922; --surface2:#1e2230; --border:#2a3040;
-  --accent:#e8c84a; --accent2:#4ae8b4; --danger:#e84a4a;
-  --text:#e8eaf0; --muted:#6b7280; --in-tune:#4ae8b4; --close:#e8c84a;
+  --bg:#ffffff;--surface:#ffffff;--surface2:#f0f2f5;--border:#e0e4ec;
+  --accent:#e8c84a;--accent2:#4ae8b4;--danger:#e84a4a;
+  --text:#1a1d26;--muted:#7a828f;--in-tune:#1aaa80;--close:#c9a800;
   --purple:#b87aff;
 }
-body.light{
-  --bg:#f4f5f7; --surface:#ffffff; --surface2:#eef0f4; --border:#d0d5e0;
-  --text:#1a1d26; --muted:#7a828f; --in-tune:#1aaa80; --close:#c9a800;
-  --danger:#cc3333; --purple:#8855cc;
+body.dark{
+  --bg:#0d0f14;--surface:#161922;--surface2:#1e2230;--border:#2a3040;
+  --text:#e8eaf0;--muted:#6b7280;--in-tune:#4ae8b4;--close:#e8c84a;
+  --danger:#e84a4a;
 }
 body{
   background:var(--bg);color:var(--text);
   font-family:'DM Sans',sans-serif;
   min-height:100vh;display:flex;flex-direction:column;align-items:center;
   padding:24px 16px 48px;transition:background .3s,color .3s;
-  background-image:
-    radial-gradient(ellipse 80% 40% at 50% -10%,rgba(232,200,74,.04) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 30% at 80% 100%,rgba(74,232,180,.03) 0%,transparent 50%);
 }
-
-/* TOP BAR */
-.top-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;width:100%;max-width:720px;margin-bottom:12px}
+.wrap{width:100%;max-width:720px}
+.top-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:12px}
 .toggle-pill{display:flex;border-radius:50px;border:1.5px solid var(--border);overflow:hidden;background:var(--surface2)}
 .toggle-pill button{padding:5px 11px;border:none;background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .15s}
-.toggle-pill button.active{background:var(--accent);color:var(--bg);font-weight:600}
-
-/* HEADER */
-header{text-align:center;margin-bottom:28px;width:100%;max-width:720px}
+.toggle-pill button.active{background:var(--accent);color:#1a1d26;font-weight:600}
+header{text-align:center;margin-bottom:28px}
 header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,7vw,3.4rem);letter-spacing:.05em;color:var(--accent);line-height:1;margin-bottom:6px}
 header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06em;text-transform:uppercase}
-
-/* CARD */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;width:100%;max-width:720px;margin-bottom:14px;transition:background .3s,border-color .3s}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:14px;transition:background .3s,border-color .3s}
 .section-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.12em;color:var(--muted);margin-bottom:14px}
-
-/* KEY SELECTOR */
 .key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.key-row .key-lbl{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.key-lbl{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .key-btns{display:flex;flex-wrap:wrap;gap:6px}
 .key-btn{padding:6px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.78rem;cursor:pointer;transition:all .15s}
 .key-btn:hover{border-color:var(--accent);color:var(--text)}
@@ -54,10 +44,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 /* TUNER */
 .tuner-inner{text-align:center}
 .pitch-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--muted);letter-spacing:.05em;min-height:80px;display:flex;align-items:center;justify-content:center;transition:color .1s}
-.pitch-big.on{color:var(--accent2)}
-.pitch-big.bend{color:var(--accent)}
-.pitch-big.blowbend{color:var(--purple)}
-.pitch-big.oob{color:var(--danger)}
+.pitch-big.on{color:var(--accent2)}.pitch-big.bend{color:#e88c32}.pitch-big.blowbend{color:#e88c32}.pitch-big.oob{color:var(--danger)}
 .freq-sub{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px;min-height:18px}
 .cents-wrap{position:relative;height:6px;background:var(--surface2);border-radius:3px;margin:14px auto;max-width:320px;border:1px solid var(--border)}
 .cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
@@ -66,7 +53,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .badge{display:inline-block;font-size:.72rem;padding:3px 12px;border-radius:999px;font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:.06em;border:1px solid transparent}
 .badge.intune{background:rgba(74,232,180,.12);color:var(--in-tune);border-color:rgba(74,232,180,.3)}
 .badge.sharp,.badge.flat,.badge.bend{background:rgba(232,200,74,.12);color:var(--close);border-color:rgba(232,200,74,.3)}
-.badge.blowbend{background:rgba(184,122,255,.12);color:var(--purple);border-color:rgba(184,122,255,.3)}
+.badge.blowbend{background:rgba(232,140,50,.12);color:#e88c32;border-color:rgba(232,140,50,.3)}
 .badge.idle{background:var(--surface2);color:var(--muted);border-color:var(--border)}
 .badge.oob{background:rgba(232,74,74,.12);color:var(--danger);border-color:rgba(232,74,74,.3)}
 .mic-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 24px;border-radius:50px;border:2px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;margin-top:14px;transition:all .2s}
@@ -76,56 +63,55 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .mic-btn.on .mic-dot{box-shadow:0 0 8px var(--in-tune);animation:pulse 1.2s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* HARP TABLE */
-.leg-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+/* HARP VISUAL */
+.leg-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .leg{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--muted)}
 .leg-sq{width:11px;height:11px;border-radius:3px;border:1.5px solid}
-.harp-scroll{overflow-x:auto;padding-bottom:4px}
-.harp-table{border-collapse:separate;border-spacing:3px;width:max-content}
-.harp-table th{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);text-align:center;padding:4px 2px 6px;font-weight:500}
-.harp-table th.hole-th{background:var(--surface2);border-radius:6px;color:var(--text);font-size:.7rem}
-.harp-table td{text-align:center;padding:0}
-.row-label{font-size:.65rem;color:var(--muted);text-align:right;padding-right:8px;white-space:nowrap;width:70px;font-family:'DM Sans',sans-serif}
-.cell{width:56px;height:28px;border-radius:7px;border:1.5px solid transparent;font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--muted);transition:all .13s}
-.cell.blow{border-color:rgba(74,232,180,.28);color:var(--accent2);background:rgba(74,232,180,.08)}
-.cell.draw{border-color:rgba(232,200,74,.28);color:var(--accent);background:rgba(232,200,74,.08)}
-/* Bend 1 semitono — arancione */
-.cell.drawbend1{border-color:rgba(232,140,50,.4);color:#e88c32;background:rgba(232,140,50,.08)}
-.cell.blowbend1{border-color:rgba(232,140,50,.4);color:#e88c32;background:rgba(232,140,50,.08)}
-/* Bend 2 semitoni — rosso */
-.cell.drawbend2{border-color:rgba(232,74,74,.4);color:#e84a4a;background:rgba(232,74,74,.08)}
-.cell.blowbend2{border-color:rgba(232,74,74,.4);color:#e84a4a;background:rgba(232,74,74,.08)}
-/* Bend 3 semitoni — marrone */
-.cell.drawbend3{border-color:rgba(139,90,43,.5);color:#8b5a2b;background:rgba(139,90,43,.08)}
+.harp-scroll{overflow-x:auto;padding-bottom:8px}
+.harp-visual{display:inline-flex;flex-direction:column;gap:5px;min-width:620px;width:100%}
+.harp-bend-row{display:flex;gap:5px}
+.harp-blow-row{display:flex;gap:5px}
+.harp-holes-row{display:flex;background:#1a1f2e;border-radius:8px;padding:4px 6px;gap:0}
+body:not(.dark) .harp-holes-row{background:#2d3348}
+.harp-draw-row{display:flex;gap:5px}
 
-.cell.drawbend1.active{border-color:#e88c32;background:rgba(232,140,50,.22);box-shadow:0 0 12px rgba(232,140,50,.4)}
-.cell.blowbend1.active{border-color:#e88c32;background:rgba(232,140,50,.22);box-shadow:0 0 12px rgba(232,140,50,.4)}
-.cell.drawbend2.active{border-color:#e84a4a;background:rgba(232,74,74,.22);box-shadow:0 0 12px rgba(232,74,74,.4)}
-.cell.blowbend2.active{border-color:#e84a4a;background:rgba(232,74,74,.22);box-shadow:0 0 12px rgba(232,74,74,.4)}
-.cell.drawbend3.active{border-color:#8b5a2b;background:rgba(139,90,43,.22);box-shadow:0 0 12px rgba(139,90,43,.4)}
-.cell.empty{background:transparent;border-color:transparent;color:transparent}
-.cell.active{transform:scale(1.12);font-weight:700;position:relative;z-index:2}
-.cell.blow.active{border-color:var(--accent2);background:rgba(74,232,180,.24);box-shadow:0 0 12px rgba(74,232,180,.4)}
-.cell.draw.active{border-color:var(--accent);background:rgba(232,200,74,.24);box-shadow:0 0 12px rgba(232,200,74,.4)}
-.cell.drawbend.active,.cell.blowbend.active{border-color:var(--purple);background:rgba(184,122,255,.18);box-shadow:0 0 12px rgba(184,122,255,.4)}
+.hcell{flex:1;min-width:0;height:52px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.82rem;font-weight:600;transition:all .13s;border-radius:8px;border:1.5px solid transparent}
+.hcell.blow{background:rgba(74,232,180,.1);color:var(--accent2);border-color:rgba(74,232,180,.3)}
+.hcell.draw{background:rgba(232,200,74,.1);color:var(--accent);border-color:rgba(232,200,74,.3)}
+.hcell.blow.active{background:rgba(74,232,180,.35);border-color:var(--accent2);box-shadow:0 0 12px rgba(74,232,180,.4);transform:scale(1.06)}
+.hcell.draw.active{background:rgba(232,200,74,.35);border-color:var(--accent);box-shadow:0 0 12px rgba(232,200,74,.4);transform:scale(1.06)}
 
-/* TABLATURA */
+.hole-num{flex:1;min-width:0;height:30px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#fff}
+
+.hbend{flex:1;min-width:0;height:40px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.75rem;font-weight:600;border-radius:8px;border:1.5px solid transparent;transition:all .13s}
+.hbend.empty{background:transparent;border-color:transparent;color:transparent;pointer-events:none}
+.hbend.blowbend1{background:rgba(232,140,50,.1);color:#e88c32;border-color:rgba(232,140,50,.35)}
+.hbend.drawbend1{background:rgba(232,140,50,.1);color:#e88c32;border-color:rgba(232,140,50,.35)}
+.hbend.drawbend2{background:rgba(232,74,74,.1);color:#e84a4a;border-color:rgba(232,74,74,.35)}
+.hbend.drawbend3{background:rgba(139,90,43,.1);color:#8b5a2b;border-color:rgba(139,90,43,.35)}
+.hbend.blowbend1.active{background:rgba(232,140,50,.3);border-color:#e88c32;box-shadow:0 0 10px rgba(232,140,50,.4);transform:scale(1.06)}
+.hbend.drawbend1.active{background:rgba(232,140,50,.3);border-color:#e88c32;box-shadow:0 0 10px rgba(232,140,50,.4);transform:scale(1.06)}
+.hbend.drawbend2.active{background:rgba(232,74,74,.3);border-color:#e84a4a;box-shadow:0 0 10px rgba(232,74,74,.4);transform:scale(1.06)}
+.hbend.drawbend3.active{background:rgba(139,90,43,.3);border-color:#8b5a2b;box-shadow:0 0 10px rgba(139,90,43,.4);transform:scale(1.06)}
+
+/* TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.btn{display:inline-block;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;text-align:center;line-height:1.4;user-select:none;-webkit-user-select:none}
 .btn:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
 .btn:disabled{opacity:.3;cursor:not-allowed}
 .btn.primary{border-color:var(--accent2);color:var(--accent2)}
 .btn.primary:hover:not(:disabled){background:rgba(74,232,180,.1)}
-.btn.primary.bend{border-color:var(--accent);color:var(--accent)}
-.btn.primary.bend:hover:not(:disabled){background:rgba(232,200,74,.1)}
-.btn.primary.blowbend{border-color:var(--purple);color:var(--purple)}
-.btn.primary.blowbend:hover:not(:disabled){background:rgba(184,122,255,.1)}
+.btn.primary.bend{border-color:#e88c32;color:#e88c32}
+.btn.primary.bend:hover:not(:disabled){background:rgba(232,140,50,.1)}
+.btn.primary.blowbend{border-color:#e88c32;color:#e88c32}
+.btn.primary.blowbend:hover:not(:disabled){background:rgba(232,140,50,.1)}
 .btn.danger{border-color:rgba(232,74,74,.4);color:var(--danger)}
 .btn.danger:hover:not(:disabled){background:rgba(232,74,74,.1)}
 .spacer{flex:1}
 .sel-bar{display:none;align-items:center;gap:8px;font-size:.75rem;background:rgba(184,122,255,.08);color:var(--purple);border:1px solid rgba(184,122,255,.3);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace}
 .sel-bar.on{display:inline-flex}
 
+/* CHIPS */
 .tab-notes{display:block;min-height:52px;padding:4px 0;margin-bottom:14px}
 .tab-row{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;min-height:44px;padding:4px 0 10px;border-bottom:1.5px dashed var(--border)}
 .tab-row:last-child{border-bottom:none}
@@ -133,16 +119,15 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .chip:hover{border-color:var(--muted)}
 .chip.sel{background:rgba(184,122,255,.1);border-color:var(--purple)}
 .chip .arr{font-size:1.2rem;line-height:1;font-family:'DM Mono',monospace}
-.chip.blow .arr{color:var(--accent2)}
-.chip.draw .arr{color:var(--accent)}
+.chip.blow .arr{color:var(--accent2)}.chip.draw .arr{color:var(--accent)}
 .chip.drawbend1 .arr,.chip.blowbend1 .arr{color:#e88c32}
 .chip.drawbend2 .arr,.chip.blowbend2 .arr{color:#e84a4a}
 .chip.drawbend3 .arr{color:#8b5a2b}
 .chip .hn{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);line-height:1}
 .chip .nn{font-size:.6rem;color:var(--muted);font-family:'DM Mono',monospace}
 .chip.sel .hn,.chip.sel .nn{color:var(--purple)}
+.chip.separator{background:transparent;border:1.5px dashed var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:1rem;min-width:24px;padding:6px 8px}
 .empty-msg{font-size:.8rem;color:var(--muted);padding:6px 0;font-family:'DM Mono',monospace}
-
 .txt-out{padding:10px 14px;background:var(--surface2);border-radius:8px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:40px;border:1px solid var(--border);user-select:all;margin-bottom:10px}
 .btm-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 
@@ -153,38 +138,33 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .sess-row{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s}
 .sess-row:hover{border-color:var(--muted)}
 .sess-row.active{border-color:var(--accent2);background:rgba(74,232,180,.06)}
-.sess-name{flex:1;font-size:.82rem;color:var(--text);font-family:'DM Sans',sans-serif}
+.sess-name{flex:1;font-size:.82rem;color:var(--text)}
 .sess-name input{background:transparent;border:none;outline:none;color:var(--text);font-size:.82rem;width:100%;font-family:'DM Sans',sans-serif}
-.sess-row.active .sess-name{color:var(--accent2)}
-.sess-row.active .sess-meta{color:var(--accent2);opacity:.6}
+.sess-row.active .sess-name{color:var(--in-tune)}
 .sess-meta{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap}
-.sess-del{font-size:.8rem;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;line-height:1;transition:all .15s}
+.sess-del{font-size:.8rem;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .15s}
 .sess-del:hover{color:var(--danger);background:rgba(232,74,74,.1)}
 .sess-empty{font-size:.8rem;color:var(--muted);font-family:'DM Mono',monospace}
 </style>
 </head>
 <body>
-<div style="width:100%;max-width:720px">
-
-<!-- TOP BAR -->
+<div class="wrap">
 <div class="top-bar">
   <div class="toggle-pill">
     <button id="btnIT" class="active" onclick="setLang('it')">🇮🇹 IT</button>
     <button id="btnEN" onclick="setLang('en')">🇬🇧 EN</button>
   </div>
   <div class="toggle-pill">
-    <button id="themeDark" class="active" onclick="setTheme('dark')">🌙</button>
-    <button id="themeLight" onclick="setTheme('light')">☀️</button>
+    <button id="themeLight" class="active" onclick="setTheme('light')">☀️</button>
+    <button id="themeDark" onclick="setTheme('dark')">🌙</button>
   </div>
 </div>
 
-<!-- HEADER -->
 <header>
   <h1>Harmonica Lab Tab Transcriber</h1>
   <p id="subTitle"></p>
 </header>
 
-<!-- KEY -->
 <div class="card">
   <div class="key-row">
     <span class="key-lbl" data-i18n="key"></span>
@@ -192,7 +172,6 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   </div>
 </div>
 
-<!-- TUNER -->
 <div class="card">
   <div class="tuner-inner">
     <div class="pitch-big" id="pitchBig">—</div>
@@ -209,39 +188,36 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   </div>
 </div>
 
-<!-- HARP GRID -->
 <div class="card">
   <h2 class="section-label" data-i18n="grid_title"></h2>
   <div class="leg-row">
-    <div class="leg"><div class="leg-sq" style="border-color:rgba(74,232,180,.5);background:rgba(74,232,180,.08)"></div><span data-i18n="leg_blow"></span></div>
-    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,200,74,.5);background:rgba(232,200,74,.08)"></div><span data-i18n="leg_draw"></span></div>
-    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,140,50,.5);background:rgba(232,140,50,.08)"></div><span data-i18n="leg_drawbend"></span></div>
-    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,74,74,.5);background:rgba(232,74,74,.08)"></div><span data-i18n="leg_drawbend2"></span></div>
-    <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.5);background:rgba(139,90,43,.08)"></div><span data-i18n="leg_drawbend3"></span></div>
-    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,140,50,.5);background:rgba(232,140,50,.08)"></div><span data-i18n="leg_blowbend"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(74,232,180,.6);background:rgba(74,232,180,.1)"></div><span data-i18n="leg_blow"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,200,74,.6);background:rgba(232,200,74,.1)"></div><span data-i18n="leg_draw"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,140,50,.6);background:rgba(232,140,50,.1)"></div><span data-i18n="leg_drawbend"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,74,74,.6);background:rgba(232,74,74,.1)"></div><span data-i18n="leg_drawbend2"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.6);background:rgba(139,90,43,.1)"></div><span data-i18n="leg_drawbend3"></span></div>
   </div>
   <div class="harp-scroll">
-    <table class="harp-table" id="harpTable"></table>
+    <div class="harp-visual" id="harpVisual"></div>
   </div>
 </div>
 
-<!-- TABLATURA -->
 <div class="card">
   <h2 class="section-label" data-i18n="tab_title"></h2>
   <div class="toolbar">
     <button class="btn primary" id="addBtn" onclick="addNote()" disabled></button>
     <button class="btn" onclick="addSeparator()"><span style="pointer-events:none;display:block;width:100%;text-align:center">| <span data-i18n="separator"></span></span></button>
     <button class="btn" onclick="addNewline()"><span style="pointer-events:none;display:block;width:100%;text-align:center">↵ <span data-i18n="newline"></span></span></button>
-    <span class="sel-bar" id="selBar">
-      <span id="selCount">0</span> <span data-i18n="selected"></span>&nbsp;
-      <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" data-i18n="delete"></button>
-      <button class="btn" style="padding:2px 9px;font-size:.7rem" onclick="clearSel()">✕</button>
-    </span>
     <div class="spacer"></div>
     <button class="btn" id="undoBtn" onclick="undo()" disabled data-i18n="undo"></button>
     <button class="btn" id="redoBtn" onclick="redo()" disabled data-i18n="redo"></button>
     <button class="btn danger" onclick="clearAll()" data-i18n="clear_all"></button>
   </div>
+  <span class="sel-bar" id="selBar">
+    <span id="selCount">0</span> <span data-i18n="selected"></span>&nbsp;
+    <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" data-i18n="delete"></button>
+    <button class="btn" style="padding:2px 9px;font-size:.7rem" onclick="clearSel()">✕</button>
+  </span>
   <div class="tab-notes" id="tabNotes"></div>
   <div class="txt-out" id="txtOut">—</div>
   <div class="btm-row">
@@ -251,7 +227,6 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   </div>
 </div>
 
-<!-- SESSIONI -->
 <div class="card">
   <div class="sess-hdr">
     <h2 data-i18n="sessions"></h2>
@@ -260,13 +235,12 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   <div class="sess-list" id="sessList"></div>
 </div>
 
-<!-- FOOTER -->
 <div style="text-align:center;padding:16px 0 4px;font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.04em">
-  © 2025 HarmonicaLab · CC BY-NC 4.0 · 
+  © 2025 HarmonicaLab · CC BY-NC 4.0 ·
   <a href="https://harmonicalab.github.io/harmonica" target="_blank" style="color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border)">harmonicalab.github.io</a>
 </div>
-
 </div>
+
 <script>
 // ── I18N ──────────────────────────────────────────────────────────────────────
 const I18N={
@@ -282,14 +256,14 @@ const I18N={
     leg_blowbend:"↑' blow bend",
     row_bb1:"↑' bend",row_blow:'↑ Soffia',row_draw:'↓ Aspira',
     row_db1:"↓' bend",row_db2:"↓'' bend",row_db3:"↓''' bend",
-    add:'+ Aggiungi',selected:'selezionate',delete:'Elimina',
+    add:'+ Aggiungi',selected:'selezionate',delete:'Elimina',separator:'Battuta',newline:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clear_all:'Cancella tutto',
     copy:'Copia testo',export_pdf:'Esporta PDF',save_session:'Salva sessione',
     sessions:'Sessioni salvate',new_session:'+ Nuova sessione',
     no_sessions:'Nessuna sessione salvata',no_notes:'Nessuna nota ancora',
     prompt_name:'Nome della sessione:',confirm_delete:'Eliminare questa sessione?',
     no_notes_save:'Nessuna nota da salvare.',no_notes_export:'Nessuna nota da esportare.',
-    separator:'Battuta', newline:'A capo', newline:'A capo',
+    copied:'Copiato!',pdf_legend:'Legenda',pdf_graphic:'Tablatura grafica',
     pdf_text:'Tablatura testo',pdf_footer:'Generato con Harmonica Lab Tab Transcriber'},
   en:{title:'Harmonica Lab Tab Transcriber',sub:'Diatonic harmonica in',key:'Key:',
     grid_title:'Note grid',tab_title:'Tab',
@@ -303,29 +277,28 @@ const I18N={
     leg_blowbend:"↑' blow bend",
     row_bb1:"↑' bend",row_blow:'↑ Blow',row_draw:'↓ Draw',
     row_db1:"↓' bend",row_db2:"↓'' bend",row_db3:"↓''' bend",
-    add:'+ Add',selected:'selected',delete:'Delete',
+    add:'+ Add',selected:'selected',delete:'Delete',separator:'Bar',newline:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clear_all:'Clear all',
     copy:'Copy text',export_pdf:'Export PDF',save_session:'Save session',
     sessions:'Saved sessions',new_session:'+ New session',
     no_sessions:'No saved sessions',no_notes:'No notes yet',
     prompt_name:'Session name:',confirm_delete:'Delete this session?',
     no_notes_save:'No notes to save.',no_notes_export:'No notes to export.',
-    separator:'Bar', newline:'New line', newline:'New line',
+    copied:'Copied!',pdf_legend:'Legend',pdf_graphic:'Graphic tab',
     pdf_text:'Text tab',pdf_footer:'Generated with Harmonica Lab Tab Transcriber'}
 };
 let lang='it';
 const t=k=>I18N[lang][k]||k;
-
 function setLang(l){
   lang=l;
   document.getElementById('btnIT').classList.toggle('active',l==='it');
   document.getElementById('btnEN').classList.toggle('active',l==='en');
-  applyI18n();buildHarpTable();render();renderSess();
+  applyI18n();buildHarpVisual();render();renderSess();
 }
 function setTheme(th){
-  document.body.classList.toggle('light',th==='light');
-  document.getElementById('themeDark').classList.toggle('active',th==='dark');
+  document.body.classList.toggle('dark',th==='dark');
   document.getElementById('themeLight').classList.toggle('active',th==='light');
+  document.getElementById('themeDark').classList.toggle('active',th==='dark');
   localStorage.setItem('harp_theme',th);
 }
 function applyI18n(){
@@ -341,14 +314,12 @@ function applyI18n(){
 const NNAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 const mn=m=>NNAMES[((m%12)+12)%12];
 const midi2hz=m=>440*Math.pow(2,(m-69)/12);
-
 const BASE_BLOW=[0,4,7,12,16,19,24,28,31,36];
 const BASE_DRAW=[2,7,11,14,17,21,23,26,29,33];
-const BASE_DB1 =[1,6,10,13,null,null,null,null,null,null];
-const BASE_DB2 =[null,5,9,null,null,null,null,null,null,null];
-const BASE_DB3 =[null,null,8,null,null,null,null,null,null,null];
-const BASE_BB1 =[null,null,null,null,null,null,22,27,30,35];
-
+const BASE_DB1=[1,6,10,13,null,null,null,null,null,null];
+const BASE_DB2=[null,5,9,null,null,null,null,null,null,null];
+const BASE_DB3=[null,null,8,null,null,null,null,null,null,null];
+const BASE_BB1=[null,null,null,null,null,null,22,27,30,35];
 const KEYS=[
   {name:'C',root:60},{name:'D',root:62},{name:'E',root:64},
   {name:'F',root:65},{name:'G',root:67},{name:'A',root:57},
@@ -361,17 +332,13 @@ function buildMap(key){
   const r=key.root,m=[];
   for(let i=0;i<10;i++){
     const h=i+1;
-    const blow=r+BASE_BLOW[i];
-    const draw=r+BASE_DRAW[i];
-    m.push({midi:blow,hz:midi2hz(blow),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
-    m.push({midi:draw,hz:midi2hz(draw),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
+    m.push({midi:r+BASE_BLOW[i],hz:midi2hz(r+BASE_BLOW[i]),hole:h,dir:'blow',sym:'↑',semis:0,blowbend:false});
+    m.push({midi:r+BASE_DRAW[i],hz:midi2hz(r+BASE_DRAW[i]),hole:h,dir:'draw',sym:'↓',semis:0,blowbend:false});
     if(BASE_DB1[i]!=null)m.push({midi:r+BASE_DB1[i],hz:midi2hz(r+BASE_DB1[i]),hole:h,dir:'drawbend1',sym:"↓'",semis:1,blowbend:false});
     if(BASE_DB2[i]!=null)m.push({midi:r+BASE_DB2[i],hz:midi2hz(r+BASE_DB2[i]),hole:h,dir:'drawbend2',sym:"↓''",semis:2,blowbend:false});
     if(BASE_DB3[i]!=null)m.push({midi:r+BASE_DB3[i],hz:midi2hz(r+BASE_DB3[i]),hole:h,dir:'drawbend3',sym:"↓'''",semis:3,blowbend:false});
     if(BASE_BB1[i]!=null)m.push({midi:r+BASE_BB1[i],hz:midi2hz(r+BASE_BB1[i]),hole:h,dir:'blowbend1',sym:"↑'",semis:1,blowbend:true});
   }
-  // Per tonalità con root >= 65 (F4 e sopra), aggiungi anche le note
-  // dei fori 1-3 un'ottava sotto per catturare YIN che rileva ottava bassa
   if(key.root>=65){
     const rLow=key.root-12;
     for(let i=0;i<3;i++){
@@ -385,18 +352,15 @@ function buildMap(key){
   }
   return m;
 }
+
 function findClosest(hz){
   let best=null,bd=9999;
-  for(const e of HMAP){
-    const d=Math.abs(e.hz-hz);
-    if(d<bd){bd=d;best=e;}
-  }
-  if(!best) return null;
+  for(const e of HMAP){const d=Math.abs(e.hz-hz);if(d<bd){bd=d;best=e;}}
+  if(!best)return null;
   const cents=Math.round(1200*Math.log2(hz/best.hz));
-  if(Math.abs(cents)>150) return null;
+  if(Math.abs(cents)>150)return null;
   return{...best,cents};
 }
-HMAP=buildMap(currentKey);
 
 // ── KEY BTNS ──────────────────────────────────────────────────────────────────
 function buildKeyBtns(){
@@ -410,64 +374,86 @@ function buildKeyBtns(){
     w.appendChild(b);
   });
 }
-buildKeyBtns();
 function setKey(i,btn){
   document.querySelectorAll('.key-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');currentKey=KEYS[i];HMAP=buildMap(currentKey);
   document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name;
-  buildHarpTable();curMatch=null;highlight(null);setAddBtn(false,null);
+  buildHarpVisual();curMatch=null;lastStableMatch=null;highlight(null);setAddBtn(false,null);
 }
 
-// ── HARP TABLE ────────────────────────────────────────────────────────────────
-function buildHarpTable(){
-  const tbl=document.getElementById('harpTable');tbl.innerHTML='';
+// ── HARP VISUAL ───────────────────────────────────────────────────────────────
+function buildHarpVisual(){
+  const vis=document.getElementById('harpVisual');
+  if(!vis)return;
+  vis.innerHTML='';
   const r=currentKey.root;
-  const holes=[];
-  for(let i=0;i<10;i++)holes.push({
-    blow:{midi:r+BASE_BLOW[i],dir:'blow'},draw:{midi:r+BASE_DRAW[i],dir:'draw'},
-    bb1:BASE_BB1[i]!=null?{midi:r+BASE_BB1[i],dir:'blowbend'}:null,
-    db1:BASE_DB1[i]!=null?{midi:r+BASE_DB1[i],dir:'drawbend'}:null,
-    db2:BASE_DB2[i]!=null?{midi:r+BASE_DB2[i],dir:'drawbend'}:null,
-    db3:BASE_DB3[i]!=null?{midi:r+BASE_DB3[i],dir:'drawbend'}:null,
+  const H=10;
+
+  function makeRow(cls){const el=document.createElement('div');el.className=cls;el.style.cssText='display:flex;gap:5px;align-items:center';return el;}
+  function makeLabel(txt){const el=document.createElement('div');el.style.cssText='width:80px;min-width:80px;font-size:.65rem;color:var(--muted);font-family:DM Sans,sans-serif;text-align:right;padding-right:8px';el.textContent=txt;return el;}
+  function makeCell(cls,text,id){const el=document.createElement('div');el.className=cls;el.textContent=text;if(id)el.id=id;return el;}
+  function makeCells(){return document.createElement('div');}
+
+  // ── Blow bends sopra
+  const bb1Row=makeRow('harp-bend-row');
+  bb1Row.appendChild(makeLabel(t('row_bb1')));
+  const bb1Wrap=document.createElement('div');bb1Wrap.style.cssText='display:flex;gap:5px;flex:1';
+  for(let i=0;i<H;i++){
+    const midi=BASE_BB1[i]!=null?r+BASE_BB1[i]:null;
+    bb1Wrap.appendChild(makeCell(midi?'hbend blowbend1':'hbend empty',midi?mn(midi):'',midi?`hv_bb1_${i+1}`:''));
+  }
+  bb1Row.appendChild(bb1Wrap);
+  vis.appendChild(bb1Row);
+
+  // ── Blow
+  const blowRow=makeRow('harp-blow-row');
+  blowRow.appendChild(makeLabel('↑ '+t('leg_blow').replace('↑ ','')));
+  const blowWrap=document.createElement('div');blowWrap.style.cssText='display:flex;gap:5px;flex:1';
+  for(let i=0;i<H;i++) blowWrap.appendChild(makeCell('hcell blow',mn(r+BASE_BLOW[i]),`hv_blow_${i+1}`));
+  blowRow.appendChild(blowWrap);
+  vis.appendChild(blowRow);
+
+  // ── Fori
+  const holesRow=makeRow('');
+  holesRow.appendChild(makeLabel('Foro'));
+  const holesWrap=document.createElement('div');holesWrap.style.cssText='display:flex;flex:1;background:#1a1f2e;border-radius:8px;padding:4px 0';
+  body_dark:holesWrap.style.background=document.body.classList.contains('dark')?'#1a1f2e':'#2d3348';
+  holesWrap.style.background=document.body.classList.contains('dark')?'#1a1f2e':'#2d3348';
+  for(let i=0;i<H;i++) holesWrap.appendChild(makeCell('hole-num',i+1,''));
+  holesRow.appendChild(holesWrap);
+  vis.appendChild(holesRow);
+
+  // ── Draw
+  const drawRow=makeRow('harp-draw-row');
+  drawRow.appendChild(makeLabel('↓ '+t('leg_draw').replace('↓ ','')));
+  const drawWrap=document.createElement('div');drawWrap.style.cssText='display:flex;gap:5px;flex:1';
+  for(let i=0;i<H;i++) drawWrap.appendChild(makeCell('hcell draw',mn(r+BASE_DRAW[i]),`hv_draw_${i+1}`));
+  drawRow.appendChild(drawWrap);
+  vis.appendChild(drawRow);
+
+  // ── Draw bends
+  [{arr:BASE_DB1,cls:'drawbend1',lbl:t('row_db1'),key:'db1'},
+   {arr:BASE_DB2,cls:'drawbend2',lbl:t('row_db2'),key:'db2'},
+   {arr:BASE_DB3,cls:'drawbend3',lbl:t('row_db3'),key:'db3'}].forEach(b=>{
+    if(!b.arr.some(x=>x!=null))return;
+    const row=makeRow('harp-bend-row');
+    row.appendChild(makeLabel(b.lbl));
+    const wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:5px;flex:1';
+    for(let i=0;i<H;i++){
+      const midi=b.arr[i]!=null?r+b.arr[i]:null;
+      wrap.appendChild(makeCell(midi?`hbend ${b.cls}`:'hbend empty',midi?mn(midi):'',midi?`hv_${b.key}_${i+1}`:''));
+    }
+    row.appendChild(wrap);vis.appendChild(row);
   });
-  const rows=[
-    {key:'bb1',lk:'row_bb1',cls:'blowbend1'},
-    {key:'blow',lk:'row_blow',cls:'blow'},
-    {key:'draw',lk:'row_draw',cls:'draw'},
-    {key:'db1',lk:'row_db1',cls:'drawbend1'},
-    {key:'db2',lk:'row_db2',cls:'drawbend2'},
-    {key:'db3',lk:'row_db3',cls:'drawbend3'},
-  ];
-  const thead=document.createElement('thead');
-  let hr='<tr><th></th>';
-  for(let i=1;i<=10;i++)hr+=`<th class="hole-th">${i}</th>`;
-  thead.innerHTML=hr+'</tr>';tbl.appendChild(thead);
-  const tbody=document.createElement('tbody');
-  rows.forEach(row=>{
-    const tr=document.createElement('tr');
-    const lbl=document.createElement('td');
-    lbl.className='row-label';lbl.textContent=t(row.lk);tr.appendChild(lbl);
-    holes.forEach((h,i)=>{
-      const td=document.createElement('td');
-      const info=h[row.key];
-      const cell=document.createElement('div');
-      if(!info){cell.className='cell empty';}
-      else{cell.className='cell '+row.cls;cell.textContent=mn(info.midi);cell.id=`cell_${row.key}_${i+1}`;}
-      td.appendChild(cell);tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-  tbl.appendChild(tbody);
 }
-buildHarpTable();
 
 // ── HIGHLIGHT ─────────────────────────────────────────────────────────────────
 let lastActId=null;
 function highlight(match){
   if(lastActId){const e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
   lastActId=null;if(!match)return;
-  const rk=match.dir==='blow'?'blow':match.dir==='draw'?'draw':match.dir==='blowbend'?'bb1':'db'+match.semis;
-  const id=`cell_${rk}_${match.hole}`;
+  const keyMap={blow:'blow',draw:'draw',blowbend1:'bb1',drawbend1:'db1',drawbend2:'db2',drawbend3:'db3'};
+  const id=`hv_${keyMap[match.dir]||match.dir}_${match.hole}`;
   const e=document.getElementById(id);
   if(e){e.classList.add('active');lastActId=id;}
 }
@@ -475,79 +461,30 @@ function highlight(match){
 // ── AUDIO ─────────────────────────────────────────────────────────────────────
 let actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null,lastStableMatch=null;
 
-function detectPitch(buf, sr) {
-  const N = buf.length;
-
-  // RMS check
-  let rms = 0;
-  for (let i = 0; i < N; i++) rms += buf[i] * buf[i];
-  rms = Math.sqrt(rms / N);
-  if (rms < 0.002) return -1;
-
-  // ── YIN algorithm ──────────────────────────────────────────────────────
-  // Limiti tau basati sul range fisico dell'armonica (80 Hz – 2200 Hz)
-  const tauMin = Math.floor(sr / 2200); // ~20 @ 44100
-  const tauMax = Math.floor(sr / 80);   // ~551 @ 44100
-  const W = Math.min(Math.floor(N / 2), tauMax + 1);
-
-  // Passo 1 – differenza quadratica
-  const d = new Float32Array(W);
-  for (let tau = tauMin; tau < W; tau++) {
-    for (let j = 0; j < W; j++) {
-      const diff = buf[j] - buf[j + tau];
-      d[tau] += diff * diff;
-    }
+function detectPitch(buf,sr){
+  const N=buf.length;
+  let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/N);
+  if(rms<0.002)return -1;
+  const tauMin=Math.floor(sr/2200),tauMax=Math.floor(sr/80),W=Math.min(Math.floor(N/2),tauMax+1);
+  const d=new Float32Array(W);
+  for(let tau=tauMin;tau<W;tau++)for(let j=0;j<W;j++){const diff=buf[j]-buf[j+tau];d[tau]+=diff*diff;}
+  const dn=new Float32Array(W);dn[0]=1;let runSum=0;
+  for(let tau=1;tau<W;tau++){runSum+=d[tau];dn[tau]=runSum===0?0:(d[tau]*tau)/runSum;}
+  const threshold=0.15;let tau=-1;
+  for(let t=tauMin;t<W-1;t++){if(dn[t]<threshold&&dn[t]<=dn[t+1]){tau=t;break;}}
+  if(tau===-1){let minVal=Infinity,minIdx=tauMin;for(let t=tauMin;t<W;t++)if(dn[t]<minVal){minVal=dn[t];minIdx=t;}if(minVal>0.35)return -1;tau=minIdx;}
+  if(tau<=0||tau>=W-1)return sr/tau;
+  const x1=dn[tau-1],x2=dn[tau],x3=dn[tau+1];
+  const denom=2*x2-x1-x3,adj=denom===0?0:(x3-x1)/(2*denom);
+  const refined=tau+adj;
+  const halfTau=Math.round(refined/2);
+  if(halfTau>=tauMin&&halfTau<W&&dn[halfTau]<threshold*1.5){
+    const fH=sr/halfTau,fF=sr/refined;
+    const dH=HMAP.reduce((a,e)=>Math.min(a,Math.abs(e.hz-fH)),9999);
+    const dF=HMAP.reduce((a,e)=>Math.min(a,Math.abs(e.hz-fF)),9999);
+    if(dH<dF)return fH;
   }
-
-  // Passo 2 – media cumulativa normalizzata (CMNDF)
-  const dn = new Float32Array(W);
-  dn[0] = 1;
-  let runSum = 0;
-  for (let tau = 1; tau < W; tau++) {
-    runSum += d[tau];
-    dn[tau] = runSum === 0 ? 0 : (d[tau] * tau) / runSum;
-  }
-
-  // Passo 3 – primo minimo sotto soglia nel range valido
-  const threshold = 0.15;
-  let tau = -1;
-  for (let t = tauMin; t < W - 1; t++) {
-    if (dn[t] < threshold && dn[t] <= dn[t + 1]) {
-      tau = t;
-      break;
-    }
-  }
-
-  // Fallback – minimo assoluto nel range
-  if (tau === -1) {
-    let minVal = Infinity, minIdx = tauMin;
-    for (let t = tauMin; t < W; t++) {
-      if (dn[t] < minVal) { minVal = dn[t]; minIdx = t; }
-    }
-    if (minVal > 0.35) return -1;
-    tau = minIdx;
-  }
-
-  // Passo 4 – interpolazione parabolica (sub-sample precision)
-  if (tau <= 0 || tau >= W - 1) return sr / tau;
-  const x1 = dn[tau - 1], x2 = dn[tau], x3 = dn[tau + 1];
-  const denom = 2 * x2 - x1 - x3;
-  const adj = denom === 0 ? 0 : (x3 - x1) / (2 * denom);
-  const refinedTau = tau + adj;
-
-  // Passo 5 – verifica anti-octave-error
-  // Se esiste un tau/2 con valore CMNDF simile, la freq reale è doppia
-  const halfTau = Math.round(refinedTau / 2);
-  if (halfTau >= tauMin && halfTau < W && dn[halfTau] < threshold * 1.5) {
-    // Confronta quale delle due frequenze è più vicina alla mappa note
-    const fHalf = sr / halfTau;
-    const fFull = sr / refinedTau;
-    const dHalf = HMAP.reduce((a, e) => Math.min(a, Math.abs(e.hz - fHalf)), 9999);
-    const dFull = HMAP.reduce((a, e) => Math.min(a, Math.abs(e.hz - fFull)), 9999);
-    if (dHalf < dFull) return fHalf;
-  }
-
-  return sr / refinedTau;
+  return sr/refined;
 }
 
 async function toggleMic(){
@@ -577,17 +514,12 @@ function stopMic(){
   setBadge('idle',t('badge_idle'));setAddBtn(false,null);highlight(null);curMatch=null;
 }
 function setBadge(cls,txt){const b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
-function setAddBtn(on, match) {
-  const ab = document.getElementById('addBtn');
-  ab.disabled = !on;
-  if (!on) {
-    ab.innerHTML = `<span style="pointer-events:none;display:block;width:100%;text-align:center">${t('add')}</span>`;
-    ab.className = 'btn primary';
-    return;
-  }
-  const isBB = match.blowbend, isDB = match.dir === 'drawbend';
-  ab.className = 'btn primary' + (isDB ? ' bend' : isBB ? ' blowbend' : '');
-  ab.innerHTML = `<span style="pointer-events:none;display:block;width:100%;text-align:center">+ ${match.sym}${match.hole} (${mn(match.midi)})</span>`;
+function setAddBtn(on,match){
+  const ab=document.getElementById('addBtn');ab.disabled=!on;
+  if(!on){ab.innerHTML=`<span style="pointer-events:none;display:block;width:100%;text-align:center">${t('add')}</span>`;ab.className='btn primary';return;}
+  const isBB=match.blowbend,isDB=match.dir.startsWith('drawbend');
+  ab.className='btn primary'+(isDB?' bend':isBB?' blowbend':'');
+  ab.innerHTML=`<span style="pointer-events:none;display:block;width:100%;text-align:center">+ ${match.sym}${match.hole} (${mn(match.midi)})</span>`;
 }
 function loop(){
   if(!listening)return;
@@ -605,14 +537,13 @@ function loop(){
     setBadge('idle',t('badge_silence'));highlight(null);setAddBtn(false,null);return;
   }
   const freq=detectPitch(buf,actx.sampleRate);
-  if(freq>80&&freq<2100){
+  if(freq>80&&freq<2200){
     const match=findClosest(freq);
     if(match){
-      curMatch=match;
-      lastStableMatch=match;
+      curMatch=match;lastStableMatch=match;
       const pb=document.getElementById('pitchBig');
       pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
-      pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'on');
+      pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir.startsWith('drawbend')?'bend':'on');
       document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
       const ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
       const fill=document.getElementById('cFill');
@@ -621,8 +552,8 @@ function loop(){
       fill.style.background=Math.abs(ct)<=20?'#4ae8b4':'#e8c84a';
       document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
       const tun=Math.abs(ct)<=20;
-      const bc=tun?(match.blowbend?'blowbend':match.dir==='drawbend'?'bend':'intune'):(ct>20?'sharp':'flat');
-      const bl=tun?(match.blowbend?t('badge_blowbend'):match.dir==='drawbend'?t('badge_drawbend'):t('badge_intune')):(ct>20?t('badge_high'):t('badge_low'));
+      const bc=tun?(match.blowbend?'blowbend':match.dir.startsWith('drawbend')?'bend':'intune'):(ct>20?'sharp':'flat');
+      const bl=tun?(match.blowbend?t('badge_blowbend'):match.dir.startsWith('drawbend')?t('badge_drawbend'):t('badge_intune')):(ct>20?t('badge_high'):t('badge_low'));
       setBadge(bc,bl);highlight(match);setAddBtn(true,match);
     }else{
       curMatch=null;
@@ -648,11 +579,7 @@ function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(x=>({...x})))
 function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
 function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(x=>({...x}));selected.clear();render();upUD();}}
 function upUD(){document.getElementById('undoBtn').disabled=histIdx<=0;document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;}
-function addNote(){
-  if(!curMatch && !lastStableMatch) return;
-  const note = curMatch || lastStableMatch;
-  snap(); tabList.push({...note}); render();
-}
+function addNote(){if(!curMatch&&!lastStableMatch)return;const note=curMatch||lastStableMatch;snap();tabList.push({...note});render();}
 function addSeparator(){snap();tabList.push({type:'separator'});render();}
 function addNewline(){snap();tabList.push({type:'newline'});render();}
 function toggleSel(i){if(selected.has(i))selected.delete(i);else selected.add(i);render();}
@@ -663,43 +590,35 @@ function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear()
 function render(){
   const cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
   const sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
-  if(!tabList.length){
-    cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;
-    txt.textContent='—';sb.classList.remove('on');return;
-  }
-  cont.innerHTML='';let str='';
-
-  // Dividi tabList in righe basandosi sui newline
-  const rows=[[]];
+  if(!tabList.length){cont.innerHTML=`<span class="empty-msg">${t('no_notes')}</span>`;txt.textContent='—';sb.classList.remove('on');return;}
+  const lines=[[]];let str='';
   tabList.forEach((n,i)=>{
-    if(n.type==='newline'){rows.push([]);str+='\n';}
-    else{rows[rows.length-1].push({n,i});str+=(n.type==='separator'?'| ':n.sym+n.hole+' ');}
+    if(n.type==='newline'){lines.push([]);str+='\n';}
+    else{lines[lines.length-1].push({n,i});str+=(n.type==='separator'?'| ':n.sym+n.hole+' ');}
   });
-
-  rows.forEach(row=>{
-    const rowEl=document.createElement('div');
-    rowEl.className='tab-row';
-    row.forEach(({n,i})=>{
+  cont.innerHTML='';
+  lines.forEach(line=>{
+    const rowEl=document.createElement('div');rowEl.className='tab-row';
+    line.forEach(({n,i})=>{
       if(n.type==='separator'){
         const chip=document.createElement('div');
         chip.className='chip separator'+(selected.has(i)?' sel':'');
-        chip.textContent='|';chip.onclick=()=>toggleSel(i);
-        rowEl.appendChild(chip);
-      } else {
+        chip.innerHTML=`<span style="pointer-events:none">|</span>`;
+        chip.onclick=()=>toggleSel(i);rowEl.appendChild(chip);
+      }else{
         const chip=document.createElement('div');
         chip.className='chip '+n.dir+(selected.has(i)?' sel':'');
         chip.onclick=()=>toggleSel(i);
-        chip.innerHTML=`<span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span>`;
+        chip.innerHTML=`<span style="pointer-events:none;display:contents"><span class="arr">${n.sym}</span><span class="hn">${n.hole}</span><span class="nn">${mn(n.midi)}</span></span>`;
         rowEl.appendChild(chip);
       }
     });
     cont.appendChild(rowEl);
   });
-
   txt.textContent=str.trim();
-  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}
-  else sb.classList.remove('on');
+  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
 }
+
 function copyTab(){
   const tx=document.getElementById('txtOut').textContent;if(tx==='—')return;
   navigator.clipboard.writeText(tx).then(()=>{const b=document.getElementById('copyBtn'),o=b.textContent;b.textContent=t('copied');setTimeout(()=>b.textContent=t('copy'),1600);});
@@ -710,7 +629,7 @@ let sessions=JSON.parse(localStorage.getItem('harp_v4')||'[]'),activeSess=null;
 function saveSess(){localStorage.setItem('harp_v4',JSON.stringify(sessions));}
 function saveSession(){
   if(!tabList.length){alert(t('no_notes_save'));return;}
-  const str=tabList.map(n=>n.sym+n.hole).join(' ');
+  const str=tabList.filter(n=>n.type!=='newline').map(n=>n.type==='separator'?'|':n.sym+n.hole).join(' ');
   if(activeSess!==null){
     const newName=prompt(t('prompt_name'),sessions[activeSess].name);if(newName===null)return;
     sessions[activeSess].name=newName.trim()||sessions[activeSess].name;
@@ -763,44 +682,36 @@ function exportPDF(){
   const colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b'};
   const bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)'};
   const noteRows=[];
-  // Dividi in righe per i newline
   const lines=[[]];
-  tabList.forEach(n=>{
-    if(n.type==='newline') lines.push([]);
-    else lines[lines.length-1].push(n);
-  });
+  tabList.forEach(n=>{if(n.type==='newline')lines.push([]);else lines[lines.length-1].push(n);});
   lines.forEach(line=>{
-    if(!line.length) return;
+    if(!line.length)return;
     const cells=line.map(n=>{
-      if(n.type==='separator'){
-        return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:transparent;color:#888;border:1.5px dashed #444;min-width:24px"><div style="font-size:18px;font-weight:700">|</div></td>`;
-      }
+      if(n.type==='separator')return`<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:transparent;color:#888;border:1.5px dashed #aaa"><div style="font-size:18px;font-weight:700">|</div></td>`;
       const c=colors[n.dir]||'#888',b=bgs[n.dir]||'transparent';
-      return `<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}44">`+
-        `<div style="font-size:16px;opacity:.9">${n.sym}</div>`+
-        `<div style="font-size:20px;font-weight:700">${n.hole}</div>`+
-        `<div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
+      return`<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:${b};color:${c};border:1px solid ${c}44"><div style="font-size:16px;opacity:.9">${n.sym}</div><div style="font-size:20px;font-weight:700">${n.hole}</div><div style="font-size:9px;color:#888">${mn(n.midi)}</div></td>`;
     }).join('<td style="width:3px"></td>');
     noteRows.push(`<tr>${cells}</tr><tr style="height:8px"></tr>`);
   });
   const tabTxt=tabList.filter(n=>n.type!=='newline').map(n=>n.type==='separator'?'|':n.sym+n.hole).join(' ');
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sessName}</title>
-<style>body{font-family:-apple-system,sans-serif;background:#0d0f14;color:#e8eaf0;padding:32px 40px;max-width:800px;margin:0 auto}
-h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#e8c84a;letter-spacing:.05em}
-.sub{font-size:12px;color:#6b7280;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}
-.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#6b7280;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #2a3040}
+<style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}
+h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800;letter-spacing:.05em}
+.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}
+.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}
 table{border-collapse:separate;border-spacing:0}
-.txt{font-family:monospace;font-size:13px;background:#161922;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #2a3040;color:#e8eaf0}
-.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#6b7280}
+.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec;color:#1a1d26}
+.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
 .ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}
-.foot{margin-top:32px;font-size:11px;color:#2a3040;text-align:center}
-@media print{body{background:#fff;color:#1a1d26}h1{color:#c9a800}.txt{background:#f5f5f5;color:#1a1d26;border-color:#ddd}.sec h2{border-color:#ddd}.foot{color:#ccc}}</style></head><body>
+.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body>
 <h1>${sessName}</h1>
 <div class="sub">${t('sub')} ${currentKey.name} · ${tabList.length} ${lang==='it'?'note':'notes'} · ${date}</div>
 <div class="sec"><h2>${t('pdf_legend')}</h2><div class="leg">
 <div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>${t('leg_blow')}</div>
 <div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>${t('leg_draw')}</div>
-<div class="li"><div class="ls" style="border-color:#b87aff;background:rgba(184,122,255,.1)"></div>${t('leg_drawbend')}</div>
+<div class="li"><div class="ls" style="border-color:#e88c32;background:rgba(232,140,50,.12)"></div>${t('leg_drawbend')}</div>
+<div class="li"><div class="ls" style="border-color:#e84a4a;background:rgba(232,74,74,.12)"></div>${t('leg_drawbend2')}</div>
+<div class="li"><div class="ls" style="border-color:#8b5a2b;background:rgba(139,90,43,.12)"></div>${t('leg_drawbend3')}</div>
 </div></div>
 <div class="sec"><h2>${t('pdf_graphic')}</h2><table><tbody>${noteRows.join('')}</tbody></table></div>
 <div class="sec"><h2>${t('pdf_text')}</h2><div class="txt">${tabTxt}</div></div>
@@ -811,7 +722,12 @@ table{border-collapse:separate;border-spacing:0}
 // ── INIT ──────────────────────────────────────────────────────────────────────
 const savedTheme=localStorage.getItem('harp_theme')||'light';
 setTheme(savedTheme);
-applyI18n();render();renderSess();
+buildKeyBtns();
+HMAP=buildMap(currentKey);
+buildHarpVisual();
+applyI18n();
+render();
+renderSess();
 </script>
 </body>
 </html>
