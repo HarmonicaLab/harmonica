@@ -554,10 +554,21 @@ function setBadge(cls, txt) { var b=document.getElementById('badge'); b.classNam
 function setAddBtn(on, match) {
   var ab = document.getElementById('addBtn');
   ab.disabled = !on;
-  if (!on) { ab.innerHTML='<span style="pointer-events:none;display:block;width:100%;text-align:center">'+t('add')+'</span>'; ab.className='btn primary'; return; }
-  var isBB=match.blowbend, isDB=match.dir.indexOf('drawbend')===0;
-  ab.className = 'btn primary' + (isDB?' bend':isBB?' blowbend':'');
-  ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">+ '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
+  var isBB=match&&match.blowbend, isDB=match&&match.dir.indexOf('drawbend')===0;
+  // Se c'è esattamente una nota selezionata → modalità Sostituisci
+  if (on && selected.size === 1) {
+    ab.className = 'btn primary' + (isDB?' bend':isBB?' blowbend':'');
+    ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">⟳ '+(lang==='it'?'Sostituisci':'Replace')+' '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
+    ab.onclick = replaceNote;
+  } else if (on) {
+    ab.className = 'btn primary' + (isDB?' bend':isBB?' blowbend':'');
+    ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">+ '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
+    ab.onclick = addNote;
+  } else {
+    ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">'+t('add')+'</span>';
+    ab.className = 'btn primary';
+    ab.onclick = addNote;
+  }
 }
 function loop() {
   if (!listening) return;
@@ -624,9 +635,19 @@ function undo(){ if(histIdx>0){histIdx--;tabList=hist[histIdx].map(function(x){r
 function redo(){ if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(function(x){return Object.assign({},x);});selected.clear();render();upUD();} }
 function upUD(){ document.getElementById('undoBtn').disabled=histIdx<=0; document.getElementById('redoBtn').disabled=histIdx>=hist.length-1; }
 function addNote(){ if(!curMatch&&!lastStableMatch)return; var n=curMatch||lastStableMatch; snap(); tabList.push(Object.assign({},n)); render(); }
+function replaceNote(){
+  if(!curMatch&&!lastStableMatch) return;
+  if(selected.size !== 1) return;
+  var idx = Array.from(selected)[0];
+  var n = curMatch || lastStableMatch;
+  snap();
+  tabList[idx] = Object.assign({}, n);
+  selected.clear();
+  render();
+}
 function addSeparator(){ snap(); tabList.push({type:'separator'}); render(); }
 function addNewline(){ snap(); tabList.push({type:'newline'}); render(); }
-function toggleSel(i){ if(selected.has(i))selected.delete(i);else selected.add(i); render(); }
+function toggleSel(i){ if(selected.has(i))selected.delete(i);else selected.add(i); render(); setAddBtn(!!curMatch||!!lastStableMatch, curMatch||lastStableMatch); }
 function clearSel(){ selected.clear(); render(); }
 function deleteSelected(){ if(!selected.size)return; snap(); tabList=tabList.filter(function(_,i){return !selected.has(i);}); selected.clear(); render(); }
 function clearAll(){ if(!tabList.length)return; snap(); tabList=[]; selected.clear(); render(); }
