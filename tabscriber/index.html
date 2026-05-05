@@ -104,7 +104,25 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .empty-msg{font-size:.8rem;color:var(--muted);padding:6px 0;font-family:'DM Mono',monospace}
 .txt-out{padding:10px 14px;background:var(--surface2);border-radius:8px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:40px;border:1px solid var(--border);user-select:all;margin-bottom:10px}
 .btm-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-/* SESSIONI */
+/* METRONOMO */
+.metro-beats{display:flex;justify-content:center;gap:10px;margin-bottom:16px}
+.metro-beat{width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--muted);transition:all .08s}
+.metro-beat.accent{background:var(--accent);border-color:var(--accent);color:#1a1d26;box-shadow:0 0 16px rgba(232,200,74,.5);transform:scale(1.15)}
+.metro-beat.normal{background:var(--accent2);border-color:var(--accent2);color:#1a1d26;box-shadow:0 0 12px rgba(74,232,180,.4);transform:scale(1.08)}
+.metro-controls{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.metro-bpm-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:1.3rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif}
+.metro-bpm-btn:hover{border-color:var(--accent);color:var(--accent)}
+.metro-bpm-display{display:flex;flex-direction:column;align-items:center;min-width:70px}
+.metro-bpm-val{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--accent);line-height:1}
+.metro-bpm-lbl{font-size:.62rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.metro-start-btn{padding:10px 24px;border-radius:50px;border:2px solid var(--accent2);background:transparent;color:var(--accent2);font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.1em;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
+.metro-start-btn:hover,.metro-start-btn.running{background:var(--accent2);color:#1a1d26}
+.metro-time-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.metro-time-lbl{font-size:.72rem;color:var(--muted)}
+.metro-time-btns{display:flex;gap:6px}
+.metro-time-btn{padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;cursor:pointer;transition:all .15s}
+.metro-time-btn:hover{border-color:var(--accent);color:var(--text)}
+.metro-time-btn.active{border-color:var(--accent);background:rgba(232,200,74,.15);color:var(--accent)}
 .sess-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .sess-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.12em;color:var(--muted)}
 .sess-list{display:flex;flex-direction:column;gap:6px}
@@ -199,7 +217,36 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   </div>
 </div>
 <div class="card">
-  <div class="sess-hdr">
+  <h2 class="section-label" data-i18n="metro_title"></h2>
+  <div class="metro-beats" id="metroBeats"></div>
+  <div class="metro-controls">
+    <button class="metro-bpm-btn" id="bpmDown" onclick="bpmChange(-1)">−</button>
+    <div class="metro-bpm-display">
+      <div class="metro-bpm-val" id="bpmVal">80</div>
+      <div class="metro-bpm-lbl">BPM</div>
+    </div>
+    <button class="metro-bpm-btn" id="bpmUp" onclick="bpmChange(1)">+</button>
+    <button class="metro-start-btn" id="metroStartBtn" onclick="toggleMetro()">
+      ▶ Start
+    </button>
+  </div>
+  <div class="metro-time-row" style="margin-top:10px">
+    <span class="metro-time-lbl" data-i18n="metro_time"></span>
+    <div class="metro-time-btns" id="metroTimeBtns">
+      <button class="metro-time-btn active" onclick="setTimeSig(4,this)">4/4</button>
+      <button class="metro-time-btn" onclick="setTimeSig(3,this)">3/4</button>
+      <button class="metro-time-btn" onclick="setTimeSig(2,this)">2/4</button>
+    </div>
+  </div>
+  <div class="metro-time-row" style="margin-top:8px">
+    <span class="metro-time-lbl">Feel:</span>
+    <div class="metro-time-btns" id="metroFeelBtns">
+      <button class="metro-time-btn active" onclick="setFeel('straight',this)">Straight</button>
+      <button class="metro-time-btn" onclick="setFeel('swing',this)">Swing</button>
+      <button class="metro-time-btn" onclick="setFeel('blues',this)">Blues</button>
+    </div>
+  </div>
+</div>
     <h2 data-i18n="sessions"></h2>
     <button class="btn primary" onclick="newSession()" data-i18n="new_session"></button>
   </div>
@@ -222,7 +269,7 @@ var I18N = {
     leg_drawbend:"↓' 1 semitono",leg_drawbend2:"↓'' 2 semitoni",leg_drawbend3:"↓''' 3 semitoni",
     row_bb1:"↑' bend",row_blow:'↑ Soffia',row_draw:'↓ Aspira',
     row_db1:"↓' bend",row_db2:"↓'' bend",row_db3:"↓''' bend",
-    add:'+ Aggiungi',selected:'selezionate',delete:'Elimina',separator:'Battuta',newline:'A capo',
+    metro_title:'Metronomo',metro_time:'Tempo:',selected:'selezionate',delete:'Elimina',separator:'Battuta',newline:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clear_all:'Cancella tutto',
     copy:'Copia testo',export_pdf:'Esporta PDF',save_session:'Salva sessione',
     sessions:'Sessioni salvate',new_session:'+ Nuova sessione',
@@ -242,7 +289,7 @@ var I18N = {
     leg_drawbend:"↓' 1 semitone",leg_drawbend2:"↓'' 2 semitones",leg_drawbend3:"↓''' 3 semitones",
     row_bb1:"↑' bend",row_blow:'↑ Blow',row_draw:'↓ Draw',
     row_db1:"↓' bend",row_db2:"↓'' bend",row_db3:"↓''' bend",
-    add:'+ Add',selected:'selected',delete:'Delete',separator:'Bar',newline:'New line',
+    metro_title:'Metronome',metro_time:'Time:',selected:'selected',delete:'Delete',separator:'Bar',newline:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clear_all:'Clear all',
     copy:'Copy text',export_pdf:'Export PDF',save_session:'Save session',
     sessions:'Saved sessions',new_session:'+ New session',
@@ -259,7 +306,10 @@ function setLang(l) {
   lang = l;
   document.getElementById('btnIT').classList.toggle('active', l==='it');
   document.getElementById('btnEN').classList.toggle('active', l==='en');
-  applyI18n(); buildHarpVisual(); render(); renderSess();
+  buildMetroBeats();
+setupLongPress('bpmDown',function(){bpmChange(-1);});
+setupLongPress('bpmUp',function(){bpmChange(1);});
+applyI18n(); buildHarpVisual(); render(); renderSess();
 }
 function setTheme(th) {
   document.body.classList.toggle('dark', th==='dark');
@@ -781,6 +831,99 @@ function exportPDF(){
   var tabTxt=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){return n.type==='separator'?'|':n.sym+n.hole;}).join(' ');
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+sessName+'</title><style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800}.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec}.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body><h1>'+sessName+'</h1><div class="sub">'+t('sub')+' '+currentKey.name+' · '+tabList.length+' '+(lang==='it'?'note':'notes')+' · '+date+'</div><div class="sec"><h2>'+t('pdf_legend')+'</h2><div class="leg"><div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>'+t('leg_blow')+'</div><div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>'+t('leg_draw')+'</div><div class="li"><div class="ls" style="border-color:#e88c32;background:rgba(232,140,50,.12)"></div>'+t('leg_drawbend')+'</div><div class="li"><div class="ls" style="border-color:#e84a4a;background:rgba(232,74,74,.12)"></div>'+t('leg_drawbend2')+'</div><div class="li"><div class="ls" style="border-color:#8b5a2b;background:rgba(139,90,43,.12)"></div>'+t('leg_drawbend3')+'</div></div></div><div class="sec"><h2>'+t('pdf_graphic')+'</h2><table><tbody>'+noteRows.join('')+'</tbody></table></div><div class="sec"><h2>'+t('pdf_text')+'</h2><div class="txt">'+tabTxt+'</div></div><div class="foot">'+t('pdf_footer')+'</div></body></html>';
   var win=window.open('','_blank'); win.document.write(html); win.document.close(); win.onload=function(){win.print();};
+}
+
+// METRONOMO
+var metroBpm=80, metroBeats=4, metroCurrent=0, metroRunning=false, metroTimer=null, metroCtx=null;
+var metroFeel='straight';
+
+// Pattern accenti per feel:
+// straight: accento solo sul 1
+// swing:    accento su 1 e 3 (terzina)
+// blues:    accento su 1 e 4 (shuffle)
+var FEEL_ACCENT = {
+  straight: function(i,n){ return i===0; },
+  swing:    function(i,n){ return i===0 || i===2; },
+  blues:    function(i,n){ return i===0 || i===3; }
+};
+// Pattern volume per feel
+var FEEL_VOL = {
+  straight: function(i,n){ return i===0?0.7:0.35; },
+  swing:    function(i,n){ return i===0?0.7:i===2?0.5:0.25; },
+  blues:    function(i,n){ return i===0?0.7:i===3?0.55:0.25; }
+};
+// Frequenza click per feel
+var FEEL_FREQ = {
+  straight: function(i,n){ return i===0?1100:750; },
+  swing:    function(i,n){ return i===0?1100:i===2?900:650; },
+  blues:    function(i,n){ return i===0?1100:i===3?950:650; }
+};
+
+function buildMetroBeats(){
+  var wrap=document.getElementById('metroBeats'); wrap.innerHTML='';
+  for(var i=0;i<metroBeats;i++){
+    var b=document.createElement('div'); b.className='metro-beat'; b.textContent=i+1; wrap.appendChild(b);
+  }
+}
+function getMetroCtx(){
+  if(!metroCtx) metroCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return metroCtx;
+}
+function playClick(i){
+  var ctx=getMetroCtx(), osc=ctx.createOscillator(), gain=ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.frequency.value=FEEL_FREQ[metroFeel](i,metroBeats);
+  osc.type='sine';
+  var vol=FEEL_VOL[metroFeel](i,metroBeats);
+  gain.gain.setValueAtTime(vol,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.08);
+}
+function metroTick(){
+  var beats=document.querySelectorAll('.metro-beat');
+  beats.forEach(function(b){b.classList.remove('accent','normal');});
+  var isAccent=FEEL_ACCENT[metroFeel](metroCurrent,metroBeats);
+  beats[metroCurrent].classList.add(isAccent?'accent':'normal');
+  playClick(metroCurrent);
+  metroCurrent=(metroCurrent+1)%metroBeats;
+}
+function startMetro(){
+  metroCurrent=0; var iv=Math.round(60000/metroBpm);
+  metroTick(); metroTimer=setInterval(metroTick,iv);
+}
+function stopMetro(){
+  clearInterval(metroTimer); metroTimer=null;
+  document.querySelectorAll('.metro-beat').forEach(function(b){b.classList.remove('accent','normal');});
+}
+function toggleMetro(){
+  metroRunning=!metroRunning;
+  var btn=document.getElementById('metroStartBtn');
+  if(metroRunning){startMetro();btn.classList.add('running');btn.textContent='■ Stop';}
+  else{stopMetro();btn.classList.remove('running');btn.textContent='▶ Start';}
+}
+function bpmChange(delta){
+  metroBpm=Math.min(300,Math.max(20,metroBpm+delta));
+  document.getElementById('bpmVal').textContent=metroBpm;
+  if(metroRunning){stopMetro();startMetro();}
+}
+function setFeel(feel,btn){
+  document.querySelectorAll('#metroFeelBtns .metro-time-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  metroFeel=feel;
+  metroCurrent=0;
+  if(metroRunning){stopMetro();startMetro();}
+}
+  document.querySelectorAll('.metro-time-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active'); metroBeats=beats; metroCurrent=0; buildMetroBeats();
+  if(metroRunning){stopMetro();startMetro();}
+}
+// Long press BPM
+function setupLongPress(id,fn){
+  var btn=document.getElementById(id),iv=null;
+  var go=function(){iv=setInterval(fn,80);};
+  var stop=function(){clearInterval(iv);};
+  btn.addEventListener('mousedown',go); btn.addEventListener('touchstart',go,{passive:true});
+  btn.addEventListener('mouseup',stop); btn.addEventListener('mouseleave',stop); btn.addEventListener('touchend',stop);
 }
 
 // INIT
