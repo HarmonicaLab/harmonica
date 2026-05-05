@@ -560,16 +560,16 @@ function setAddBtn(on, match) {
   if (!on) {
     ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">'+t('add')+'</span>';
     ab.className = 'btn primary';
-    rb.style.display = 'none';
-    return;
+  } else {
+    var isBB = match.blowbend, isDB = match.dir.indexOf('drawbend')===0;
+    ab.className = 'btn primary' + (isDB?' bend':isBB?' blowbend':'');
+    ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">+ '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
   }
-  var isBB = match.blowbend, isDB = match.dir.indexOf('drawbend')===0;
-  ab.className = 'btn primary' + (isDB?' bend':isBB?' blowbend':'');
-  ab.innerHTML = '<span style="pointer-events:none;display:block;width:100%;text-align:center">+ '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
-  // Mostra Sostituisci solo se c'è esattamente 1 nota selezionata
+  // Sostituisci: visibile se 1 sola chip selezionata, indipendentemente dal match
   if (selected.size === 1) {
     rb.style.display = '';
-    rl.textContent = (lang==='it'?'Sostituisci':'Replace')+' '+match.sym+match.hole;
+    rb.disabled = !on;
+    rl.textContent = (lang==='it'?'Sostituisci':'Replace') + (match?' '+match.sym+match.hole:'...');
   } else {
     rb.style.display = 'none';
   }
