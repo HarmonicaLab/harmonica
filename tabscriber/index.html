@@ -681,6 +681,9 @@ function render() {
   });
   txt.textContent=str.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
+  // Aggiorna il pulsante in base alla selezione corrente
+  var hasMatch = !!(curMatch||lastStableMatch);
+  setAddBtn(hasMatch, curMatch||lastStableMatch);
 }
 
 function copyTab(){
