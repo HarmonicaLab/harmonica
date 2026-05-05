@@ -230,20 +230,12 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
       ▶ Start
     </button>
   </div>
-  <div class="metro-time-row" style="margin-top:10px">
+  <div class="metro-time-row">
     <span class="metro-time-lbl" data-i18n="metro_time"></span>
     <div class="metro-time-btns" id="metroTimeBtns">
       <button class="metro-time-btn active" onclick="setTimeSig(4,this)">4/4</button>
       <button class="metro-time-btn" onclick="setTimeSig(3,this)">3/4</button>
       <button class="metro-time-btn" onclick="setTimeSig(2,this)">2/4</button>
-    </div>
-  </div>
-  <div class="metro-time-row" style="margin-top:8px">
-    <span class="metro-time-lbl">Feel:</span>
-    <div class="metro-time-btns" id="metroFeelBtns">
-      <button class="metro-time-btn active" onclick="setFeel('straight',this)">Straight</button>
-      <button class="metro-time-btn" onclick="setFeel('swing',this)">Swing</button>
-      <button class="metro-time-btn" onclick="setFeel('blues',this)">Blues</button>
     </div>
   </div>
 </div>
@@ -835,29 +827,6 @@ function exportPDF(){
 
 // METRONOMO
 var metroBpm=80, metroBeats=4, metroCurrent=0, metroRunning=false, metroTimer=null, metroCtx=null;
-var metroFeel='straight';
-
-// Pattern accenti per feel:
-// straight: accento solo sul 1
-// swing:    accento su 1 e 3 (terzina)
-// blues:    accento su 1 e 4 (shuffle)
-var FEEL_ACCENT = {
-  straight: function(i,n){ return i===0; },
-  swing:    function(i,n){ return i===0 || i===2; },
-  blues:    function(i,n){ return i===0 || i===3; }
-};
-// Pattern volume per feel
-var FEEL_VOL = {
-  straight: function(i,n){ return i===0?0.7:0.35; },
-  swing:    function(i,n){ return i===0?0.7:i===2?0.5:0.25; },
-  blues:    function(i,n){ return i===0?0.7:i===3?0.55:0.25; }
-};
-// Frequenza click per feel
-var FEEL_FREQ = {
-  straight: function(i,n){ return i===0?1100:750; },
-  swing:    function(i,n){ return i===0?1100:i===2?900:650; },
-  blues:    function(i,n){ return i===0?1100:i===3?950:650; }
-};
 
 function buildMetroBeats(){
   var wrap=document.getElementById('metroBeats'); wrap.innerHTML='';
@@ -869,22 +838,19 @@ function getMetroCtx(){
   if(!metroCtx) metroCtx=new(window.AudioContext||window.webkitAudioContext)();
   return metroCtx;
 }
-function playClick(i){
+function playClick(accent){
   var ctx=getMetroCtx(), osc=ctx.createOscillator(), gain=ctx.createGain();
   osc.connect(gain); gain.connect(ctx.destination);
-  osc.frequency.value=FEEL_FREQ[metroFeel](i,metroBeats);
-  osc.type='sine';
-  var vol=FEEL_VOL[metroFeel](i,metroBeats);
-  gain.gain.setValueAtTime(vol,ctx.currentTime);
+  osc.frequency.value=accent?1100:750; osc.type='sine';
+  gain.gain.setValueAtTime(accent?0.6:0.35,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
   osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.08);
 }
 function metroTick(){
   var beats=document.querySelectorAll('.metro-beat');
   beats.forEach(function(b){b.classList.remove('accent','normal');});
-  var isAccent=FEEL_ACCENT[metroFeel](metroCurrent,metroBeats);
-  beats[metroCurrent].classList.add(isAccent?'accent':'normal');
-  playClick(metroCurrent);
+  beats[metroCurrent].classList.add(metroCurrent===0?'accent':'normal');
+  playClick(metroCurrent===0);
   metroCurrent=(metroCurrent+1)%metroBeats;
 }
 function startMetro(){
@@ -906,13 +872,7 @@ function bpmChange(delta){
   document.getElementById('bpmVal').textContent=metroBpm;
   if(metroRunning){stopMetro();startMetro();}
 }
-function setFeel(feel,btn){
-  document.querySelectorAll('#metroFeelBtns .metro-time-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  metroFeel=feel;
-  metroCurrent=0;
-  if(metroRunning){stopMetro();startMetro();}
-}
+function setTimeSig(beats,btn){
   document.querySelectorAll('.metro-time-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active'); metroBeats=beats; metroCurrent=0; buildMetroBeats();
   if(metroRunning){stopMetro();startMetro();}
