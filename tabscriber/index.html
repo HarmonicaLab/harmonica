@@ -651,7 +651,20 @@ function replaceNote(){
 }
 function addSeparator(){ snap(); tabList.push({type:'separator'}); render(); }
 function addNewline(){ snap(); tabList.push({type:'newline'}); render(); }
-function toggleSel(i){ if(selected.has(i))selected.delete(i);else selected.add(i); render(); setAddBtn(!!curMatch||!!lastStableMatch, curMatch||lastStableMatch); }
+function toggleSel(i){
+  if(selected.has(i))selected.delete(i);else selected.add(i);
+  render();
+  // Mostra/nascondi Sostituisci subito in base alla selezione
+  var rb=document.getElementById('replaceBtn');
+  var rl=document.getElementById('replaceLbl');
+  if(selected.size===1){
+    rb.style.display='';
+    var match=curMatch||lastStableMatch;
+    rl.textContent=(lang==='it'?'Sostituisci':'Replace')+(match?' '+match.sym+match.hole:'');
+  } else {
+    rb.style.display='none';
+  }
+}
 function clearSel(){ selected.clear(); render(); }
 function deleteSelected(){ if(!selected.size)return; snap(); tabList=tabList.filter(function(_,i){return !selected.has(i);}); selected.clear(); render(); }
 function clearAll(){ if(!tabList.length)return; snap(); tabList=[]; selected.clear(); render(); }
