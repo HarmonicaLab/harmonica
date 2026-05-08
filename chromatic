@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chromatic Harmonica Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f4f5f7;--surface:#fff;--surface2:#eef0f4;--border:#d0d5e0;--accent:#e8c84a;--accent2:#4ae8b4;--danger:#e84a4a;--text:#1a1d26;--muted:#7a828f;--in-tune:#1aaa80;--purple:#8855dd;--blow:#4a9ce8;--draw:#e84a6a;--slide:#b44ae8}
+body.dark{--bg:#0d0f14;--surface:#161922;--surface2:#1e2230;--border:#2a3040;--text:#e8eaf0;--muted:#6b7280;--in-tune:#4ae8b4}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 48px;transition:background .3s,color .3s}
+.wrap{width:100%;max-width:760px}
+.top-bar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px}
+.toggle-pill{display:flex;border-radius:50px;border:1.5px solid var(--border);overflow:hidden;background:var(--surface2)}
+.toggle-pill button{padding:5px 11px;border:none;background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .15s}
+.toggle-pill button.active{background:var(--accent);color:#1a1d26;font-weight:600}
+header{text-align:center;margin-bottom:28px}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,7vw,3.4rem);letter-spacing:.05em;color:var(--accent);line-height:1;margin-bottom:6px}
+header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06em;text-transform:uppercase}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:14px}
+.section-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.12em;color:var(--muted);margin-bottom:14px}
+.key-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.key-lbl{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.key-btns{display:flex;flex-wrap:wrap;gap:6px}
+.key-btn{padding:6px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.78rem;cursor:pointer;transition:all .15s}
+.key-btn:hover{border-color:var(--accent);color:var(--text)}
+.key-btn.active{border-color:var(--accent);background:rgba(232,200,74,.15);color:var(--accent);font-weight:500}
+.tuner-inner{text-align:center}
+.pitch-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--muted);letter-spacing:.05em;min-height:80px;display:flex;align-items:center;justify-content:center;transition:color .1s}
+.pitch-big.on{color:var(--accent2)}.pitch-big.slide{color:var(--slide)}.pitch-big.oob{color:var(--danger)}
+.freq-sub{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px;min-height:18px}
+.cents-wrap{position:relative;height:6px;background:var(--surface2);border-radius:3px;margin:14px auto;max-width:320px;border:1px solid var(--border)}
+.cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
+.cents-mid{position:absolute;left:50%;top:-4px;width:2px;height:14px;background:var(--border);transform:translateX(-50%);border-radius:1px}
+.cents-lbl{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace}
+.badge{display:inline-block;font-size:.72rem;padding:3px 12px;border-radius:999px;font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:.06em;border:1px solid transparent}
+.badge.intune{background:rgba(74,232,180,.12);color:var(--in-tune);border-color:rgba(74,232,180,.3)}
+.badge.sharp,.badge.flat{background:rgba(232,200,74,.12);color:#c9a800;border-color:rgba(232,200,74,.3)}
+.badge.slide{background:rgba(180,74,232,.12);color:var(--slide);border-color:rgba(180,74,232,.3)}
+.badge.idle{background:var(--surface2);color:var(--muted);border-color:var(--border)}
+.badge.oob{background:rgba(232,74,74,.12);color:var(--danger);border-color:rgba(232,74,74,.3)}
+.mic-row{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.mic-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 24px;border-radius:50px;border:2px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.mic-btn:hover{border-color:var(--accent2);color:var(--text)}
+.mic-btn.on{border-color:var(--in-tune);color:var(--in-tune);background:rgba(74,232,180,.08)}
+.mic-btn.auto-on{border-color:var(--purple);color:var(--purple);background:rgba(136,85,221,.08)}
+.mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+.mic-btn.on .mic-dot,.mic-btn.auto-on .mic-dot{animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* GRIGLIA CROMATICA */
+.leg-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.leg{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--muted)}
+.leg-sq{width:11px;height:11px;border-radius:3px;border:1.5px solid}
+.harp-scroll{overflow-x:auto;padding-bottom:8px}
+.harp-row{display:flex;gap:5px;align-items:center;margin-bottom:5px}
+.harp-lbl{width:80px;min-width:80px;font-size:.63rem;color:var(--muted);text-align:right;padding-right:8px;font-family:'DM Sans',sans-serif}
+.harp-cells{display:flex;gap:4px;flex:1}
+.hcell{flex:1;min-width:0;height:44px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.75rem;font-weight:600;border-radius:8px;border:1.5px solid transparent;transition:all .13s;flex-direction:column;gap:1px}
+.hcell .cn{font-size:.6rem;font-weight:400;opacity:.7}
+.hcell.blow{background:rgba(74,156,232,.1);color:var(--blow);border-color:rgba(74,156,232,.3)}
+.hcell.draw{background:rgba(232,74,106,.1);color:var(--draw);border-color:rgba(232,74,106,.3)}
+.hcell.slide{background:rgba(180,74,232,.1);color:var(--slide);border-color:rgba(180,74,232,.3)}
+.hcell.blow.active{background:rgba(74,156,232,.35);border-color:var(--blow);box-shadow:0 0 12px rgba(74,156,232,.4);transform:scale(1.06)}
+.hcell.draw.active{background:rgba(232,74,106,.35);border-color:var(--draw);box-shadow:0 0 12px rgba(232,74,106,.4);transform:scale(1.06)}
+.hcell.slide.active{background:rgba(180,74,232,.35);border-color:var(--slide);box-shadow:0 0 12px rgba(180,74,232,.4);transform:scale(1.06)}
+.hole-wrap{display:flex;flex:1;border-radius:8px;padding:3px 0}
+.hole-num{flex:1;min-width:0;height:26px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:#fff}
+
+/* PENTAGRAMMA */
+#staffCanvas{display:block;width:100%;border-radius:8px}
+.staff-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.staff-info{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;flex:1;text-align:right}
+
+/* TRASCRIZIONE CHIP */
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.btn{display:inline-block;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;text-align:center;line-height:1.4;user-select:none;-webkit-user-select:none}
+.btn:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.primary{border-color:var(--accent2);color:var(--accent2)}
+.btn.primary:hover:not(:disabled){background:rgba(74,232,180,.1)}
+.btn.primary.slide{border-color:var(--slide);color:var(--slide)}
+.btn.danger{border-color:rgba(232,74,74,.4);color:var(--danger)}
+.btn.danger:hover:not(:disabled){background:rgba(232,74,74,.1)}
+.spacer{flex:1}
+.sel-bar{display:none;align-items:center;gap:8px;font-size:.75rem;background:rgba(136,85,221,.08);color:var(--purple);border:1px solid rgba(136,85,221,.3);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace}
+.sel-bar.on{display:inline-flex}
+.tab-notes{display:block;min-height:52px;padding:4px 0;margin-bottom:14px}
+.tab-row{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;min-height:44px;padding:4px 0 10px;border-bottom:1.5px dashed var(--border)}
+.tab-row:last-child{border-bottom:none}
+.chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:5px 9px;min-width:42px;cursor:pointer;transition:all .13s;user-select:none}
+.chip:hover{border-color:var(--muted)}
+.chip.sel{background:rgba(136,85,221,.1);border-color:var(--purple)}
+.chip .arr{font-size:1rem;line-height:1;font-family:'DM Mono',monospace}
+.chip.blow .arr{color:var(--blow)}.chip.draw .arr{color:var(--draw)}.chip.blow-slide .arr,.chip.draw-slide .arr{color:var(--slide)}
+.chip .hn{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);line-height:1}
+.chip .nn{font-size:.6rem;color:var(--muted);font-family:'DM Mono',monospace}
+.chip.sel .hn,.chip.sel .nn{color:var(--purple)}
+.chip.separator{background:transparent;border:1.5px dashed var(--border);font-family:'DM Mono',monospace;font-size:1rem;min-width:24px;padding:6px 8px}
+.empty-msg{font-size:.8rem;color:var(--muted);padding:6px 0;font-family:'DM Mono',monospace}
+.txt-out{padding:10px 14px;background:var(--surface2);border-radius:8px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:40px;border:1px solid var(--border);user-select:all;margin-bottom:10px}
+.btm-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* METRONOMO */
+.metro-beats{display:flex;justify-content:center;gap:10px;margin-bottom:16px}
+.metro-beat{width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--muted);transition:all .08s}
+.metro-beat.accent{background:var(--accent);border-color:var(--accent);color:#1a1d26;box-shadow:0 0 16px rgba(232,200,74,.5);transform:scale(1.15)}
+.metro-beat.normal{background:var(--accent2);border-color:var(--accent2);color:#1a1d26;box-shadow:0 0 12px rgba(74,232,180,.4);transform:scale(1.08)}
+.metro-controls{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.metro-bpm-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:1.3rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.metro-bpm-btn:hover{border-color:var(--accent);color:var(--accent)}
+.metro-bpm-display{display:flex;flex-direction:column;align-items:center;min-width:70px}
+.metro-bpm-val{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--accent);line-height:1}
+.metro-bpm-lbl{font-size:.62rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.metro-start-btn{padding:10px 24px;border-radius:50px;border:2px solid var(--accent2);background:transparent;color:var(--accent2);font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.1em;cursor:pointer;transition:all .15s}
+.metro-start-btn:hover,.metro-start-btn.running{background:var(--accent2);color:#1a1d26}
+.metro-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.metro-row-lbl{font-size:.72rem;color:var(--muted)}
+.metro-btns{display:flex;gap:6px;flex-wrap:wrap}
+.metro-btn{padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;cursor:pointer;transition:all .15s}
+.metro-btn:hover{border-color:var(--accent);color:var(--text)}
+.metro-btn.active{border-color:var(--accent);background:rgba(232,200,74,.15);color:var(--accent)}
+
+/* SESSIONI */
+.sess-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sess-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.12em;color:var(--muted)}
+.sess-list{display:flex;flex-direction:column;gap:6px}
+.sess-row{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s}
+.sess-row:hover{border-color:var(--muted)}.sess-row.active{border-color:var(--accent2);background:rgba(74,232,180,.06)}
+.sess-name{flex:1;font-size:.82rem;color:var(--text)}
+.sess-name input{background:transparent;border:none;outline:none;color:var(--text);font-size:.82rem;width:100%;font-family:'DM Sans',sans-serif}
+.sess-row.active .sess-name{color:var(--in-tune)}
+.sess-meta{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap}
+.sess-del{font-size:.8rem;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .15s}
+.sess-del:hover{color:var(--danger);background:rgba(232,74,74,.1)}
+.sess-empty{font-size:.8rem;color:var(--muted);font-family:'DM Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="toggle-pill">
+    <button id="btnIT" class="active" onclick="setLang('it')">IT</button>
+    <button id="btnEN" onclick="setLang('en')">EN</button>
+  </div>
+  <div class="toggle-pill">
+    <button id="themeLight" class="active" onclick="setTheme('light')">☀️</button>
+    <button id="themeDark" onclick="setTheme('dark')">🌙</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <h1>Chromatic Harmonica Lab</h1>
+  <p id="subTitle">Armonica Cromatica in C</p>
+</header>
+
+<!-- TONALITÀ -->
+<div class="card">
+  <div class="key-row">
+    <span class="key-lbl" id="keyLbl">Tonalità:</span>
+    <div class="key-btns" id="keyBtns"></div>
+  </div>
+</div>
+
+<!-- TUNER -->
+<div class="card">
+  <div class="tuner-inner">
+    <div class="pitch-big" id="pitchBig">—</div>
+    <div class="freq-sub" id="freqSub"></div>
+    <div class="cents-wrap">
+      <div class="cents-fill" id="cFill" style="left:50%;width:0"></div>
+      <div class="cents-mid"></div>
+    </div>
+    <div class="cents-lbl" id="cLbl">— ct</div><br>
+    <span class="badge idle" id="badge"></span>
+    <div class="mic-row">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()"><span class="mic-dot"></span><span id="micLbl">Attiva microfono</span></button>
+      <button class="mic-btn" id="autoBtn" onclick="toggleAuto()"><span class="mic-dot"></span><span id="autoLbl">Auto 1s</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- GRIGLIA CROMATICA -->
+<div class="card">
+  <h2 class="section-label" id="gridTitle">Griglia Note</h2>
+  <div class="leg-row">
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(74,156,232,.6);background:rgba(74,156,232,.1)"></div><span id="legBlow">↑ Soffia</span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(232,74,106,.6);background:rgba(232,74,106,.1)"></div><span id="legDraw">↓ Aspira</span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(180,74,232,.6);background:rgba(180,74,232,.1)"></div><span id="legSlide">+ Slide</span></div>
+  </div>
+  <div class="harp-scroll" id="harpVisual"></div>
+</div>
+
+<!-- PENTAGRAMMA -->
+<div class="card">
+  <h2 class="section-label" id="staffTitle">Pentagramma</h2>
+  <div class="staff-toolbar">
+    <button class="btn" onclick="staffZoomOut()">−</button>
+    <button class="btn" onclick="staffZoomIn()">+</button>
+    <button class="btn" onclick="clearStaff()" style="border-color:rgba(232,74,74,.4);color:var(--danger)" id="clearStaffBtn">Cancella</button>
+    <div class="staff-info" id="staffInfo">0 note</div>
+  </div>
+  <canvas id="staffCanvas"></canvas>
+</div>
+
+<!-- TRASCRIZIONE -->
+<div class="card">
+  <h2 class="section-label" id="tabTitle">Trascrizione</h2>
+  <div class="toolbar">
+    <button class="btn primary" id="addBtn" onclick="addNote()" disabled>+ Aggiungi</button>
+    <button class="btn" id="replaceBtn" onclick="replaceNote()" style="display:none;border-color:#8855dd;color:#8855dd">⟳ <span id="replaceLbl">Sostituisci</span></button>
+    <button class="btn" onclick="addSeparator()">| <span id="sepLbl">Battuta</span></button>
+    <button class="btn" onclick="addNewline()">↵ <span id="nlLbl">A capo</span></button>
+    <div class="spacer"></div>
+    <button class="btn" id="undoBtn" onclick="undo()" disabled>↩ Annulla</button>
+    <button class="btn" id="redoBtn" onclick="redo()" disabled>↪ Ripristina</button>
+    <button class="btn danger" id="clearBtn" onclick="clearAll()">Cancella tutto</button>
+  </div>
+  <span class="sel-bar" id="selBar">
+    <span id="selCount">0</span> <span id="selLbl">selezionate</span>&nbsp;
+    <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" id="delBtn">Elimina</button>
+    <button class="btn" style="padding:2px 9px;font-size:.7rem" onclick="clearSel()">✕</button>
+  </span>
+  <div class="tab-notes" id="tabNotes"></div>
+  <div class="txt-out" id="txtOut">—</div>
+  <div class="btm-row">
+    <button class="btn" id="copyBtn" onclick="copyTab()">Copia testo</button>
+    <button class="btn" onclick="exportPDF()">📄 <span id="pdfLbl">Esporta PDF</span></button>
+    <button class="btn primary" onclick="saveSession()" id="saveBtn">Salva sessione</button>
+  </div>
+</div>
+
+<!-- METRONOMO -->
+<div class="card">
+  <h2 class="section-label" id="metroTitle">Metronomo</h2>
+  <div class="metro-beats" id="metroBeats"></div>
+  <div class="metro-controls">
+    <button class="metro-bpm-btn" id="bpmDown" onclick="bpmChange(-1)">−</button>
+    <div class="metro-bpm-display">
+      <div class="metro-bpm-val" id="bpmVal">80</div>
+      <div class="metro-bpm-lbl">BPM</div>
+    </div>
+    <button class="metro-bpm-btn" id="bpmUp" onclick="bpmChange(1)">+</button>
+    <button class="metro-start-btn" id="metroStartBtn" onclick="toggleMetro()">▶ Start</button>
+  </div>
+  <div class="metro-row">
+    <span class="metro-row-lbl" id="metroTimeLbl">Tempo:</span>
+    <div class="metro-btns">
+      <button class="metro-btn active" onclick="setTimeSig(4,this)">4/4</button>
+      <button class="metro-btn" onclick="setTimeSig(3,this)">3/4</button>
+      <button class="metro-btn" onclick="setTimeSig(2,this)">2/4</button>
+    </div>
+  </div>
+  <div class="metro-row" style="margin-top:8px">
+    <span class="metro-row-lbl">Feel:</span>
+    <div class="metro-btns" id="feelBtns">
+      <button class="metro-btn active" onclick="setFeel('straight',this)">Straight</button>
+      <button class="metro-btn" onclick="setFeel('swing',this)">Swing</button>
+      <button class="metro-btn" onclick="setFeel('blues',this)">Blues</button>
+    </div>
+  </div>
+</div>
+
+<!-- SESSIONI -->
+<div class="card">
+  <div class="sess-hdr">
+    <h2 id="sessTitle">Sessioni salvate</h2>
+    <button class="btn primary" onclick="newSession()" id="newSessBtn">+ Nuova sessione</button>
+  </div>
+  <div class="sess-list" id="sessList"></div>
+</div>
+
+<div style="text-align:center;padding:16px 0 4px;font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace">
+  © 2025 Chromatic Harmonica Lab · CC BY-NC 4.0
+</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   LINGUE
+═══════════════════════════════════════════════════════ */
+var lang = 'it';
+var TX = {
+  it:{
+    sub:'Armonica Cromatica in', key:'Tonalità:',
+    grid:'Griglia note', staff:'Pentagramma', tab:'Trascrizione',
+    micOn:'Attiva microfono', micOff:'Stop',
+    idle:'in attesa', silence:'silenzio', intune:'in tune', high:'troppo alta', low:'troppo bassa', slide:'slide', oob:'fuori range',
+    legBlow:'↑ Soffia (blow)', legDraw:'↓ Aspira (draw)', legSlide:'+ Slide',
+    rowBlowSlide:'↑ Soffia+Slide', rowBlow:'↑ Soffia', rowDraw:'↓ Aspira', rowDrawSlide:'↓ Aspira+Slide',
+    add:'+ Aggiungi', replace:'Sostituisci', sep:'Battuta', nl:'A capo',
+    undo:'↩ Annulla', redo:'↪ Ripristina', clearAll:'Cancella tutto',
+    clearStaff:'Cancella', selected:'selezionate', del:'Elimina',
+    copy:'Copia testo', pdf:'Esporta PDF', save:'Salva sessione',
+    metro:'Metronomo', metroTime:'Tempo:',
+    sessions:'Sessioni salvate', newSess:'+ Nuova sessione',
+    noSess:'Nessuna sessione', noNotes:'Nessuna nota ancora',
+    promptName:'Nome sessione:', confirmDel:'Eliminare la sessione?',
+    noSave:'Nessuna nota da salvare.', noExport:'Nessuna nota da esportare.', copied:'Copiato!',
+    noteCount:'note', staffZoom:'Zoom:',
+    pdfLeg:'Legenda', pdfStaff:'Pentagramma', pdfTxt:'Notazione testo', pdfFoot:'Generato con Chromatic Harmonica Lab'
+  },
+  en:{
+    sub:'Chromatic Harmonica in', key:'Key:',
+    grid:'Note grid', staff:'Staff', tab:'Transcription',
+    micOn:'Enable microphone', micOff:'Stop',
+    idle:'waiting', silence:'silence', intune:'in tune', high:'too sharp', low:'too flat', slide:'slide', oob:'out of range',
+    legBlow:'↑ Blow', legDraw:'↓ Draw', legSlide:'+ Slide',
+    rowBlowSlide:'↑ Blow+Slide', rowBlow:'↑ Blow', rowDraw:'↓ Draw', rowDrawSlide:'↓ Draw+Slide',
+    add:'+ Add', replace:'Replace', sep:'Bar', nl:'New line',
+    undo:'↩ Undo', redo:'↪ Redo', clearAll:'Clear all',
+    clearStaff:'Clear', selected:'selected', del:'Delete',
+    copy:'Copy text', pdf:'Export PDF', save:'Save session',
+    metro:'Metronome', metroTime:'Time:',
+    sessions:'Saved sessions', newSess:'+ New session',
+    noSess:'No sessions', noNotes:'No notes yet',
+    promptName:'Session name:', confirmDel:'Delete this session?',
+    noSave:'No notes to save.', noExport:'No notes to export.', copied:'Copied!',
+    noteCount:'notes', staffZoom:'Zoom:',
+    pdfLeg:'Legend', pdfStaff:'Staff', pdfTxt:'Text notation', pdfFoot:'Generated with Chromatic Harmonica Lab'
+  }
+};
+function t(k){return TX[lang][k]||k;}
+function setLang(l){
+  lang=l;
+  document.getElementById('btnIT').classList.toggle('active',l==='it');
+  document.getElementById('btnEN').classList.toggle('active',l==='en');
+  applyTx(); buildHarpVisual(); render(); renderSess(); drawStaff();
+}
+function setTheme(th){
+  document.body.classList.toggle('dark',th==='dark');
+  document.getElementById('themeLight').classList.toggle('active',th==='light');
+  document.getElementById('themeDark').classList.toggle('active',th==='dark');
+  localStorage.setItem('chrom_theme',th);
+  buildHarpVisual(); drawStaff();
+}
+function applyTx(){
+  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name;
+  document.getElementById('keyLbl').textContent=t('key');
+  document.getElementById('gridTitle').textContent=t('grid');
+  document.getElementById('staffTitle').textContent=t('staff');
+  document.getElementById('tabTitle').textContent=t('tab');
+  document.getElementById('legBlow').textContent=t('legBlow');
+  document.getElementById('legDraw').textContent=t('legDraw');
+  document.getElementById('legSlide').textContent=t('legSlide');
+  document.getElementById('micLbl').textContent=listening?t('micOff'):t('micOn');
+  document.getElementById('badge').textContent=t('idle');
+  document.getElementById('sepLbl').textContent=t('sep');
+  document.getElementById('nlLbl').textContent=t('nl');
+  document.getElementById('undoBtn').textContent=t('undo');
+  document.getElementById('redoBtn').textContent=t('redo');
+  document.getElementById('clearBtn').textContent=t('clearAll');
+  document.getElementById('clearStaffBtn').textContent=t('clearStaff');
+  document.getElementById('selLbl').textContent=t('selected');
+  document.getElementById('delBtn').textContent=t('del');
+  document.getElementById('copyBtn').textContent=t('copy');
+  document.getElementById('pdfLbl').textContent=t('pdf');
+  document.getElementById('saveBtn').textContent=t('save');
+  document.getElementById('metroTitle').textContent=t('metro');
+  document.getElementById('metroTimeLbl').textContent=t('metroTime');
+  document.getElementById('sessTitle').textContent=t('sessions');
+  document.getElementById('newSessBtn').textContent=t('newSess');
+  var ab=document.getElementById('addBtn');
+  if(ab.disabled) ab.textContent=t('add');
+}
+
+/* ═══════════════════════════════════════════════════════
+   ARMONICA CROMATICA — MAPPA NOTE
+   12 fori, DO (C). Ogni foro: blow, draw, blow+slide, draw+slide
+═══════════════════════════════════════════════════════ */
+var NNAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+var NNAMES_FLAT=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+function mn(m){return NNAMES[((m%12)+12)%12];}
+function midi2hz(m){return 440*Math.pow(2,(m-69)/12);}
+
+/* 
+  Armonica cromatica standard (C):
+  Foro  | Blow | Blow+Slide | Draw | Draw+Slide
+  1     | C4   | C#4        | D4   | D#4
+  2     | E4   | F4         | F4   | F#4  ← nota: blow+slide = draw
+  3     | G4   | G#4        | A4   | A#4
+  4     | C5   | C#5        | B4   | C5
+  5     | E5   | F5         | D5   | D#5
+  6     | G5   | G#5        | F5   | F#5
+  7     | C6   | C#6        | A5   | A#5
+  8     | E6   | F6         | B5   | C6
+  9     | G6   | G#6        | D6   | D#6
+  10    | C7   | C#7        | F6   | F#6
+  11    | E7   | F7         | A6   | A#6
+  12    | G7   | G#7        | B6   | C7
+*/
+var CHROMATIC_12 = [
+  {hole:1,  blow:60, blowS:61, draw:62, drawS:63},
+  {hole:2,  blow:64, blowS:65, draw:65, drawS:66},
+  {hole:3,  blow:67, blowS:68, draw:69, drawS:70},
+  {hole:4,  blow:72, blowS:73, draw:71, drawS:72},
+  {hole:5,  blow:76, blowS:77, draw:74, drawS:75},
+  {hole:6,  blow:79, blowS:80, draw:77, drawS:78},
+  {hole:7,  blow:84, blowS:85, draw:81, drawS:82},
+  {hole:8,  blow:88, blowS:89, draw:83, drawS:84},
+  {hole:9,  blow:91, blowS:92, draw:86, drawS:87},
+  {hole:10, blow:96, blowS:97, draw:89, drawS:90},
+  {hole:11, blow:100,blowS:101,draw:93, drawS:94},
+  {hole:12, blow:103,blowS:104,draw:95, drawS:96},
+];
+
+var KEYS=[
+  {name:'C',  offset:0},
+  {name:'C#', offset:1},
+  {name:'D',  offset:2},
+  {name:'Eb', offset:3},
+  {name:'E',  offset:4},
+  {name:'F',  offset:5},
+  {name:'F#', offset:6},
+  {name:'G',  offset:7},
+  {name:'Ab', offset:8},
+  {name:'A',  offset:9},
+  {name:'Bb', offset:10},
+  {name:'B',  offset:11},
+];
+var currentKey=KEYS[0], HMAP=[];
+
+function buildMap(key){
+  var m=[], off=key.offset;
+  CHROMATIC_12.forEach(function(h){
+    var types=[
+      {midi:h.blow+off,  dir:'blow',       sym:'↑',  slide:false},
+      {midi:h.blowS+off, dir:'blow-slide', sym:'↑+', slide:true},
+      {midi:h.draw+off,  dir:'draw',       sym:'↓',  slide:false},
+      {midi:h.drawS+off, dir:'draw-slide', sym:'↓+', slide:true},
+    ];
+    types.forEach(function(tp){
+      m.push({midi:tp.midi, hz:midi2hz(tp.midi), hole:h.hole, dir:tp.dir, sym:tp.sym, slide:tp.slide});
+    });
+  });
+  return m;
+}
+
+function findClosest(hz){
+  var best=null, bd=9999;
+  for(var i=0;i<HMAP.length;i++){
+    var d=Math.abs(HMAP[i].hz-hz);
+    if(d<bd){bd=d;best=HMAP[i];}
+  }
+  if(!best)return null;
+  var cents=Math.round(1200*Math.log2(hz/best.hz));
+  if(Math.abs(cents)>130)return null;
+  return {midi:best.midi,hz:best.hz,hole:best.hole,dir:best.dir,sym:best.sym,slide:best.slide,cents:cents};
+}
+
+function buildKeyBtns(){
+  var w=document.getElementById('keyBtns'); w.innerHTML='';
+  KEYS.forEach(function(k,idx){
+    var b=document.createElement('button');
+    b.className='key-btn'+(idx===0?' active':'');
+    b.textContent=k.name;
+    b.onclick=(function(i,el){return function(){setKey(i,el);};})(idx,b);
+    w.appendChild(b);
+  });
+}
+function setKey(i,btn){
+  document.querySelectorAll('.key-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  currentKey=KEYS[i]; HMAP=buildMap(currentKey);
+  document.getElementById('subTitle').textContent=t('sub')+' '+currentKey.name;
+  buildHarpVisual(); curMatch=null; lastStableMatch=null; highlight(null); setAddBtn(false,null);
+}
+
+/* ═══════════════════════════════════════════════════════
+   GRIGLIA VISIVA CROMATICA
+═══════════════════════════════════════════════════════ */
+function buildHarpVisual(){
+  var vis=document.getElementById('harpVisual'); if(!vis)return;
+  vis.innerHTML='';
+  var isDark=document.body.classList.contains('dark');
+  var holeBg=isDark?'#3a3f52':'#6b7280';
+  var off=currentKey.offset;
+
+  function makeRow(lbl,cells){
+    var wrap=document.createElement('div'); wrap.className='harp-row';
+    var l=document.createElement('div'); l.className='harp-lbl'; l.textContent=lbl;
+    var c=document.createElement('div'); c.className='harp-cells';
+    cells.forEach(function(el){c.appendChild(el);}); wrap.appendChild(l); wrap.appendChild(c); return wrap;
+  }
+  function makeCell(cls,note,midi,id){
+    var el=document.createElement('div'); el.className='hcell '+cls;
+    if(id) el.id=id;
+    var noteName=mn(midi), octave=Math.floor(midi/12)-1;
+    el.innerHTML='<span>'+noteName+'</span><span class="cn">'+octave+'</span>';
+    return el;
+  }
+
+  // Riga Blow+Slide
+  var bsCells=CHROMATIC_12.map(function(h){
+    var m=h.blowS+off;
+    return makeCell('slide','',m,'hv_blowS_'+h.hole);
+  });
+  vis.appendChild(makeRow(t('rowBlowSlide'),bsCells));
+
+  // Riga Blow
+  var blowCells=CHROMATIC_12.map(function(h){
+    var m=h.blow+off;
+    return makeCell('blow','',m,'hv_blow_'+h.hole);
+  });
+  vis.appendChild(makeRow(t('rowBlow'),blowCells));
+
+  // Numeri foro
+  var holeRow=document.createElement('div'); holeRow.className='harp-row';
+  var hLbl=document.createElement('div'); hLbl.className='harp-lbl'; hLbl.textContent='Foro';
+  var hWrap=document.createElement('div'); hWrap.className='hole-wrap harp-cells'; hWrap.style.background=holeBg;
+  CHROMATIC_12.forEach(function(h){
+    var el=document.createElement('div'); el.className='hole-num'; el.textContent=h.hole;
+    hWrap.appendChild(el);
+  });
+  holeRow.appendChild(hLbl); holeRow.appendChild(hWrap); vis.appendChild(holeRow);
+
+  // Riga Draw
+  var drawCells=CHROMATIC_12.map(function(h){
+    var m=h.draw+off;
+    return makeCell('draw','',m,'hv_draw_'+h.hole);
+  });
+  vis.appendChild(makeRow(t('rowDraw'),drawCells));
+
+  // Riga Draw+Slide
+  var dsCells=CHROMATIC_12.map(function(h){
+    var m=h.drawS+off;
+    return makeCell('slide','',m,'hv_drawS_'+h.hole);
+  });
+  vis.appendChild(makeRow(t('rowDrawSlide'),dsCells));
+}
+
+var lastActId=null;
+function highlight(match){
+  if(lastActId){var e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
+  lastActId=null; if(!match)return;
+  var dirMap={blow:'blow','blow-slide':'blowS',draw:'draw','draw-slide':'drawS'};
+  var id='hv_'+(dirMap[match.dir]||match.dir)+'_'+match.hole;
+  var e=document.getElementById(id);
+  if(e){e.classList.add('active');lastActId=id;}
+}
+
+/* ═══════════════════════════════════════════════════════
+   PITCH DETECTION (YIN-like, come originale)
+═══════════════════════════════════════════════════════ */
+var actx=null,analyser=null,stream=null,raf=null,listening=false;
+var curMatch=null,lastStableMatch=null;
+var autoCapture=false,autoTimer=null,autoHoldMatch=null;
+
+function toggleAuto(){
+  autoCapture=!autoCapture;
+  var btn=document.getElementById('autoBtn'),lbl=document.getElementById('autoLbl');
+  if(autoCapture){btn.classList.add('auto-on');lbl.textContent='Auto ON';}
+  else{btn.classList.remove('auto-on');lbl.textContent='Auto 1s';resetAutoTimer();}
+}
+function resetAutoTimer(){clearTimeout(autoTimer);autoTimer=null;autoHoldMatch=null;if(!autoCapture)document.getElementById('cFill').style.width='0';}
+function tickAuto(match){
+  if(!autoCapture||!match)return;
+  if(!autoHoldMatch||autoHoldMatch.hole!==match.hole||autoHoldMatch.dir!==match.dir){
+    resetAutoTimer();autoHoldMatch=match;
+    var start=Date.now();
+    function tick(){
+      var pct=Math.min((Date.now()-start)/1000,1);
+      var fill=document.getElementById('cFill');
+      fill.style.left='0';fill.style.width=(pct*100)+'%';fill.style.background='#8855dd';
+      if(pct>=1){snap();tabList.push(copyNote(match));render();drawStaff();autoHoldMatch=null;setTimeout(function(){document.getElementById('cFill').style.width='0';},300);}
+      else{autoTimer=setTimeout(tick,30);}
+    }
+    autoTimer=setTimeout(tick,30);
+  }
+}
+function copyNote(n){return {midi:n.midi,hz:n.hz,hole:n.hole,dir:n.dir,sym:n.sym,slide:n.slide,cents:n.cents};}
+
+function detectPitch(buf,sr){
+  var N=buf.length,rms=0;
+  for(var i=0;i<N;i++)rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/N); if(rms<0.002)return -1;
+  var tauMin=Math.floor(sr/2200),tauMax=Math.floor(sr/80),W=Math.min(Math.floor(N/2),tauMax+1);
+  var d=new Float32Array(W);
+  for(var tau=tauMin;tau<W;tau++)for(var j=0;j<W;j++){var diff=buf[j]-buf[j+tau];d[tau]+=diff*diff;}
+  var dn=new Float32Array(W);dn[0]=1;var rs=0;
+  for(var tau=1;tau<W;tau++){rs+=d[tau];dn[tau]=rs===0?0:(d[tau]*tau)/rs;}
+  var th=0.15,tau=-1;
+  for(var tt=tauMin;tt<W-1;tt++){if(dn[tt]<th&&dn[tt]<=dn[tt+1]){tau=tt;break;}}
+  if(tau===-1){var mv=Infinity,mi=tauMin;for(var tt=tauMin;tt<W;tt++){if(dn[tt]<mv){mv=dn[tt];mi=tt;}}if(mv>0.35)return -1;tau=mi;}
+  if(tau<=0||tau>=W-1)return sr/tau;
+  var x1=dn[tau-1],x2=dn[tau],x3=dn[tau+1];
+  var denom=2*x2-x1-x3,adj=denom===0?0:(x3-x1)/(2*denom);
+  var refined=tau+adj;
+  var ht=Math.round(refined/2);
+  if(ht>=tauMin&&ht<W&&dn[ht]<th*1.5){
+    var fH=sr/ht,fF=sr/refined,dH=9999,dF=9999;
+    for(var i=0;i<HMAP.length;i++){var ah=Math.abs(HMAP[i].hz-fH),af=Math.abs(HMAP[i].hz-fF);if(ah<dH)dH=ah;if(af<dF)dF=af;}
+    if(dH<dF)return fH;
+  }
+  return sr/refined;
+}
+
+function toggleMic(){
+  if(!listening){
+    navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(s){
+      stream=s;actx=new(window.AudioContext||window.webkitAudioContext)();
+      analyser=actx.createAnalyser();analyser.fftSize=8192;
+      actx.createMediaStreamSource(stream).connect(analyser);
+      listening=true;document.getElementById('micBtn').classList.add('on');
+      document.getElementById('micLbl').textContent=t('micOff');loop();
+    }).catch(function(e){document.getElementById('freqSub').textContent='Errore: '+e.message;});
+  } else {stopMic();}
+}
+function stopMic(){
+  listening=false;cancelAnimationFrame(raf);
+  if(stream)stream.getTracks().forEach(function(tr){tr.stop();});
+  if(actx)actx.close();
+  document.getElementById('micBtn').classList.remove('on');
+  document.getElementById('micLbl').textContent=t('micOn');
+  document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
+  document.getElementById('freqSub').textContent='';document.getElementById('cFill').style.width='0';
+  document.getElementById('cLbl').textContent='— ct';
+  setBadge('idle',t('idle'));setAddBtn(false,null);highlight(null);curMatch=null;resetAutoTimer();
+}
+function setBadge(cls,txt){var b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
+function setAddBtn(on,match){
+  var ab=document.getElementById('addBtn'),rb=document.getElementById('replaceBtn'),rl=document.getElementById('replaceLbl');
+  ab.disabled=!on;
+  if(!on){ab.textContent=t('add');ab.className='btn primary';}
+  else{
+    ab.className='btn primary'+(match.slide?' slide':'');
+    ab.innerHTML='<span style="pointer-events:none;display:block;width:100%;text-align:center">+ '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
+  }
+  if(selected.size===1){rb.style.display='';rb.disabled=false;rl.textContent=t('replace')+(match?' '+match.sym+match.hole:'...');}
+  else{rb.style.display='none';}
+}
+function loop(){
+  if(!listening)return;
+  raf=requestAnimationFrame(loop);
+  var buf=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(buf);
+  var rms=0;for(var i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
+  if(rms<0.002){
+    curMatch=null;
+    document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
+    document.getElementById('freqSub').textContent='';
+    if(!autoCapture){document.getElementById('cFill').style.width='0';document.getElementById('cLbl').textContent='— ct';}
+    setBadge('idle',t('silence'));highlight(null);setAddBtn(false,null);resetAutoTimer();return;
+  }
+  var freq=detectPitch(buf,actx.sampleRate);
+  if(freq>60&&freq<4200){
+    var match=findClosest(freq);
+    if(match){
+      curMatch=match;lastStableMatch=match;
+      var pb=document.getElementById('pitchBig');
+      pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
+      pb.className='pitch-big '+(match.slide?'slide':'on');
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
+      var ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
+      if(!autoCapture){
+        var fill=document.getElementById('cFill');
+        if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}
+        else{var w=(0.5-pct)*100;fill.style.left=(50-w)+'%';fill.style.width=w+'%';}
+        fill.style.background=Math.abs(ct)<=20?'#4ae8b4':'#e8c84a';
+        document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
+      }
+      var tun=Math.abs(ct)<=20;
+      var bc=tun?(match.slide?'slide':'intune'):(ct>20?'sharp':'flat');
+      var bl=tun?(match.slide?t('slide'):t('intune')):(ct>20?t('high'):t('low'));
+      setBadge(bc,bl);highlight(match);setAddBtn(true,match);tickAuto(match);
+    } else {
+      curMatch=null;
+      document.getElementById('pitchBig').textContent='?';document.getElementById('pitchBig').className='pitch-big oob';
+      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
+      setBadge('oob',t('oob'));highlight(null);setAddBtn(false,null);resetAutoTimer();
+    }
+  } else {
+    curMatch=null;
+    document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
+    document.getElementById('freqSub').textContent='';
+    if(!autoCapture){document.getElementById('cFill').style.width='0';document.getElementById('cLbl').textContent='— ct';}
+    setBadge('idle',t('silence'));highlight(null);setAddBtn(false,null);resetAutoTimer();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PENTAGRAMMA — CANVAS RENDERING
+   Chiave di violino + note con tagli addizionali
+═══════════════════════════════════════════════════════ */
+var staffNotes=[]; // note sul pentagramma
+var staffZoom=1.0;
+var STAFF_MIN_ZOOM=0.6, STAFF_MAX_ZOOM=2.0;
+
+function staffZoomIn(){staffZoom=Math.min(STAFF_MAX_ZOOM,staffZoom+0.1);drawStaff();}
+function staffZoomOut(){staffZoom=Math.max(STAFF_MIN_ZOOM,staffZoom-0.1);drawStaff();}
+function clearStaff(){staffNotes=[];drawStaff();document.getElementById('staffInfo').textContent='0 '+t('noteCount');}
+
+/* Converte MIDI in posizione sul pentagramma (chiave di violino)
+   Il Do centrale (C4 = midi 60) è il taglio aggiunto in basso */
+function midiToStaffPos(midi){
+  /* Mappa cromatica → diatonica (step su rigo, 0=Do centrale)
+     C4=0, D4=1, E4=2, F4=3, G4=4, A4=5, B4=6, C5=7 ...
+     Ogni ottava = 7 step diatonici */
+  var diatonicMap=[0,0,1,1,2,3,3,4,4,5,5,6]; // semitono → step diatonico in ottava
+  var note=(midi%12+12)%12;
+  var octave=Math.floor(midi/12)-1; // ottava MIDI
+  var step=diatonicMap[note]+(octave-4)*7; // step relativo a C4
+  return step; // step: 0=C4 (taglio in basso), ogni +1 = mezzo spazio su
+}
+
+function isSharp(midi){
+  var sharps=[1,3,6,8,10];
+  return sharps.indexOf((midi%12+12)%12)!==-1;
+}
+
+function drawStaff(){
+  var canvas=document.getElementById('staffCanvas');
+  var isDark=document.body.classList.contains('dark');
+  var Z=staffZoom;
+  var lineH=10*Z;        // spazio tra le righe
+  var marginLeft=70*Z;
+  var noteW=28*Z;        // larghezza slot nota
+  var notesPerLine=Math.floor((canvas.parentElement.clientWidth-marginLeft-20)/(noteW));
+  notesPerLine=Math.max(4,notesPerLine);
+
+  /* Calcola linee necessarie */
+  var realNotes=staffNotes.filter(function(n){return n.type!=='separator'&&n.type!=='newline';});
+  /* Divide per newline */
+  var lines=[[]];
+  staffNotes.forEach(function(n){
+    if(n.type==='newline') lines.push([]);
+    else lines[lines.length-1].push(n);
+  });
+  /* Spezza in righe da notesPerLine */
+  var rows=[];
+  lines.forEach(function(ln){
+    for(var i=0;i<ln.length||i===0;i+=notesPerLine){
+      rows.push(ln.slice(i,i+notesPerLine));
+    }
+  });
+
+  var staffTop=30*Z;        // margine sopra primo rigo
+  var staffHeight=4*lineH;  // 5 righe = 4 spazi
+  var extraAbove=4*lineH;   // spazio per note acute
+  var extraBelow=4*lineH;   // spazio per note basse + taglio aggiunto
+  var rowH=staffTop+extraAbove+staffHeight+extraBelow+20*Z;
+  var totalH=rows.length*rowH+20*Z;
+  var W=canvas.parentElement.clientWidth;
+  canvas.width=W; canvas.height=totalH;
+  var ctx=canvas.getContext('2d');
+
+  var bg=isDark?'#161922':'#ffffff';
+  var lineCol=isDark?'#3a4060':'#c8ccd8';
+  var noteBlowCol=isDark?'#4a9ce8':'#2a7cc8';
+  var noteDrawCol=isDark?'#e84a6a':'#c0284a';
+  var noteSlideCol=isDark?'#b44ae8':'#8a28c8';
+  var textCol=isDark?'#e8eaf0':'#1a1d26';
+  var mutedCol=isDark?'#6b7280':'#9a9fb0';
+  var accentCol='#e8c84a';
+
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,totalH);
+
+  /* Chiave di violino semplificata con canvas */
+  function drawClef(cx,cy){
+    // Disegno stilizzato della chiave di violino
+    ctx.save();
+    ctx.font='bold '+(38*Z)+'px serif';
+    ctx.fillStyle=textCol;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('𝄞',cx,cy);
+    ctx.restore();
+  }
+
+  /* Nota sul pentagramma */
+  function drawNote(ctx,x,stepPos,midi,dir,isSlide,isSelected,rowTop){
+    var staffMid=rowTop+staffTop+extraAbove+staffHeight/2; // linea centrale (B4)
+    /* step: 0=C4 (1 taglio sotto), linea B4 = step 6 su chiave violino
+       La riga centrale del pentagramma corrisponde a B4 (step=6 da C4) */
+    var centerStep=6; // B4 = step 6 da C4
+    var halfSpace=lineH/2;
+    var noteY=staffMid-((stepPos-centerStep)*halfSpace);
+
+    var r=lineH*0.42;
+    var col=isSlide?noteSlideCol:(dir==='blow'||dir==='blow-slide')?noteBlowCol:noteDrawCol;
+
+    // Tagli addizionali (ledger lines)
+    // Righe del pentagramma: G5(step10), E5(8), C5(6 top-rigo)... 
+    // Rigo superiore = E6(step16 in chiave violino), Rigo inferiore = E4(step2)
+    // Centro (B4) = step 6
+    // Linee del pentagramma (step pari dal basso): E4=2, G4=4, B4=6, D5=8, F5=10
+    var staffLines=[2,4,6,8,10]; // step delle 5 righe (E4,G4,B4,D5,F5) da C4
+    // Tagli addizionali sotto (C4=0, A3=-2...)
+    var ledgerBelow=[];
+    for(var s=0;s>=stepPos-1;s-=2){if(s<staffLines[0])ledgerBelow.push(s);}
+    // Tagli addizionali sopra
+    var ledgerAbove=[];
+    for(var s=12;s<=stepPos+1;s+=2){if(s>staffLines[4])ledgerAbove.push(s);}
+    var allLedger=ledgerBelow.concat(ledgerAbove);
+
+    ctx.save();
+    ctx.strokeStyle=lineCol;
+    ctx.lineWidth=1.2*Z;
+    allLedger.forEach(function(ls){
+      var ly=staffMid-((ls-centerStep)*halfSpace);
+      ctx.beginPath();
+      ctx.moveTo(x-r*1.5,ly);
+      ctx.lineTo(x+r*1.5,ly);
+      ctx.stroke();
+    });
+
+    // Ellisse nota
+    ctx.beginPath();
+    ctx.ellipse(x,noteY,r*1.15,r*0.78,Math.PI*(-0.12),0,Math.PI*2);
+    if(isSelected){ctx.fillStyle='rgba(136,85,221,.35)';ctx.strokeStyle='#8855dd';}
+    else{ctx.fillStyle=col;ctx.strokeStyle=col;}
+    ctx.fill();
+    if(isSelected){ctx.lineWidth=2*Z;ctx.stroke();}
+
+    // Gambo
+    var stemDir=stepPos>=6?-1:1; // su se note basse, giù se note acute
+    var stemLen=3.5*lineH;
+    ctx.beginPath();
+    ctx.strokeStyle=isSelected?'#8855dd':col;
+    ctx.lineWidth=1.6*Z;
+    if(stemDir===1){ctx.moveTo(x+r*1.1,noteY);ctx.lineTo(x+r*1.1,noteY-stemLen);}
+    else{ctx.moveTo(x-r*1.1,noteY);ctx.lineTo(x-r*1.1,noteY+stemLen);}
+    ctx.stroke();
+
+    // Alterazione (diesis)
+    if(isSharp(midi)){
+      ctx.font='bold '+(12*Z)+'px serif';
+      ctx.fillStyle=col;
+      ctx.textAlign='right';
+      ctx.textBaseline='middle';
+      ctx.fillText('♯',x-r*1.3,noteY);
+    }
+
+    // Indicatore foro sotto la nota
+    ctx.font=(9*Z)+'px "DM Mono",monospace';
+    ctx.fillStyle=mutedCol;
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+
+    ctx.restore();
+    return noteY;
+  }
+
+  rows.forEach(function(row,ri){
+    var rowTop=ri*rowH;
+    var staffMid=rowTop+staffTop+extraAbove+staffHeight/2;
+
+    // 5 righe
+    ctx.strokeStyle=lineCol;
+    ctx.lineWidth=1.2*Z;
+    for(var i=0;i<5;i++){
+      var y=staffMid+((i-2)*lineH);
+      ctx.beginPath();
+      ctx.moveTo(marginLeft-10*Z,y);
+      ctx.lineTo(W-10,y);
+      ctx.stroke();
+    }
+
+    // Doppia sbarra iniziale
+    ctx.fillStyle=textCol;
+    ctx.fillRect(marginLeft-10*Z,staffMid-2*lineH,2*Z,4*lineH+Z);
+
+    // Chiave di violino
+    drawClef(marginLeft-38*Z,staffMid-lineH*0.5);
+
+    // Note
+    row.forEach(function(n,ci){
+      var x=marginLeft+(ci+0.5)*noteW;
+      if(n.type==='separator'){
+        ctx.strokeStyle=lineCol;
+        ctx.lineWidth=1.5*Z;
+        ctx.beginPath();
+        ctx.moveTo(x,staffMid-2*lineH);
+        ctx.lineTo(x,staffMid+2*lineH);
+        ctx.stroke();
+        return;
+      }
+      var step=midiToStaffPos(n.midi);
+      drawNote(ctx,x,step,n.midi,n.dir,n.slide,n._sel,rowTop);
+      // Numero foro sotto rigo
+      var bottomY=staffMid+2*lineH+18*Z;
+      ctx.font=(8.5*Z)+'px "DM Mono",monospace';
+      ctx.fillStyle=n.slide?noteSlideCol:(n.dir==='blow'||n.dir==='blow-slide')?noteBlowCol:noteDrawCol;
+      ctx.textAlign='center';
+      ctx.textBaseline='top';
+      ctx.fillText(n.sym+n.hole,x,bottomY);
+    });
+
+    // Fine riga: sbarra
+    if(row.length>0){
+      ctx.strokeStyle=lineCol;
+      ctx.lineWidth=1.5*Z;
+      var endX=marginLeft+Math.max(row.length,1)*noteW;
+      ctx.beginPath();ctx.moveTo(endX,staffMid-2*lineH);ctx.lineTo(endX,staffMid+2*lineH);ctx.stroke();
+    }
+  });
+
+  // Aggiorna contatore
+  document.getElementById('staffInfo').textContent=realNotes.length+' '+t('noteCount');
+}
+
+/* ═══════════════════════════════════════════════════════
+   TAB / TRASCRIZIONE
+═══════════════════════════════════════════════════════ */
+var tabList=[],selected=new Set(),hist=[[]],histIdx=0;
+function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(function(x){return copyObj(x);}));histIdx++;upUD();}
+function copyObj(x){if(!x)return x;var o={};for(var k in x)o[k]=x[k];return o;}
+function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(copyObj);selected.clear();render();drawStaff();upUD();}}
+function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(copyObj);selected.clear();render();drawStaff();upUD();}}
+function upUD(){document.getElementById('undoBtn').disabled=histIdx<=0;document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;}
+function addNote(){
+  if(!curMatch&&!lastStableMatch)return;
+  snap();
+  var n=copyNote(curMatch||lastStableMatch);
+  tabList.push(n);
+  staffNotes.push(copyObj(n));
+  render();drawStaff();
+}
+function replaceNote(){
+  if(!curMatch&&!lastStableMatch)return;if(selected.size!==1)return;
+  var idx=Array.from(selected)[0];snap();
+  var n=copyNote(curMatch||lastStableMatch);
+  tabList[idx]=n;
+  // ricostruisci staffNotes in sincronia
+  syncStaffNotes();
+  selected.clear();render();drawStaff();
+}
+function addSeparator(){snap();tabList.push({type:'separator'});staffNotes.push({type:'separator'});render();drawStaff();}
+function addNewline(){snap();tabList.push({type:'newline'});staffNotes.push({type:'newline'});render();drawStaff();}
+function toggleSel(i){
+  if(selected.has(i))selected.delete(i);else selected.add(i);
+  render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
+}
+function clearSel(){selected.clear();render();}
+function deleteSelected(){
+  if(!selected.size)return;snap();
+  tabList=tabList.filter(function(_,i){return !selected.has(i);});
+  syncStaffNotes();selected.clear();render();drawStaff();
+}
+function clearAll(){if(!tabList.length)return;snap();tabList=[];staffNotes=[];selected.clear();render();drawStaff();}
+function syncStaffNotes(){staffNotes=tabList.map(copyObj);}
+
+function render(){
+  var cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
+  var sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
+  if(!tabList.length){cont.innerHTML='<span class="empty-msg">'+t('noNotes')+'</span>';txt.textContent='—';sb.classList.remove('on');return;}
+  var lines=[[]],str='';
+  for(var i=0;i<tabList.length;i++){
+    var n=tabList[i];
+    if(n.type==='newline'){lines.push([]);str+='\n';}
+    else{lines[lines.length-1].push({n:n,i:i});str+=(n.type==='separator'?'| ':n.sym+n.hole+' ');}
+  }
+  cont.innerHTML='';
+  for(var r=0;r<lines.length;r++){
+    var line=lines[r],rowEl=document.createElement('div');rowEl.className='tab-row';
+    for(var c=0;c<line.length;c++){
+      var item=line[c],n=item.n,idx=item.i;
+      var chip=document.createElement('div');
+      if(n.type==='separator'){
+        chip.className='chip separator'+(selected.has(idx)?' sel':'');
+        chip.innerHTML='<span style="pointer-events:none">|</span>';
+      } else {
+        chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
+      }
+      chip.onclick=(function(ii){return function(){toggleSel(ii);};})(idx);
+      rowEl.appendChild(chip);
+    }
+    cont.appendChild(rowEl);
+  }
+  txt.textContent=str.trim();
+  if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
+  setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
+}
+
+function copyTab(){
+  var tx=document.getElementById('txtOut').textContent;if(tx==='—')return;
+  navigator.clipboard.writeText(tx).then(function(){
+    var b=document.getElementById('copyBtn'),o=b.textContent;b.textContent=t('copied');
+    setTimeout(function(){b.textContent=t('copy');},1600);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   SESSIONI
+═══════════════════════════════════════════════════════ */
+var sessions=JSON.parse(localStorage.getItem('chrom_v1')||'[]'),activeSess=null;
+function saveSess(){localStorage.setItem('chrom_v1',JSON.stringify(sessions));}
+function saveSession(){
+  if(!tabList.length){alert(t('noSave'));return;}
+  var str=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){return n.type==='separator'?'|':n.sym+n.hole;}).join(' ');
+  if(activeSess!==null){
+    var nm=prompt(t('promptName'),sessions[activeSess].name);if(nm===null)return;
+    sessions[activeSess].name=nm.trim()||sessions[activeSess].name;
+    sessions[activeSess].notes=tabList.slice();sessions[activeSess].staffNotes=staffNotes.slice();
+    sessions[activeSess].tab=str;sessions[activeSess].key=currentKey.name;sessions[activeSess].updated=Date.now();
+  } else {
+    var def=(lang==='it'?'Sessione ':'Session ')+(sessions.length+1);
+    var nm=prompt(t('promptName'),def);if(nm===null)return;
+    sessions.push({id:Date.now(),name:nm.trim()||def,notes:tabList.slice(),staffNotes:staffNotes.slice(),tab:str,key:currentKey.name,updated:Date.now()});
+    activeSess=sessions.length-1;
+  }
+  saveSess();renderSess();
+}
+function loadSession(i){
+  activeSess=i;tabList=sessions[i].notes.map(copyObj);
+  staffNotes=(sessions[i].staffNotes||sessions[i].notes||[]).map(copyObj);
+  selected.clear();hist=[tabList.map(copyObj)];histIdx=0;upUD();render();drawStaff();renderSess();
+}
+function deleteSession(i,e){
+  e.stopPropagation();if(!confirm(t('confirmDel')))return;
+  sessions.splice(i,1);if(activeSess===i)activeSess=null;else if(activeSess>i)activeSess--;
+  saveSess();renderSess();
+}
+function newSession(){activeSess=null;tabList=[];staffNotes=[];selected.clear();hist=[[]];histIdx=0;upUD();render();drawStaff();renderSess();}
+function startRename(i,el,e){
+  e.stopPropagation();var inp=document.createElement('input');inp.value=sessions[i].name;
+  inp.onclick=function(ev){ev.stopPropagation();};
+  var done=function(){sessions[i].name=inp.value.trim()||sessions[i].name;saveSess();renderSess();};
+  inp.onblur=done;inp.onkeydown=function(ev){if(ev.key==='Enter')done();};
+  el.innerHTML='';el.appendChild(inp);inp.focus();
+}
+function renderSess(){
+  var list=document.getElementById('sessList');
+  if(!sessions.length){list.innerHTML='<span class="sess-empty">'+t('noSess')+'</span>';return;}
+  list.innerHTML='';
+  for(var i=0;i<sessions.length;i++){
+    (function(idx){
+      var s=sessions[idx],row=document.createElement('div');
+      row.className='sess-row'+(activeSess===idx?' active':'');
+      row.onclick=function(){loadSession(idx);};
+      var d=new Date(s.updated);
+      var ds=d.toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString(lang==='it'?'it-IT':'en-GB',{hour:'2-digit',minute:'2-digit'});
+      row.innerHTML='<div class="sess-name" ondblclick="startRename('+idx+',this,event)">'+s.name+'</div>'+
+        '<div class="sess-meta">'+(s.key||'C')+' · '+s.notes.length+' '+(lang==='it'?'note':'notes')+' · '+ds+'</div>'+
+        '<button class="sess-del" onclick="deleteSession('+idx+',event)">✕</button>';
+      list.appendChild(row);
+    })(i);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   EXPORT PDF con pentagramma (canvas→immagine)
+═══════════════════════════════════════════════════════ */
+function exportPDF(){
+  if(!tabList.length){alert(t('noExport'));return;}
+  var date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+  var sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Trascrizione':'Transcription');
+  var tabTxt=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){return n.type==='separator'?'|':n.sym+n.hole;}).join(' ');
+  var staffImg=document.getElementById('staffCanvas').toDataURL('image/png');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+sessName+'</title><style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800}.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}.sec{margin-bottom:24px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec}.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}img{max-width:100%;border-radius:8px;border:1px solid #e0e4ec}.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body><h1>'+sessName+'</h1><div class="sub">'+t('sub')+' '+currentKey.name+' · '+date+'</div><div class="sec"><h2>'+t('pdfLeg')+'</h2><div class="leg"><div class="li"><div class="ls" style="border-color:#4a9ce8;background:rgba(74,156,232,.12)"></div>'+t('legBlow')+'</div><div class="li"><div class="ls" style="border-color:#e84a6a;background:rgba(232,74,106,.12)"></div>'+t('legDraw')+'</div><div class="li"><div class="ls" style="border-color:#b44ae8;background:rgba(180,74,232,.12)"></div>'+t('legSlide')+'</div></div></div><div class="sec"><h2>'+t('pdfStaff')+'</h2><img src="'+staffImg+'"></div><div class="sec"><h2>'+t('pdfTxt')+'</h2><div class="txt">'+tabTxt+'</div></div><div class="foot">'+t('pdfFoot')+'</div></body></html>';
+  var win=window.open('','_blank');win.document.write(html);win.document.close();win.onload=function(){win.print();};
+}
+
+/* ═══════════════════════════════════════════════════════
+   METRONOMO
+═══════════════════════════════════════════════════════ */
+var metroBpm=80,metroBeats=4,metroCurrent=0,metroRunning=false,metroTimer=null,metroACtx=null,metroFeel='straight';
+function getMetroCtx(){if(!metroACtx)metroACtx=new(window.AudioContext||window.webkitAudioContext)();return metroACtx;}
+function playClick(i){
+  var ctx=getMetroCtx(),osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.connect(gain);gain.connect(ctx.destination);osc.type='sine';
+  var freq,vol;
+  if(metroFeel==='swing'){freq=i===0?1100:i===2?900:650;vol=i===0?.7:i===2?.5:.25;}
+  else if(metroFeel==='blues'){freq=i===0?1100:i===3?950:650;vol=i===0?.7:i===3?.55:.25;}
+  else{freq=i===0?1100:750;vol=i===0?.7:.35;}
+  osc.frequency.value=freq;
+  gain.gain.setValueAtTime(vol,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+  osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.08);
+}
+function isAccent(i){if(metroFeel==='swing')return i===0||i===2;if(metroFeel==='blues')return i===0||i===3;return i===0;}
+function buildMetroBeats(){
+  var wrap=document.getElementById('metroBeats');wrap.innerHTML='';
+  for(var i=0;i<metroBeats;i++){var b=document.createElement('div');b.className='metro-beat';b.textContent=i+1;wrap.appendChild(b);}
+}
+function metroTick(){
+  var beats=document.querySelectorAll('.metro-beat');
+  beats.forEach(function(b){b.classList.remove('accent','normal');});
+  beats[metroCurrent].classList.add(isAccent(metroCurrent)?'accent':'normal');
+  playClick(metroCurrent);metroCurrent=(metroCurrent+1)%metroBeats;
+}
+function startMetro(){metroCurrent=0;var iv=Math.round(60000/metroBpm);metroTick();metroTimer=setInterval(metroTick,iv);}
+function stopMetro(){clearInterval(metroTimer);metroTimer=null;document.querySelectorAll('.metro-beat').forEach(function(b){b.classList.remove('accent','normal');});}
+function toggleMetro(){
+  metroRunning=!metroRunning;
+  var btn=document.getElementById('metroStartBtn');
+  if(metroRunning){startMetro();btn.classList.add('running');btn.textContent='■ Stop';}
+  else{stopMetro();btn.classList.remove('running');btn.textContent='▶ Start';}
+}
+function bpmChange(delta){
+  metroBpm=Math.min(300,Math.max(20,metroBpm+delta));
+  document.getElementById('bpmVal').textContent=metroBpm;
+  if(metroRunning){stopMetro();startMetro();}
+}
+function setTimeSig(beats,btn){
+  document.querySelectorAll('.metro-btn').forEach(function(b){if(b.textContent.indexOf('/')>0)b.classList.remove('active');});
+  btn.classList.add('active');metroBeats=beats;metroCurrent=0;buildMetroBeats();
+  if(metroRunning){stopMetro();startMetro();}
+}
+function setFeel(feel,btn){
+  document.getElementById('feelBtns').querySelectorAll('.metro-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');metroFeel=feel;metroCurrent=0;
+  if(metroRunning){stopMetro();startMetro();}
+}
+function setupLongPress(id,fn){
+  var btn=document.getElementById(id),iv=null;
+  btn.addEventListener('mousedown',function(){iv=setInterval(fn,80);});
+  btn.addEventListener('touchstart',function(){iv=setInterval(fn,80);},{passive:true});
+  btn.addEventListener('mouseup',function(){clearInterval(iv);});
+  btn.addEventListener('mouseleave',function(){clearInterval(iv);});
+  btn.addEventListener('touchend',function(){clearInterval(iv);});
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+var savedTheme=localStorage.getItem('chrom_theme')||'light';
+setTheme(savedTheme);
+buildKeyBtns();
+HMAP=buildMap(currentKey);
+buildHarpVisual();
+buildMetroBeats();
+setupLongPress('bpmDown',function(){bpmChange(-1);});
+setupLongPress('bpmUp',function(){bpmChange(1);});
+applyTx();
+render();
+renderSess();
+// Disegna pentagramma vuoto all'avvio
+window.addEventListener('load',function(){
+  setTimeout(function(){drawStaff();},100);
+});
+window.addEventListener('resize',function(){drawStaff();});
+</script>
+</body>
+</html>
