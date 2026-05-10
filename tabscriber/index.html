@@ -146,6 +146,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   </div>
 </div>
 <header>
+  <img src="https://harmonicalab.github.io/harmonica/logo.png" alt="Harmonica Lab" style="width:120px;height:120px;border-radius:50%;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto">
   <h1>Harmonica Lab Tab Transcriber</h1>
   <p id="subTitle"></p>
 </header>
@@ -167,7 +168,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     <span class="badge idle" id="badge"></span>
     <div class="mic-row">
       <button class="mic-btn" id="micBtn" onclick="toggleMic()"><span class="mic-dot"></span><span id="micLbl"></span></button>
-      <button class="mic-btn" id="autoBtn" onclick="toggleAuto()"><span class="mic-dot"></span><span id="autoLbl">Auto 1s</span></button>
+      <button class="mic-btn" id="autoBtn" onclick="toggleAuto()"><span class="mic-dot"></span><span id="autoLbl">Auto</span></button>
     </div>
   </div>
 </div>
@@ -487,7 +488,7 @@ function toggleAuto() {
   autoCapture=!autoCapture;
   var btn=document.getElementById('autoBtn'), lbl=document.getElementById('autoLbl');
   if (autoCapture) { btn.classList.add('auto-on'); lbl.textContent='Auto ON'; }
-  else { btn.classList.remove('auto-on'); lbl.textContent='Auto 1s'; resetAutoTimer(); }
+  else { btn.classList.remove('auto-on'); lbl.textContent='Auto'; resetAutoTimer(); }
 }
 function resetAutoTimer() {
   clearTimeout(autoTimer); autoTimer=null; autoHoldMatch=null;
@@ -499,7 +500,7 @@ function tickAuto(match) {
     resetAutoTimer(); autoHoldMatch=match;
     var start=Date.now();
     function tick() {
-      var pct=Math.min((Date.now()-start)/1000,1);
+      var pct=Math.min((Date.now()-start)/500,1);
       var fill=document.getElementById('cFill');
       fill.style.left='0'; fill.style.width=(pct*100)+'%'; fill.style.background='#8855dd';
       if (pct>=1) {
