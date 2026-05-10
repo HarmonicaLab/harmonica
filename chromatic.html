@@ -190,7 +190,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
         <span class="mic-dot"></span><span id="micLbl">Attiva microfono</span>
       </button>
       <button class="mic-btn" id="autoBtn" onclick="toggleAuto()">
-        <span class="mic-dot"></span><span id="autoLbl">Auto 1s</span>
+        <span class="mic-dot"></span><span id="autoLbl">Auto 0.5s</span>
       </button>
     </div>
     <div class="auto-prog-wrap" id="autoProgWrap">
@@ -323,7 +323,7 @@ function applyTx(){
   document.getElementById('lblDraw').textContent=t('lblDraw');
   document.getElementById('lblDrawSlide').textContent=t('lblDrawSlide');
   document.getElementById('micLbl').textContent=listening?t('micOff'):t('micOn');
-  document.getElementById('autoLbl').textContent=autoCapture?'Auto ON':'Auto 1s';
+  document.getElementById('autoLbl').textContent=autoCapture?'Auto ON':'Auto 0.5s';
   document.getElementById('badge').textContent=t('idle');
   document.getElementById('threshLbl').textContent=t('threshLbl');
   document.getElementById('barBtn').textContent='| '+t('bar');
@@ -507,7 +507,7 @@ function toggleAuto(){
   autoCapture=!autoCapture;
   var btn=document.getElementById('autoBtn'),lbl=document.getElementById('autoLbl');
   if(autoCapture){btn.classList.add('auto-on');lbl.textContent='Auto ON';}
-  else{btn.classList.remove('auto-on');lbl.textContent='Auto 1s';resetAutoTimer();}
+  else{btn.classList.remove('auto-on');lbl.textContent='Auto 0.5s';resetAutoTimer();}
 }
 function resetAutoTimer(){
   clearTimeout(autoTimer);autoTimer=null;autoHoldMatch=null;
@@ -521,7 +521,7 @@ function tickAuto(match){
     document.getElementById('autoProgWrap').classList.add('show');
     var start=Date.now();
     function tick(){
-      var pct=Math.min((Date.now()-start)/1000,1);
+      var pct=Math.min((Date.now()-start)/500,1);
       document.getElementById('autoProgBar').style.width=(pct*100)+'%';
       if(pct>=1){captureNote(match);autoHoldMatch=null;setTimeout(function(){document.getElementById('autoProgBar').style.width='0%';document.getElementById('autoProgWrap').classList.remove('show');},200);}
       else autoTimer=setTimeout(tick,30);
