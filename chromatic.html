@@ -653,7 +653,7 @@ function drawStaff(){
       if(stemUp){ctx.moveTo(x+r2*1.1,noteY);ctx.lineTo(x+r2*1.1,noteY-stemLen);}else{ctx.moveTo(x-r2*1.1,noteY);ctx.lineTo(x-r2*1.1,noteY+stemLen);}ctx.stroke();
       if(isSharpMidi(n.midi)){ctx.save();ctx.font='bold '+(16*Z)+'px serif';ctx.fillStyle=col;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('♯',x-r2*1.4,noteY);ctx.restore();}
       /* indicatore foro */
-      ctx.save();ctx.font=(10*Z)+'px "DM Mono",monospace';ctx.fillStyle=col;ctx.globalAlpha=0.75;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(n.sym+n.hole,x,staffMid+2*lineH+16*Z);ctx.restore();
+      ctx.save();ctx.font='bold '+(11*Z)+'px "DM Mono",monospace';ctx.fillStyle=col;ctx.globalAlpha=0.88;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(mn(n.midi),x,staffMid+2*lineH+14*Z);ctx.restore();
       noteIdx++;
     });
     var endX=marginLeft+Math.max(row.length,1)*noteW;ctx.strokeStyle=lineCol;ctx.lineWidth=1.5*Z;ctx.beginPath();ctx.moveTo(endX,staffMid-2*lineH);ctx.lineTo(endX,staffMid+2*lineH);ctx.stroke();
