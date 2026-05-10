@@ -27,10 +27,10 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .key-btn:hover{border-color:var(--accent);color:var(--text)}
 .key-btn.active{border-color:var(--accent);background:rgba(232,200,74,.15);color:var(--accent);font-weight:500}
 .tuner-inner{text-align:center}
-.pitch-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--muted);letter-spacing:.05em;min-height:80px;display:flex;align-items:center;justify-content:center;transition:color .1s}
+.pitch-big{font-family:'Bebas Neue',sans-serif;font-size:3rem;line-height:1;color:var(--muted);letter-spacing:.05em;min-height:48px;display:flex;align-items:center;justify-content:center;transition:color .1s}
 .pitch-big.on{color:var(--accent2)}.pitch-big.slide{color:var(--slide)}.pitch-big.oob{color:var(--danger)}
 .freq-sub{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px;min-height:18px}
-.cents-wrap{position:relative;height:6px;background:var(--surface2);border-radius:3px;margin:14px auto;max-width:320px;border:1px solid var(--border)}
+.cents-wrap{position:relative;height:6px;background:var(--surface2);border-radius:3px;margin:8px auto;max-width:320px;border:1px solid var(--border)}
 .cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
 .cents-mid{position:absolute;left:50%;top:-4px;width:2px;height:14px;background:var(--border);transform:translateX(-50%);border-radius:1px}
 .cents-lbl{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace}
@@ -40,7 +40,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .badge.slide{background:rgba(180,74,232,.12);color:var(--slide);border-color:rgba(180,74,232,.3)}
 .badge.idle{background:var(--surface2);color:var(--muted);border-color:var(--border)}
 .badge.oob{background:rgba(232,74,74,.12);color:var(--danger);border-color:rgba(232,74,74,.3)}
-.mic-row{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.mic-row{display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap}
 .mic-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 24px;border-radius:50px;border:2px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
 .mic-btn:hover{border-color:var(--accent2);color:var(--text)}
 .mic-btn.on{border-color:var(--in-tune);color:var(--in-tune);background:rgba(74,232,180,.08)}
@@ -50,7 +50,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* VU METER */
-.vu-wrap{position:relative;height:5px;background:var(--surface2);border-radius:3px;margin:12px auto 0;max-width:320px;border:1px solid var(--border)}
+.vu-wrap{position:relative;height:5px;background:var(--surface2);border-radius:3px;margin:6px auto 0;max-width:320px;border:1px solid var(--border)}
 .vu-bar{position:absolute;left:0;top:0;height:100%;width:0%;border-radius:3px;background:var(--accent2);transition:width .04s}
 .vu-bar.above{background:var(--accent)}
 .vu-thresh-mark{position:absolute;top:-3px;height:11px;width:2.5px;background:var(--danger);border-radius:1px}
@@ -59,7 +59,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .auto-prog-wrap.show{display:block}
 .auto-prog-bar{height:100%;width:0%;background:var(--purple);border-radius:3px}
 /* NOISE THRESHOLD */
-.thresh-row{display:flex;align-items:center;gap:10px;margin:10px auto 0;max-width:320px}
+.thresh-row{display:flex;align-items:center;gap:10px;margin:6px auto 0;max-width:320px}
 .thresh-lbl{font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap}
 .thresh-row input[type=range]{flex:1;accent-color:var(--danger);cursor:pointer}
 .thresh-num{font-size:.7rem;font-family:'DM Mono',monospace;color:var(--danger);min-width:20px;text-align:right}
@@ -183,7 +183,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
       <div class="cents-fill" id="cFill" style="left:50%;width:0"></div>
       <div class="cents-mid"></div>
     </div>
-    <div class="cents-lbl" id="cLbl">— ct</div><br>
+    <div class="cents-lbl" id="cLbl">— ct</div>
     <span class="badge idle" id="badge"></span>
     <div class="mic-row">
       <button class="mic-btn" id="micBtn" onclick="toggleMic()">
@@ -202,7 +202,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     </div>
     <div class="thresh-row">
       <span class="thresh-lbl" id="threshLbl">Soglia rumore:</span>
-      <input type="range" id="threshSlider" min="1" max="40" step="1" value="8" oninput="onThreshInput(this)">
+      <input type="range" id="threshSlider" min="5" max="60" step="1" value="18" oninput="onThreshInput(this)">
       <span class="thresh-num" id="threshNum">8</span>
     </div>
   </div>
@@ -479,9 +479,9 @@ function highlight(match){
 }
 
 /* ── SOGLIA RUMORE ──────────────────────────────────── */
-var RMS_MIN=0.002,RMS_MAX=0.055;
-var noiseThreshold=0.008;
-function sliderToRms(v){return RMS_MIN+(v-1)/(40-1)*(RMS_MAX-RMS_MIN);}
+var RMS_MIN=0.002,RMS_MAX=0.10;
+var noiseThreshold=0.022;
+function sliderToRms(v){return RMS_MIN+(v-5)/(60-5)*(RMS_MAX-RMS_MIN);}
 function rmsToVuPct(r){return Math.min(r/RMS_MAX*100,100);}
 function onThreshInput(el){
   var v=parseInt(el.value);
@@ -619,7 +619,7 @@ function staffZoomOut(){staffZoom=Math.max(0.5,staffZoom-0.1);drawStaff();}
 function drawStaff(){
   var canvas=document.getElementById('staffCanvas');
   var isDark=document.body.classList.contains('dark');
-  var Z=staffZoom,lineH=11*Z,marginLeft=72*Z,noteW=30*Z;
+  var Z=staffZoom,lineH=18*Z,marginLeft=88*Z,noteW=44*Z;
   var containerW=canvas.parentElement.clientWidth;
   var notesPerLine=Math.max(4,Math.floor((containerW-marginLeft-16)/noteW));
   var rows=[[]];
@@ -637,9 +637,9 @@ function drawStaff(){
   rows.forEach(function(row,ri){
     var rowTop=ri*rowH,staffMid=rowTop+staffTop+extraAbove+staffH/2,centerStep=6,halfSpace=lineH/2;
     ctx.strokeStyle=lineCol;ctx.lineWidth=1.2*Z;
-    for(var i=0;i<5;i++){var y=staffMid+((i-2)*lineH);ctx.beginPath();ctx.moveTo(marginLeft-12*Z,y);ctx.lineTo(containerW-8,y);ctx.stroke();}
+    ctx.lineWidth=1.8*Z;for(var i=0;i<5;i++){var y=staffMid+((i-2)*lineH);ctx.beginPath();ctx.moveTo(marginLeft-12*Z,y);ctx.lineTo(containerW-8,y);ctx.stroke();}
     ctx.fillStyle=textCol;ctx.fillRect(marginLeft-12*Z,staffMid-2*lineH,2.5*Z,4*lineH+1.5*Z);
-    ctx.save();ctx.font='bold '+(42*Z)+'px serif';ctx.fillStyle=textCol;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('𝄞',marginLeft-38*Z,staffMid-lineH*0.4);ctx.restore();
+    ctx.save();ctx.font='bold '+(60*Z)+'px serif';ctx.fillStyle=textCol;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('𝄞',marginLeft-52*Z,staffMid-lineH*0.4);ctx.restore();
     var noteIdx=0;
     row.forEach(function(n){
       var x=marginLeft+(noteIdx+0.5)*noteW;
@@ -651,9 +651,9 @@ function drawStaff(){
       ctx.save();ctx.beginPath();ctx.ellipse(x,noteY,r2*1.18,r2*0.8,Math.PI*(-0.13),0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.restore();
       var stemUp=step<centerStep,stemLen=3.5*lineH;ctx.strokeStyle=col;ctx.lineWidth=1.6*Z;ctx.beginPath();
       if(stemUp){ctx.moveTo(x+r2*1.1,noteY);ctx.lineTo(x+r2*1.1,noteY-stemLen);}else{ctx.moveTo(x-r2*1.1,noteY);ctx.lineTo(x-r2*1.1,noteY+stemLen);}ctx.stroke();
-      if(isSharpMidi(n.midi)){ctx.save();ctx.font='bold '+(13*Z)+'px serif';ctx.fillStyle=col;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('♯',x-r2*1.4,noteY);ctx.restore();}
+      if(isSharpMidi(n.midi)){ctx.save();ctx.font='bold '+(16*Z)+'px serif';ctx.fillStyle=col;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('♯',x-r2*1.4,noteY);ctx.restore();}
       /* indicatore foro */
-      ctx.save();ctx.font=(8*Z)+'px "DM Mono",monospace';ctx.fillStyle=col;ctx.globalAlpha=0.75;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(n.sym+n.hole,x,staffMid+2*lineH+16*Z);ctx.restore();
+      ctx.save();ctx.font=(10*Z)+'px "DM Mono",monospace';ctx.fillStyle=col;ctx.globalAlpha=0.75;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(n.sym+n.hole,x,staffMid+2*lineH+16*Z);ctx.restore();
       noteIdx++;
     });
     var endX=marginLeft+Math.max(row.length,1)*noteW;ctx.strokeStyle=lineCol;ctx.lineWidth=1.5*Z;ctx.beginPath();ctx.moveTo(endX,staffMid-2*lineH);ctx.lineTo(endX,staffMid+2*lineH);ctx.stroke();
@@ -690,7 +690,7 @@ function setupLongPress(id,fn){var btn=document.getElementById(id),iv=null;btn.a
 
 /* ── INIT ───────────────────────────────────────────── */
 (function initThresh(){
-  var saved=parseInt(localStorage.getItem('chrom_thresh')||'8');
+  var saved=parseInt(localStorage.getItem('chrom_thresh')||'18');
   document.getElementById('threshSlider').value=saved;
   document.getElementById('threshNum').textContent=saved;
   noiseThreshold=sliderToRms(saved);
