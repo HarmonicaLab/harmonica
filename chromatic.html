@@ -503,6 +503,15 @@ var actx=null,analyser=null,stream=null,raf=null,listening=false;
 var curMatch=null,lastStableMatch=null;
 var autoCapture=false,autoTimer=null,autoHoldMatch=null;
 
+/* ── FILTRO STABILITÀ ───────────────────────────────────
+   La nota deve essere la stessa per STABLE_FRAMES frame
+   consecutivi prima di essere accettata dal tuner.
+   Questo elimina rumori di fondo e note spurie.          */
+var STABLE_FRAMES = 6;          /* ~100ms a 60fps */
+var stableCount   = 0;
+var lastRawMidi   = -1;
+var confirmedMatch = null;
+
 function toggleAuto(){
   autoCapture=!autoCapture;
   var btn=document.getElementById('autoBtn'),lbl=document.getElementById('autoLbl');
@@ -531,17 +540,39 @@ function tickAuto(match){
 }
 
 function detectPitch(buf,sr){
-  var N=buf.length,rms=0;for(var i=0;i<N;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/N);
-  if(rms<noiseThreshold)return -1;
-  var tauMin=Math.floor(sr/2200),tauMax=Math.floor(sr/60),W=Math.min(Math.floor(N/2),tauMax+1);
-  var d=new Float32Array(W);for(var tau=tauMin;tau<W;tau++)for(var j=0;j<W;j++){var diff=buf[j]-buf[j+tau];d[tau]+=diff*diff;}
-  var dn=new Float32Array(W);dn[0]=1;var rs=0;for(var tau=1;tau<W;tau++){rs+=d[tau];dn[tau]=rs===0?0:(d[tau]*tau)/rs;}
-  var th=0.15,tau=-1;for(var tt=tauMin;tt<W-1;tt++){if(dn[tt]<th&&dn[tt]<=dn[tt+1]){tau=tt;break;}}
-  if(tau===-1){var mv=Infinity,mi=tauMin;for(var tt=tauMin;tt<W;tt++){if(dn[tt]<mv){mv=dn[tt];mi=tt;}}if(mv>0.35)return -1;tau=mi;}
-  if(tau<=0||tau>=W-1)return sr/tau;
-  var x1=dn[tau-1],x2=dn[tau],x3=dn[tau+1];var denom=2*x2-x1-x3,adj=denom===0?0:(x3-x1)/(2*denom);var refined=tau+adj;
-  var ht=Math.round(refined/2);if(ht>=tauMin&&ht<W&&dn[ht]<th*1.5){var fH=sr/ht,fF=sr/refined,dH=9999,dF=9999;for(var i=0;i<HMAP.length;i++){var ah=Math.abs(HMAP[i].hz-fH),af=Math.abs(HMAP[i].hz-fF);if(ah<dH)dH=ah;if(af<dF)dF=af;}if(dH<dF)return fH;}
-  return sr/refined;
+  var N=buf.length,rms=0;
+  for(var i=0;i<N;i++)rms+=buf[i]*buf[i]; rms=Math.sqrt(rms/N);
+  if(rms<noiseThreshold)return null;
+  var tauMin=Math.floor(sr/5000),tauMax=Math.floor(sr/60),W=Math.min(Math.floor(N/2),tauMax+1);
+  var d=new Float32Array(W);
+  for(var tau=tauMin;tau<W;tau++)
+    for(var j=0;j<W-tau;j++){var diff=buf[j]-buf[j+tau];d[tau]+=diff*diff;}
+  var dn=new Float32Array(W);dn[0]=1;var rs=0;
+  for(var tau=1;tau<W;tau++){rs+=d[tau];dn[tau]=rs===0?0:(d[tau]*tau)/rs;}
+  var th=0.10,tau=-1;
+  for(var tt=tauMin;tt<W-1;tt++){if(dn[tt]<th&&dn[tt]<=dn[tt+1]){tau=tt;break;}}
+  if(tau===-1){
+    var mv=Infinity,mi=tauMin;
+    for(var tt=tauMin;tt<W;tt++){if(dn[tt]<mv){mv=dn[tt];mi=tt;}}
+    if(mv>0.25)return null;
+    tau=mi;
+  }
+  if(tau<=0||tau>=W-1)return null;
+  var x1=dn[tau-1],x2=dn[tau],x3=dn[tau+1];
+  var denom=2*x2-x1-x3,adj=denom===0?0:(x3-x1)/(2*denom);
+  var refined=tau+adj;
+  var confidence=1-dn[tau];
+  if(confidence<0.75)return null;
+  var ht=Math.round(refined/2);
+  if(ht>=tauMin&&ht<W&&dn[ht]<th*1.5){
+    var fH=sr/ht,fF=sr/refined,dH=9999,dF=9999;
+    for(var i=0;i<HMAP.length;i++){
+      var ah=Math.abs(HMAP[i].hz-fH),af=Math.abs(HMAP[i].hz-fF);
+      if(ah<dH)dH=ah; if(af<dF)dF=af;
+    }
+    if(dH<dF)return {freq:fH,conf:confidence};
+  }
+  return {freq:sr/refined,conf:confidence};
 }
 
 function toggleMic(){
@@ -567,39 +598,51 @@ function loop(){
   var buf=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(buf);
   var rms=0;for(var i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
   updateVU(rms);
+
   if(rms<noiseThreshold){
-    curMatch=null;document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
+    stableCount=0;lastRawMidi=-1;confirmedMatch=null;curMatch=null;
+    document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
     document.getElementById('freqSub').textContent='';document.getElementById('cFill').style.width='0';document.getElementById('cLbl').textContent='— ct';
     document.getElementById('liveDot').classList.remove('on');setBadge('idle',t('silence'));highlight(null);resetAutoTimer();return;
   }
-  var freq=detectPitch(buf,actx.sampleRate);
-  if(freq>60&&freq<5000){
-    var match=findClosest(freq);
-    if(match){
-      curMatch=match;lastStableMatch=match;
-      var pb=document.getElementById('pitchBig');
-      pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
-      pb.className='pitch-big '+(match.slide?'slide':'on');
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
-      var ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
-      var fill=document.getElementById('cFill');
-      if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}else{var w=(0.5-pct)*100;fill.style.left=(50-w)+'%';fill.style.width=w+'%';}
-      fill.style.background=Math.abs(ct)<=20?'#4ae8b4':'#e8c84a';
-      document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
-      var tun=Math.abs(ct)<=20;
-      var bc=tun?(match.slide?'slide':'intune'):(ct>20?'sharp':'flat');
-      var bl=tun?(match.slide?t('slide'):t('intune')):(ct>20?t('high'):t('low'));
-      setBadge(bc,bl);highlight(match);document.getElementById('liveDot').classList.add('on');
-      if(autoCapture)tickAuto(match);
-    } else {
-      curMatch=null;document.getElementById('pitchBig').textContent='?';document.getElementById('pitchBig').className='pitch-big oob';
-      document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';setBadge('oob',t('oob'));highlight(null);document.getElementById('liveDot').classList.remove('on');resetAutoTimer();
-    }
-  } else {
-    curMatch=null;document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
+
+  var result=detectPitch(buf,actx.sampleRate);
+  if(!result){
+    stableCount=0;lastRawMidi=-1;
+    document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
     document.getElementById('freqSub').textContent='';document.getElementById('cFill').style.width='0';document.getElementById('cLbl').textContent='— ct';
-    document.getElementById('liveDot').classList.remove('on');setBadge('idle',t('silence'));highlight(null);resetAutoTimer();
+    document.getElementById('liveDot').classList.remove('on');setBadge('idle',t('silence'));highlight(null);resetAutoTimer();return;
   }
+
+  var freq=result.freq;
+  if(freq<60||freq>5000){stableCount=0;lastRawMidi=-1;resetAutoTimer();return;}
+
+  var rawMatch=findClosest(freq);
+  if(!rawMatch){stableCount=0;lastRawMidi=-1;resetAutoTimer();return;}
+
+  if(rawMatch.midi===lastRawMidi){
+    stableCount=Math.min(stableCount+1,STABLE_FRAMES*3);
+  } else {
+    stableCount=1;lastRawMidi=rawMatch.midi;resetAutoTimer();return;
+  }
+  if(stableCount<STABLE_FRAMES)return;
+
+  var match=rawMatch;
+  confirmedMatch=match;curMatch=match;lastStableMatch=match;
+  var pb=document.getElementById('pitchBig');
+  pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
+  pb.className='pitch-big '+(match.slide?'slide':'on');
+  document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
+  var ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
+  var fill=document.getElementById('cFill');
+  if(ct>=0){fill.style.left='50%';fill.style.width=Math.min(pct*100,50)+'%';}else{var w=(0.5-pct)*100;fill.style.left=(50-w)+'%';fill.style.width=w+'%';}
+  fill.style.background=Math.abs(ct)<=20?'#4ae8b4':'#e8c84a';
+  document.getElementById('cLbl').textContent=(ct>=0?'+':'')+ct+' ct';
+  var tun=Math.abs(ct)<=20;
+  var bc=tun?(match.slide?'slide':'intune'):(ct>20?'sharp':'flat');
+  var bl=tun?(match.slide?t('slide'):t('intune')):(ct>20?t('high'):t('low'));
+  setBadge(bc,bl);highlight(match);document.getElementById('liveDot').classList.add('on');
+  if(autoCapture)tickAuto(match);
 }
 
 /* ── PENTAGRAMMA ────────────────────────────────────── */
