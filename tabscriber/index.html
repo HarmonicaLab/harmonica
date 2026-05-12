@@ -482,7 +482,7 @@ function highlight(match) {
 
 // AUDIO
 var actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null,lastStableMatch=null;
-var autoCapture=false,autoTimer=null,autoHoldMatch=null;
+var autoCapture=false,autoTimer=null,autoHoldMatch=null,autoCaptureCooldown=false;
 
 function toggleAuto() {
   autoCapture=!autoCapture;
@@ -495,7 +495,7 @@ function resetAutoTimer() {
   document.getElementById('cFill').style.width='0';
 }
 function tickAuto(match) {
-  if (!autoCapture||!match) return;
+  if (!autoCapture||!match||autoCaptureCooldown) return;
   if (!autoHoldMatch||autoHoldMatch.hole!==match.hole||autoHoldMatch.dir!==match.dir) {
     resetAutoTimer(); autoHoldMatch=match;
     var start=Date.now();
@@ -505,7 +505,15 @@ function tickAuto(match) {
       fill.style.left='0'; fill.style.width=(pct*100)+'%'; fill.style.background='#8855dd';
       if (pct>=1) {
         snap(); tabList.push(copyNote(match)); render(); autoHoldMatch=null;
-        setTimeout(function(){ document.getElementById('cFill').style.width='0'; },300);
+        // Pausa di 1 secondo prima di poter catturare di nuovo
+        var cooldown=true;
+        setTimeout(function(){
+          cooldown=false;
+          document.getElementById('cFill').style.width='0';
+        },1000);
+        // Blocca tickAuto durante il cooldown
+        autoCaptureCooldown=true;
+        setTimeout(function(){ autoCaptureCooldown=false; },1000);
       } else { autoTimer=setTimeout(tick,30); }
     }
     autoTimer=setTimeout(tick,30);
