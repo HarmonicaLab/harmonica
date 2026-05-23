@@ -422,19 +422,15 @@ function buildHarpVisual(){
     var el=document.createElement('div');el.className=cls;el.textContent=txt;
     if(id)el.id=id;
     if(note){
-      el.onclick=(function(n,elem){return function(e){
-        e.preventDefault();e.stopPropagation();
-        // Modalità accordo
-        if(chordMode){
-          selectChordNote(n,elem);
-          return;
-        }
-        // Modalità normale — aggiunge la nota
-        alert('click: '+n.dir+' foro '+n.hole);
-        snap();tabList.push({midi:n.midi,hz:n.hz,hole:n.hole,dir:n.dir,sym:n.sym,semis:n.semis,blowbend:n.blowbend,cents:0});render();
+      el.style.cursor='pointer';
+      el.addEventListener('click',(function(n,elem){return function(){
+        if(chordMode){ selectChordNote(n,elem); return; }
+        snap();
+        tabList.push({midi:n.midi,hz:n.hz,hole:n.hole,dir:n.dir,sym:n.sym,semis:n.semis||0,blowbend:n.blowbend||false,cents:0});
+        render();
         elem.style.opacity='0.5';
         setTimeout(function(){elem.style.opacity='1';},200);
-      };})(note,el);
+      };})(note,el));
     }
     return el;
   }
