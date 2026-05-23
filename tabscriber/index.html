@@ -75,7 +75,12 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .hbend.blowbend1.active,.hbend.drawbend1.active{background:rgba(232,140,50,.3);border-color:#e88c32;box-shadow:0 0 10px rgba(232,140,50,.4);transform:scale(1.06)}
 .hbend.drawbend2.active{background:rgba(232,74,74,.3);border-color:#e84a4a;box-shadow:0 0 10px rgba(232,74,74,.4);transform:scale(1.06)}
 .hbend.drawbend3.active{background:rgba(139,90,43,.3);border-color:#8b5a2b;box-shadow:0 0 10px rgba(139,90,43,.4);transform:scale(1.06)}
-.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+/* ACCORDO */
+.chord-active .hcell,.chord-active .hbend{cursor:crosshair!important}
+.hcell.chord-sel{box-shadow:0 0 0 3px var(--purple);transform:scale(1.08)}
+.hbend.chord-sel{box-shadow:0 0 0 3px var(--purple);transform:scale(1.08)}
+.chip.chord .arr{color:var(--purple)}
+.chip.chord .hn{color:var(--purple)}display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .btn{display:inline-block;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;text-align:center;line-height:1.4;user-select:none;-webkit-user-select:none}
 .btn:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
 .btn:disabled{opacity:.3;cursor:not-allowed}
@@ -185,7 +190,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     <div class="leg"><div class="leg-sq" style="border-color:rgba(232,74,74,.6);background:rgba(232,74,74,.1)"></div><span id="legBend2"></span></div>
     <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.6);background:rgba(139,90,43,.1)"></div><span id="legBend3"></span></div>
   </div>
-  <div class="grid-hint" id="gridHint">👆 Clicca una nota per aggiungerla alla tablatura</div>
+  <div class="grid-hint" id="gridHint">👆 <span id="grid-hint-text">Clicca una nota per aggiungerla alla tablatura</span></div>
   <div class="harp-scroll" id="harpVisual"></div>
 </div>
 <div class="card">
@@ -193,6 +198,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
   <div class="toolbar">
     <button class="btn primary" id="addBtn" onclick="addNote()" disabled></button>
     <button class="btn" id="replaceBtn" onclick="replaceNote()" style="display:none;border-color:#8855dd;color:#8855dd">⟳ <span id="replaceLbl"></span></button>
+    <button class="btn" id="chordBtn" onclick="toggleChordMode()" style="border-color:var(--purple);color:var(--purple)">🎵 <span id="chordLbl">Accordo</span></button>
+    <button class="btn" id="addChordBtn" onclick="addChord()" style="display:none;border-color:var(--purple);color:var(--purple)">+ <span id="addChordLbl">Aggiungi accordo</span></button>
     <button class="btn" onclick="addSeparator()"><span style="pointer-events:none;display:block;width:100%;text-align:center">| <span id="sepLbl"></span></span></button>
     <button class="btn" onclick="addNewline()"><span style="pointer-events:none;display:block;width:100%;text-align:center">↵ <span id="nlLbl"></span></span></button>
     <div class="spacer"></div>
@@ -415,14 +422,13 @@ function buildHarpVisual(){
     var el=document.createElement('div');el.className=cls;el.textContent=txt;
     if(id)el.id=id;
     if(note){
-      var handler=(function(n,elem){return function(e){
+      el.onclick=(function(n,elem){return function(e){
         e.preventDefault();e.stopPropagation();
+        if(selectChordNote(n,elem)) return;
         snap();tabList.push(copyNote(n));render();
         elem.style.opacity='0.5';
         setTimeout(function(){elem.style.opacity='1';},200);
       };})(note,el);
-      el.addEventListener('click',handler);
-      el.addEventListener('touchend',handler,{passive:false});
     }
     return el;
   }
@@ -662,6 +668,9 @@ function render(){
       if(n.type==='separator'){
         chip.className='chip separator'+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none">|</span>';
+      }else if(n.type==='chord'){
+        chip.className='chip chord'+(selected.has(idx)?' sel':'');
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.holes+'</span><span class="nn" style="color:var(--purple)">accordo</span></span>';
       }else{
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
