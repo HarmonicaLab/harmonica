@@ -424,7 +424,12 @@ function buildHarpVisual(){
     if(note){
       el.onclick=(function(n,elem){return function(e){
         e.preventDefault();e.stopPropagation();
-        if(selectChordNote(n,elem)) return;
+        // Modalità accordo
+        if(chordMode){
+          selectChordNote(n,elem);
+          return;
+        }
+        // Modalità normale — aggiunge la nota
         snap();tabList.push(copyNote(n));render();
         elem.style.opacity='0.5';
         setTimeout(function(){elem.style.opacity='1';},200);
