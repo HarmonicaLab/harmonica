@@ -75,12 +75,6 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .hbend.blowbend1.active,.hbend.drawbend1.active{background:rgba(232,140,50,.3);border-color:#e88c32;box-shadow:0 0 10px rgba(232,140,50,.4);transform:scale(1.06)}
 .hbend.drawbend2.active{background:rgba(232,74,74,.3);border-color:#e84a4a;box-shadow:0 0 10px rgba(232,74,74,.4);transform:scale(1.06)}
 .hbend.drawbend3.active{background:rgba(139,90,43,.3);border-color:#8b5a2b;box-shadow:0 0 10px rgba(139,90,43,.4);transform:scale(1.06)}
-/* ACCORDO */
-.chord-active .hcell,.chord-active .hbend{cursor:crosshair!important}
-.hcell.chord-sel{box-shadow:0 0 0 3px var(--purple);transform:scale(1.08)}
-.hbend.chord-sel{box-shadow:0 0 0 3px var(--purple);transform:scale(1.08)}
-.chip.chord .arr{color:var(--purple)}
-.chip.chord .hn{color:var(--purple)}
 .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .btn{display:inline-block;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;text-align:center;line-height:1.4;user-select:none;-webkit-user-select:none}
 .btn:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
@@ -107,6 +101,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .chip .hn{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);line-height:1}
 .chip .nn{font-size:.6rem;color:var(--muted);font-family:'DM Mono',monospace}
 .chip.sel .hn,.chip.sel .nn{color:var(--purple)}
+.chip.chord .arr{color:var(--purple)}
+.chip.chord .hn{color:var(--purple)}
 .chip.separator{background:transparent;border:1.5px dashed var(--border);font-family:'DM Mono',monospace;font-size:1rem;min-width:24px;padding:6px 8px}
 .empty-msg{font-size:.8rem;color:var(--muted);padding:6px 0;font-family:'DM Mono',monospace}
 .txt-out{padding:10px 14px;background:var(--surface2);border-radius:8px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--text);letter-spacing:2px;word-break:break-all;min-height:40px;border:1px solid var(--border);user-select:all;margin-bottom:10px}
@@ -191,7 +187,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     <div class="leg"><div class="leg-sq" style="border-color:rgba(232,74,74,.6);background:rgba(232,74,74,.1)"></div><span id="legBend2"></span></div>
     <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.6);background:rgba(139,90,43,.1)"></div><span id="legBend3"></span></div>
   </div>
-  <div class="grid-hint" id="gridHint">👆 <span id="grid-hint-text">Clicca una nota per aggiungerla alla tablatura</span></div>
+  <div class="grid-hint" id="gridHint"></div>
   <div class="harp-scroll" id="harpVisual"></div>
 </div>
 <div class="card">
@@ -276,7 +272,8 @@ var TX={
     sessions:'Sessioni salvate',newSess:'+ Nuova sessione',noSess:'Nessuna sessione',noNotes:'Nessuna nota ancora',
     promptName:'Nome sessione:',confirmDel:'Eliminare la sessione?',noSave:'Nessuna nota da salvare.',noExport:'Nessuna nota da esportare.',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
-    gridHint:'👆 Clicca una nota per aggiungerla alla tablatura'},
+    gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',oob:'out of range',
@@ -289,7 +286,8 @@ var TX={
     sessions:'Saved sessions',newSess:'+ New session',noSess:'No sessions',noNotes:'No notes yet',
     promptName:'Session name:',confirmDel:'Delete this session?',noSave:'No notes to save.',noExport:'No notes to export.',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
-    gridHint:'👆 Click a note to add it to the tab'}
+    gridHint:'👆 Click a note to add it to the tab',
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -333,6 +331,8 @@ function applyTx(){
   document.getElementById('metroTimeLbl').textContent=t('metroTime');
   document.getElementById('sessTitle').textContent=t('sessions');
   document.getElementById('newSessBtn').textContent=t('newSess');
+  document.getElementById('chordLbl').textContent=chordMode?t('chordOn'):t('chord');
+  document.getElementById('addChordLbl').textContent=t('addChord');
   var ab=document.getElementById('addBtn');
   if(ab.disabled)ab.textContent=t('add');
 }
@@ -406,6 +406,44 @@ function setKey(i,btn){
   buildHarpVisual();curMatch=null;lastStableMatch=null;highlight(null);setAddBtn(false,null);
 }
 
+/* ---- CHORD MODE ---- */
+var chordMode=false,chordSel=[];
+function toggleChordMode(){
+  chordMode=!chordMode;chordSel=[];
+  var btn=document.getElementById('chordBtn'),lbl=document.getElementById('chordLbl');
+  var addCB=document.getElementById('addChordBtn');
+  if(chordMode){
+    btn.style.background='rgba(136,85,221,.15)';btn.style.borderColor='var(--purple)';
+    lbl.textContent=t('chordOn');
+    addCB.style.display='';
+    document.getElementById('harpVisual').classList.add('chord-active');
+  }else{
+    btn.style.background='';btn.style.borderColor='var(--purple)';
+    lbl.textContent=t('chord');
+    addCB.style.display='none';
+    document.getElementById('harpVisual').classList.remove('chord-active');
+  }
+  buildHarpVisual();
+}
+function addChord(){
+  if(!chordSel.length)return;
+  snap();
+  // build chord object — use sym/dir of first note as reference
+  var first=chordSel[0];
+  tabList.push({
+    type:'chord',
+    sym:first.sym,
+    dir:first.dir,
+    notes:chordSel.map(copyNote)
+  });
+  chordSel=[];chordMode=false;
+  document.getElementById('chordBtn').style.background='';
+  document.getElementById('chordLbl').textContent=t('chord');
+  document.getElementById('addChordBtn').style.display='none';
+  document.getElementById('harpVisual').classList.remove('chord-active');
+  buildHarpVisual();render();
+}
+
 function buildHarpVisual(){
   var vis=document.getElementById('harpVisual');if(!vis)return;
   vis.innerHTML='';
@@ -423,15 +461,22 @@ function buildHarpVisual(){
     var el=document.createElement('div');el.className=cls;el.textContent=txt;
     if(id)el.id=id;
     if(note){
-      el.style.cursor='pointer';
-      el.addEventListener('click',(function(n,elem){return function(){
-        if(chordMode){ selectChordNote(n,elem); return; }
-        snap();
-        tabList.push({midi:n.midi,hz:n.hz,hole:n.hole,dir:n.dir,sym:n.sym,semis:n.semis||0,blowbend:n.blowbend||false,cents:0});
-        render();
-        elem.style.opacity='0.5';
-        setTimeout(function(){elem.style.opacity='1';},200);
-      };})(note,el));
+      var handler=(function(n,elem){return function(e){
+        e.preventDefault();e.stopPropagation();
+        if(chordMode){
+          // toggle in chordSel
+          var found=-1;
+          for(var j=0;j<chordSel.length;j++){if(chordSel[j].hole===n.hole&&chordSel[j].dir===n.dir){found=j;break;}}
+          if(found>=0){chordSel.splice(found,1);elem.classList.remove('chord-sel');}
+          else{chordSel.push(copyNote(n));elem.classList.add('chord-sel');}
+        }else{
+          snap();tabList.push(copyNote(n));render();
+          elem.style.opacity='0.5';
+          setTimeout(function(){elem.style.opacity='1';},200);
+        }
+      };})(note,el);
+      el.addEventListener('click',handler);
+      el.addEventListener('touchend',handler,{passive:false});
     }
     return el;
   }
@@ -635,7 +680,15 @@ function loop(){
 }
 
 var tabList=[],selected=new Set(),hist=[[]],histIdx=0;
-function copyObj(x){if(!x)return x;var o={};for(var k in x)o[k]=x[k];return o;}
+function copyObj(x){
+  if(!x)return x;
+  var o={};
+  for(var k in x){
+    if(k==='notes'&&Array.isArray(x[k]))o[k]=x[k].map(copyNote);
+    else o[k]=x[k];
+  }
+  return o;
+}
 function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(copyObj));histIdx++;upUD();}
 function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(copyObj);selected.clear();render();upUD();}}
 function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(copyObj);selected.clear();render();upUD();}}
@@ -652,6 +705,15 @@ function clearSel(){selected.clear();render();}
 function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter(function(_,i){return !selected.has(i);});selected.clear();render();}
 function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear();render();}
 
+/* ---- CHORD TEXT helper ---- */
+function chordToText(n){
+  // e.g. "[↓2-3-4 (G-B-D)]"
+  var notes=n.notes||[];
+  var holes=notes.map(function(x){return x.sym+x.hole;}).join('-');
+  var names=notes.map(function(x){return mn(x.midi);}).join('-');
+  return '['+holes+' ('+names+')]';
+}
+
 function render(){
   var cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
   var sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
@@ -660,7 +722,12 @@ function render(){
   for(var i=0;i<tabList.length;i++){
     var n=tabList[i];
     if(n.type==='newline'){lines.push([]);str+='\n';}
-    else{lines[lines.length-1].push({n:n,i:i});str+=(n.type==='separator'?'| ':n.sym+n.hole+' ');}
+    else{
+      lines[lines.length-1].push({n:n,i:i});
+      if(n.type==='separator') str+='| ';
+      else if(n.type==='chord') str+=chordToText(n)+' ';
+      else str+=n.sym+n.hole+' ';
+    }
   }
   cont.innerHTML='';
   for(var r=0;r<lines.length;r++){
@@ -673,7 +740,10 @@ function render(){
         chip.innerHTML='<span style="pointer-events:none">|</span>';
       }else if(n.type==='chord'){
         chip.className='chip chord'+(selected.has(idx)?' sel':'');
-        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.holes+'</span><span class="nn" style="color:var(--purple)">accordo</span></span>';
+        var notes=n.notes||[];
+        var holeTxt=notes.map(function(x){return x.sym+x.hole;}).join('-');
+        var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
       }else{
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
@@ -700,7 +770,11 @@ var sessions=JSON.parse(localStorage.getItem('harp_v4')||'[]'),activeSess=null;
 function saveSess(){localStorage.setItem('harp_v4',JSON.stringify(sessions));}
 function saveSession(){
   if(!tabList.length){alert(t('noSave'));return;}
-  var str=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){return n.type==='separator'?'|':n.sym+n.hole;}).join(' ');
+  var str=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){
+    if(n.type==='separator')return '|';
+    if(n.type==='chord')return chordToText(n);
+    return n.sym+n.hole;
+  }).join(' ');
   if(activeSess!==null){
     var nm=prompt(t('promptName'),sessions[activeSess].name);if(nm===null)return;
     sessions[activeSess].name=nm.trim()||sessions[activeSess].name;
@@ -751,8 +825,8 @@ function exportPDF(){
   if(!tabList.length){alert(t('noExport'));return;}
   var date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
   var sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
-  var colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b'};
-  var bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)'};
+  var colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',chord:'#8855dd'};
+  var bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)',chord:'rgba(136,85,221,.12)'};
   var noteRows=[],lines=[[]];
   for(var i=0;i<tabList.length;i++){var n=tabList[i];if(n.type==='newline')lines.push([]);else lines[lines.length-1].push(n);}
   for(var l=0;l<lines.length;l++){
@@ -760,12 +834,25 @@ function exportPDF(){
     var cells=[];
     for(var c=0;c<line.length;c++){
       var n=line[c];
-      if(n.type==='separator')cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;border:1.5px dashed #aaa"><div style="font-size:18px;font-weight:700">|</div></td>');
-      else{var col=colors[n.dir]||'#888',bg=bgs[n.dir]||'transparent';cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:'+bg+';color:'+col+';border:1px solid '+col+'44"><div style="font-size:16px;opacity:.9">'+n.sym+'</div><div style="font-size:20px;font-weight:700">'+n.hole+'</div><div style="font-size:9px;color:#888">'+mn(n.midi)+'</div></td>');}
+      if(n.type==='separator'){
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;border:1.5px dashed #aaa"><div style="font-size:18px;font-weight:700">|</div></td>');
+      }else if(n.type==='chord'){
+        var notes=n.notes||[];
+        var holeTxt=notes.map(function(x){return x.sym+x.hole;}).join('-');
+        var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(136,85,221,.12);color:#8855dd;border:1px solid rgba(136,85,221,.4)"><div style="font-size:13px;opacity:.9">'+holeTxt+'</div><div style="font-size:10px;color:#666">accordo</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
+      }else{
+        var col=colors[n.dir]||'#888',bg=bgs[n.dir]||'transparent';
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:'+bg+';color:'+col+';border:1px solid '+col+'44"><div style="font-size:16px;opacity:.9">'+n.sym+'</div><div style="font-size:20px;font-weight:700">'+n.hole+'</div><div style="font-size:9px;color:#888">'+mn(n.midi)+'</div></td>');
+      }
     }
     noteRows.push('<tr>'+cells.join('<td style="width:3px"></td>')+'</tr><tr style="height:8px"></tr>');
   }
-  var tabTxt=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){return n.type==='separator'?'|':n.sym+n.hole;}).join(' ');
+  var tabTxt=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){
+    if(n.type==='separator')return '|';
+    if(n.type==='chord')return chordToText(n);
+    return n.sym+n.hole;
+  }).join(' ');
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+sessName+'</title><style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800}.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec}.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body><h1>'+sessName+'</h1><div class="sub">'+t('sub')+' '+currentKey.name+' · '+tabList.length+' '+(lang==='it'?'note':'notes')+' · '+date+'</div><div class="sec"><h2>'+t('pdfLeg')+'</h2><div class="leg"><div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>'+t('legBlow')+'</div><div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>'+t('legDraw')+'</div><div class="li"><div class="ls" style="border-color:#e88c32;background:rgba(232,140,50,.12)"></div>'+t('legB1')+'</div><div class="li"><div class="ls" style="border-color:#e84a4a;background:rgba(232,74,74,.12)"></div>'+t('legB2')+'</div><div class="li"><div class="ls" style="border-color:#8b5a2b;background:rgba(139,90,43,.12)"></div>'+t('legB3')+'</div></div></div><div class="sec"><h2>'+t('pdfGraph')+'</h2><table><tbody>'+noteRows.join('')+'</tbody></table></div><div class="sec"><h2>'+t('pdfTxt')+'</h2><div class="txt">'+tabTxt+'</div></div><div class="foot">'+t('pdfFoot')+'</div></body></html>';
   var win=window.open('','_blank');win.document.write(html);win.document.close();win.onload=function(){win.print();};
 }
@@ -824,47 +911,6 @@ function setupLongPress(id,fn){
   btn.addEventListener('mouseup',function(){clearInterval(iv);});
   btn.addEventListener('mouseleave',function(){clearInterval(iv);});
   btn.addEventListener('touchend',function(){clearInterval(iv);});
-}
-
-var chordMode=false,chordNotes=[];
-function toggleChordMode(){
-  chordMode=!chordMode;chordNotes=[];
-  var btn=document.getElementById('chordBtn'),lbl=document.getElementById('chordLbl');
-  var addBtn=document.getElementById('addChordBtn');
-  var vis=document.getElementById('harpVisual');
-  if(chordMode){
-    btn.style.background='rgba(136,85,221,.15)';btn.style.fontWeight='600';
-    lbl.textContent=lang==='it'?'Accordo ON':'Chord ON';
-    addBtn.style.display='';addBtn.style.opacity='0.4';
-    vis.classList.add('chord-active');
-    document.getElementById('grid-hint-text').textContent=lang==='it'?'🎵 Seleziona 2-3 note aspirate vicine':'🎵 Select 2-3 adjacent draw notes';
-  }else{
-    btn.style.background='';btn.style.fontWeight='';
-    lbl.textContent=lang==='it'?'Accordo':'Chord';
-    addBtn.style.display='none';
-    vis.classList.remove('chord-active');
-    clearChordSel();
-    document.getElementById('grid-hint-text').textContent=lang==='it'?'👆 Clicca una nota per aggiungerla alla tablatura':'👆 Click a note to add it to the tab';
-  }
-}
-function clearChordSel(){
-  chordNotes=[];
-  document.querySelectorAll('.chord-sel').forEach(function(el){el.classList.remove('chord-sel');});
-  var ab=document.getElementById('addChordBtn');if(ab)ab.style.opacity='0.4';
-}
-function selectChordNote(note,el){
-  var idx=chordNotes.findIndex(function(n){return n.hole===note.hole&&n.dir===note.dir;});
-  if(idx>-1){chordNotes.splice(idx,1);el.classList.remove('chord-sel');}
-  else{if(chordNotes.length>=3)return;chordNotes.push(note);el.classList.add('chord-sel');}
-  var ab=document.getElementById('addChordBtn');
-  if(ab)ab.style.opacity=chordNotes.length>=2?'1':'0.4';
-}
-function addChord(){
-  if(chordNotes.length<2){alert(lang==='it'?'Seleziona almeno 2 note!':'Select at least 2 notes!');return;}
-  var sorted=chordNotes.slice().sort(function(a,b){return a.hole-b.hole;});
-  var holes=sorted.map(function(n){return n.hole;}).join('-');
-  snap();tabList.push({type:'chord',notes:sorted,sym:sorted[0].sym,holes:holes,midi:sorted.map(function(n){return n.midi;}),dir:sorted[0].dir});
-  render();clearChordSel();
 }
 
 var savedTheme=localStorage.getItem('harp_theme')||'light';
