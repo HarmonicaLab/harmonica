@@ -192,9 +192,6 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.6);background:rgba(139,90,43,.1)"></div><span id="legBend3"></span></div>
   </div>
   <div class="grid-hint" id="gridHint">👆 <span id="grid-hint-text">Clicca una nota per aggiungerla alla tablatura</span></div>
-  <div style="margin-bottom:8px">
-    <button class="btn primary" onclick="testAdd()">🧪 Test aggiungi C↑1</button>
-  </div>
   <div class="harp-scroll" id="harpVisual"></div>
 </div>
 <div class="card">
@@ -827,6 +824,47 @@ function setupLongPress(id,fn){
   btn.addEventListener('mouseup',function(){clearInterval(iv);});
   btn.addEventListener('mouseleave',function(){clearInterval(iv);});
   btn.addEventListener('touchend',function(){clearInterval(iv);});
+}
+
+var chordMode=false,chordNotes=[];
+function toggleChordMode(){
+  chordMode=!chordMode;chordNotes=[];
+  var btn=document.getElementById('chordBtn'),lbl=document.getElementById('chordLbl');
+  var addBtn=document.getElementById('addChordBtn');
+  var vis=document.getElementById('harpVisual');
+  if(chordMode){
+    btn.style.background='rgba(136,85,221,.15)';btn.style.fontWeight='600';
+    lbl.textContent=lang==='it'?'Accordo ON':'Chord ON';
+    addBtn.style.display='';addBtn.style.opacity='0.4';
+    vis.classList.add('chord-active');
+    document.getElementById('grid-hint-text').textContent=lang==='it'?'🎵 Seleziona 2-3 note aspirate vicine':'🎵 Select 2-3 adjacent draw notes';
+  }else{
+    btn.style.background='';btn.style.fontWeight='';
+    lbl.textContent=lang==='it'?'Accordo':'Chord';
+    addBtn.style.display='none';
+    vis.classList.remove('chord-active');
+    clearChordSel();
+    document.getElementById('grid-hint-text').textContent=lang==='it'?'👆 Clicca una nota per aggiungerla alla tablatura':'👆 Click a note to add it to the tab';
+  }
+}
+function clearChordSel(){
+  chordNotes=[];
+  document.querySelectorAll('.chord-sel').forEach(function(el){el.classList.remove('chord-sel');});
+  var ab=document.getElementById('addChordBtn');if(ab)ab.style.opacity='0.4';
+}
+function selectChordNote(note,el){
+  var idx=chordNotes.findIndex(function(n){return n.hole===note.hole&&n.dir===note.dir;});
+  if(idx>-1){chordNotes.splice(idx,1);el.classList.remove('chord-sel');}
+  else{if(chordNotes.length>=3)return;chordNotes.push(note);el.classList.add('chord-sel');}
+  var ab=document.getElementById('addChordBtn');
+  if(ab)ab.style.opacity=chordNotes.length>=2?'1':'0.4';
+}
+function addChord(){
+  if(chordNotes.length<2){alert(lang==='it'?'Seleziona almeno 2 note!':'Select at least 2 notes!');return;}
+  var sorted=chordNotes.slice().sort(function(a,b){return a.hole-b.hole;});
+  var holes=sorted.map(function(n){return n.hole;}).join('-');
+  snap();tabList.push({type:'chord',notes:sorted,sym:sorted[0].sym,holes:holes,midi:sorted.map(function(n){return n.midi;}),dir:sorted[0].dir});
+  render();clearChordSel();
 }
 
 var savedTheme=localStorage.getItem('harp_theme')||'light';
