@@ -79,6 +79,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 /* ── OVERBLOW e OVERDRAW ── */
 .hbend.overblow{background:rgba(153,51,238,.1);color:var(--violet);border-color:rgba(153,51,238,.35);font-size:.68rem}
 .hbend.overdraw{background:rgba(34,153,221,.1);color:var(--sky);border-color:rgba(34,153,221,.35);font-size:.68rem}
+.hbend.blowbend2{background:rgba(232,74,74,.1);color:#e84a4a;border-color:rgba(232,74,74,.35)}
+.hbend.blowbend2.active{background:rgba(232,74,74,.3);border-color:#e84a4a;box-shadow:0 0 10px rgba(232,74,74,.4);transform:scale(1.06)}
 .hbend.blowbend1.active,.hbend.drawbend1.active{background:rgba(232,140,50,.3);border-color:#e88c32;box-shadow:0 0 10px rgba(232,140,50,.4);transform:scale(1.06)}
 .hbend.drawbend2.active{background:rgba(232,74,74,.3);border-color:#e84a4a;box-shadow:0 0 10px rgba(232,74,74,.4);transform:scale(1.06)}
 .hbend.drawbend3.active{background:rgba(139,90,43,.3);border-color:#8b5a2b;box-shadow:0 0 10px rgba(139,90,43,.4);transform:scale(1.06)}
@@ -107,7 +109,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .chip .arr{font-size:1.2rem;line-height:1;font-family:'DM Mono',monospace}
 .chip.blow .arr{color:var(--accent2)}.chip.draw .arr{color:var(--accent)}
 .chip.drawbend1 .arr,.chip.blowbend1 .arr{color:#e88c32}
-.chip.drawbend2 .arr,.chip.blowbend2 .arr{color:#e84a4a}
+.chip.drawbend2 .arr,.chip.blowbend2 .arr,.chip.blowbend2 .arr{color:#e84a4a}
 .chip.drawbend3 .arr{color:#8b5a2b}
 .chip.overblow .arr{color:var(--violet)}
 .chip.overdraw .arr{color:var(--sky)}
@@ -284,7 +286,7 @@ var TX={
     legBlow:'↑ soffiata',legDraw:'↓ aspirata',legB1:"↓' 1 semitono",legB2:"↓'' 2 semitoni",legB3:"↓''' 3 semitoni",
     legOB:'↑ overblow',legOD:'↓ overdraw',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
-    rowBB:"↑' bend",rowBlow:'↑ Soffia',rowDraw:'↓ Aspira',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
+    rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Soffia',rowDraw:'↓ Aspira',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
     add:'+ Aggiungi',replace:'Sostituisci',sep:'Battuta',nl:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clearAll:'Cancella tutto',selected:'selezionate',del:'Elimina',
     copy:'Copia testo',pdf:'Esporta PDF',save:'Salva sessione',
@@ -301,7 +303,7 @@ var TX={
     legBlow:'↑ blow',legDraw:'↓ draw',legB1:"↓' 1 semitone",legB2:"↓'' 2 semitones",legB3:"↓''' 3 semitones",
     legOB:'↑ overblow',legOD:'↓ overdraw',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
-    rowBB:"↑' bend",rowBlow:'↑ Blow',rowDraw:'↓ Draw',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
+    rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Blow',rowDraw:'↓ Draw',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
     add:'+ Add',replace:'Replace',sep:'Bar',nl:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clearAll:'Clear all',selected:'selected',del:'Delete',
     copy:'Copy text',pdf:'Export PDF',save:'Save session',
@@ -373,6 +375,7 @@ var BASE_DB1  =[1,6,10,13,null,null,null,null,null,null];
 var BASE_DB2  =[null,5,9,null,null,null,null,null,null,null];
 var BASE_DB3  =[null,null,8,null,null,null,null,null,null,null];
 var BASE_BB1  =[null,null,null,null,null,null,22,27,30,35];
+var BASE_BB2  =[null,null,null,null,null,null,null,null,null,34]; // foro 10: Bb (2 semitoni sotto il blow)
 
 // ── Overbend offsets, null = foro senza overbend ──
 // Overblow: fori 1,4,5,6 → Eb,Eb,Gb,Bb in C (offset +3,+15,+18,+22)
@@ -404,6 +407,7 @@ function buildMap(key){
     if(BASE_DB2[i]!=null)m.push({midi:r+BASE_DB2[i],hz:midi2hz(r+BASE_DB2[i]),hole:h,dir:'drawbend2',sym:"↓''",semis:2,blowbend:false});
     if(BASE_DB3[i]!=null)m.push({midi:r+BASE_DB3[i],hz:midi2hz(r+BASE_DB3[i]),hole:h,dir:'drawbend3',sym:"↓'''",semis:3,blowbend:false});
     if(BASE_BB1[i]!=null)m.push({midi:r+BASE_BB1[i],hz:midi2hz(r+BASE_BB1[i]),hole:h,dir:'blowbend1',sym:"↑'",semis:1,blowbend:true});
+    if(BASE_BB2[i]!=null)m.push({midi:r+BASE_BB2[i],hz:midi2hz(r+BASE_BB2[i]),hole:h,dir:'blowbend2',sym:"↑''",semis:2,blowbend:true});
     // overbend: NON inseriti in HMAP — solo manuali da griglia, non dal microfono
   }
   if(key.root>=65){
@@ -523,7 +527,16 @@ function buildHarpVisual(){
   }
   vis.appendChild(makeRow(t('rowOB'),obCells));
 
-  // ── Riga BLOW BEND ──
+  // ── Riga BLOW BEND 2 (solo foro 10: Bb) ──
+  var bb2Cells=[];
+  for(var i=0;i<10;i++){
+    var midi=BASE_BB2[i]!=null?r+BASE_BB2[i]:null;
+    var note=midi?{midi:midi,hz:midi2hz(midi),hole:i+1,dir:'blowbend2',sym:"↑''",semis:2,blowbend:true,cents:0}:null;
+    bb2Cells.push(makeCell(midi?'hbend blowbend2':'hbend empty',midi?mn(midi):'',midi?'hv_bb2_'+(i+1):'',note));
+  }
+  vis.appendChild(makeRow(t('rowBB2'),bb2Cells));
+
+  // ── Riga BLOW BEND 1 ──
   var bbCells=[];
   for(var i=0;i<10;i++){
     var midi=BASE_BB1[i]!=null?r+BASE_BB1[i]:null;
@@ -879,7 +892,7 @@ function exportPDF(){
   if(!tabList.length){alert(t('noExport'));return;}
   var date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
   var sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
-  var colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',chord:'#8855dd',overblow:'#9933ee',overdraw:'#2299dd'};
+  var colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',blowbend2:'#e84a4a',chord:'#8855dd',overblow:'#9933ee',overdraw:'#2299dd'};
   var bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)',chord:'rgba(136,85,221,.12)',overblow:'rgba(153,51,238,.12)',overdraw:'rgba(34,153,221,.12)'};
   var noteRows=[],lines=[[]];
   for(var i=0;i<tabList.length;i++){var n=tabList[i];if(n.type==='newline')lines.push([]);else lines[lines.length-1].push(n);}
