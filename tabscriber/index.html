@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f4f5f7;--surface:#fff;--surface2:#eef0f4;--border:#d0d5e0;--accent:#e8c84a;--accent2:#4ae8b4;--danger:#e84a4a;--text:#1a1d26;--muted:#7a828f;--in-tune:#1aaa80;--purple:#8855dd}
+:root{--bg:#f4f5f7;--surface:#fff;--surface2:#eef0f4;--border:#d0d5e0;--accent:#e8c84a;--accent2:#4ae8b4;--danger:#e84a4a;--text:#1a1d26;--muted:#7a828f;--in-tune:#1aaa80;--purple:#8855dd;--violet:#9933ee;--sky:#2299dd}
 body.dark{--bg:#0d0f14;--surface:#161922;--surface2:#1e2230;--border:#2a3040;--text:#e8eaf0;--muted:#6b7280;--in-tune:#4ae8b4}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 48px;transition:background .3s,color .3s}
 .wrap{width:100%;max-width:720px}
@@ -28,7 +28,9 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .key-btn.active{border-color:var(--accent);background:rgba(232,200,74,.15);color:var(--accent);font-weight:500}
 .tuner-inner{text-align:center}
 .pitch-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--muted);letter-spacing:.05em;min-height:80px;display:flex;align-items:center;justify-content:center;transition:color .1s}
-.pitch-big.on{color:var(--accent2)}.pitch-big.bend{color:#e88c32}.pitch-big.blowbend{color:#e88c32}.pitch-big.oob{color:var(--danger)}
+.pitch-big.on{color:var(--accent2)}.pitch-big.bend{color:#e88c32}.pitch-big.blowbend{color:#e88c32}
+.pitch-big.overblow{color:var(--violet)}.pitch-big.overdraw{color:var(--sky)}
+.pitch-big.oob{color:var(--danger)}
 .freq-sub{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px;min-height:18px}
 .cents-wrap{position:relative;height:6px;background:var(--surface2);border-radius:3px;margin:14px auto;max-width:320px;border:1px solid var(--border)}
 .cents-fill{position:absolute;height:100%;border-radius:3px;top:0;transition:all .07s}
@@ -38,6 +40,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .badge.intune{background:rgba(74,232,180,.12);color:var(--in-tune);border-color:rgba(74,232,180,.3)}
 .badge.sharp,.badge.flat,.badge.bend{background:rgba(232,200,74,.12);color:#c9a800;border-color:rgba(232,200,74,.3)}
 .badge.blowbend{background:rgba(232,140,50,.12);color:#e88c32;border-color:rgba(232,140,50,.3)}
+.badge.overblow{background:rgba(153,51,238,.12);color:var(--violet);border-color:rgba(153,51,238,.3)}
+.badge.overdraw{background:rgba(34,153,221,.12);color:var(--sky);border-color:rgba(34,153,221,.3)}
 .badge.idle{background:var(--surface2);color:var(--muted);border-color:var(--border)}
 .badge.oob{background:rgba(232,74,74,.12);color:var(--danger);border-color:rgba(232,74,74,.3)}
 .mic-row{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
@@ -54,7 +58,7 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .grid-hint{font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px;text-align:center}
 .harp-scroll{overflow-x:auto;padding-bottom:8px}
 .harp-row{display:flex;gap:5px;align-items:center;margin-bottom:5px}
-.harp-lbl{width:72px;min-width:72px;font-size:.63rem;color:var(--muted);text-align:right;padding-right:8px;font-family:'DM Sans',sans-serif}
+.harp-lbl{width:80px;min-width:80px;font-size:.63rem;color:var(--muted);text-align:right;padding-right:8px;font-family:'DM Sans',sans-serif}
 .harp-cells{display:flex;gap:5px;flex:1}
 .hcell{flex:1;min-width:0;height:50px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.82rem;font-weight:600;border-radius:8px;border:1.5px solid transparent;transition:all .13s;cursor:pointer}
 .hcell:hover{transform:scale(1.08);filter:brightness(1.2);box-shadow:0 0 8px rgba(0,0,0,.15)}
@@ -72,9 +76,14 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .hbend.blowbend1,.hbend.drawbend1{background:rgba(232,140,50,.1);color:#e88c32;border-color:rgba(232,140,50,.35)}
 .hbend.drawbend2{background:rgba(232,74,74,.1);color:#e84a4a;border-color:rgba(232,74,74,.35)}
 .hbend.drawbend3{background:rgba(139,90,43,.1);color:#8b5a2b;border-color:rgba(139,90,43,.35)}
+/* ── OVERBLOW e OVERDRAW ── */
+.hbend.overblow{background:rgba(153,51,238,.1);color:var(--violet);border-color:rgba(153,51,238,.35);font-size:.68rem}
+.hbend.overdraw{background:rgba(34,153,221,.1);color:var(--sky);border-color:rgba(34,153,221,.35);font-size:.68rem}
 .hbend.blowbend1.active,.hbend.drawbend1.active{background:rgba(232,140,50,.3);border-color:#e88c32;box-shadow:0 0 10px rgba(232,140,50,.4);transform:scale(1.06)}
 .hbend.drawbend2.active{background:rgba(232,74,74,.3);border-color:#e84a4a;box-shadow:0 0 10px rgba(232,74,74,.4);transform:scale(1.06)}
 .hbend.drawbend3.active{background:rgba(139,90,43,.3);border-color:#8b5a2b;box-shadow:0 0 10px rgba(139,90,43,.4);transform:scale(1.06)}
+.hbend.overblow.active{background:rgba(153,51,238,.3);border-color:var(--violet);box-shadow:0 0 10px rgba(153,51,238,.4);transform:scale(1.06)}
+.hbend.overdraw.active{background:rgba(34,153,221,.3);border-color:var(--sky);box-shadow:0 0 10px rgba(34,153,221,.4);transform:scale(1.06)}
 .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .btn{display:inline-block;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;text-align:center;line-height:1.4;user-select:none;-webkit-user-select:none}
 .btn:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
@@ -83,6 +92,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .btn.primary:hover:not(:disabled){background:rgba(74,232,180,.1)}
 .btn.primary.bend{border-color:#e88c32;color:#e88c32}
 .btn.primary.blowbend{border-color:#e88c32;color:#e88c32}
+.btn.primary.overblow{border-color:var(--violet);color:var(--violet)}
+.btn.primary.overdraw{border-color:var(--sky);color:var(--sky)}
 .btn.danger{border-color:rgba(232,74,74,.4);color:var(--danger)}
 .btn.danger:hover:not(:disabled){background:rgba(232,74,74,.1)}
 .spacer{flex:1}
@@ -98,9 +109,13 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .chip.drawbend1 .arr,.chip.blowbend1 .arr{color:#e88c32}
 .chip.drawbend2 .arr,.chip.blowbend2 .arr{color:#e84a4a}
 .chip.drawbend3 .arr{color:#8b5a2b}
+.chip.overblow .arr{color:var(--violet)}
+.chip.overdraw .arr{color:var(--sky)}
 .chip .hn{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);line-height:1}
 .chip .nn{font-size:.6rem;color:var(--muted);font-family:'DM Mono',monospace}
 .chip.sel .hn,.chip.sel .nn{color:var(--purple)}
+.chip.overblow .hn{color:var(--violet)}.chip.overblow .nn{color:var(--violet)}
+.chip.overdraw .hn{color:var(--sky)}.chip.overdraw .nn{color:var(--sky)}
 .chip.chord .arr{color:var(--purple)}
 .chip.chord .hn{color:var(--purple)}
 .chip.separator{background:transparent;border:1.5px dashed var(--border);font-family:'DM Mono',monospace;font-size:1rem;min-width:24px;padding:6px 8px}
@@ -186,6 +201,8 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     <div class="leg"><div class="leg-sq" style="border-color:rgba(232,140,50,.6);background:rgba(232,140,50,.1)"></div><span id="legBend1"></span></div>
     <div class="leg"><div class="leg-sq" style="border-color:rgba(232,74,74,.6);background:rgba(232,74,74,.1)"></div><span id="legBend2"></span></div>
     <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.6);background:rgba(139,90,43,.1)"></div><span id="legBend3"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(153,51,238,.6);background:rgba(153,51,238,.1)"></div><span id="legOB"></span></div>
+    <div class="leg"><div class="leg-sq" style="border-color:rgba(34,153,221,.6);background:rgba(34,153,221,.1)"></div><span id="legOD"></span></div>
   </div>
   <div class="grid-hint" id="gridHint"></div>
   <div class="harp-scroll" id="harpVisual"></div>
@@ -262,8 +279,11 @@ var lang='it';
 var TX={
   it:{sub:'Armonica diatonica in',key:'Tonalità:',grid:'Griglia note',tab:'Tablatura',
     micOn:'Attiva microfono',micOff:'Stop',idle:'in attesa',silence:'silenzio',intune:'in tune',
-    high:'troppo alta',low:'troppo bassa',blowbend:'blow bend',drawbend:'bend rilevato',oob:'fuori range',
+    high:'troppo alta',low:'troppo bassa',blowbend:'blow bend',drawbend:'bend rilevato',
+    overblow:'overblow',overdraw:'overdraw',oob:'fuori range',
     legBlow:'↑ soffiata',legDraw:'↓ aspirata',legB1:"↓' 1 semitono",legB2:"↓'' 2 semitoni",legB3:"↓''' 3 semitoni",
+    legOB:'↑ overblow',legOD:'↓ overdraw',
+    rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB:"↑' bend",rowBlow:'↑ Soffia',rowDraw:'↓ Aspira',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
     add:'+ Aggiungi',replace:'Sostituisci',sep:'Battuta',nl:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clearAll:'Cancella tutto',selected:'selezionate',del:'Elimina',
@@ -276,8 +296,11 @@ var TX={
     chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
-    high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',oob:'out of range',
+    high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
+    overblow:'overblow',overdraw:'overdraw',oob:'out of range',
     legBlow:'↑ blow',legDraw:'↓ draw',legB1:"↓' 1 semitone",legB2:"↓'' 2 semitones",legB3:"↓''' 3 semitones",
+    legOB:'↑ overblow',legOD:'↓ overdraw',
+    rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB:"↑' bend",rowBlow:'↑ Blow',rowDraw:'↓ Draw',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
     add:'+ Add',replace:'Replace',sep:'Bar',nl:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clearAll:'Clear all',selected:'selected',del:'Delete',
@@ -315,6 +338,8 @@ function applyTx(){
   document.getElementById('legBend1').textContent=t('legB1');
   document.getElementById('legBend2').textContent=t('legB2');
   document.getElementById('legBend3').textContent=t('legB3');
+  document.getElementById('legOB').textContent=t('legOB');
+  document.getElementById('legOD').textContent=t('legOD');
   document.getElementById('micLbl').textContent=listening?t('micOff'):t('micOn');
   document.getElementById('badge').textContent=t('idle');
   document.getElementById('sepLbl').textContent=t('sep');
@@ -340,12 +365,28 @@ function applyTx(){
 var NNAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 function mn(m){return NNAMES[((m%12)+12)%12];}
 function midi2hz(m){return 440*Math.pow(2,(m-69)/12);}
-var BASE_BLOW=[0,4,7,12,16,19,24,28,31,36];
-var BASE_DRAW=[2,7,11,14,17,21,23,26,29,33];
-var BASE_DB1=[1,6,10,13,null,null,null,null,null,null];
-var BASE_DB2=[null,5,9,null,null,null,null,null,null,null];
-var BASE_DB3=[null,null,8,null,null,null,null,null,null,null];
-var BASE_BB1=[null,null,null,null,null,null,22,27,30,35];
+
+// ── Richter standard offsets (root = foro 1 blow) ──
+var BASE_BLOW =[0,4,7,12,16,19,24,28,31,36];
+var BASE_DRAW =[2,7,11,14,17,21,23,26,29,33];
+var BASE_DB1  =[1,6,10,13,null,null,null,null,null,null];
+var BASE_DB2  =[null,5,9,null,null,null,null,null,null,null];
+var BASE_DB3  =[null,null,8,null,null,null,null,null,null,null];
+var BASE_BB1  =[null,null,null,null,null,null,22,27,30,35];
+
+// ── Overbend offsets, null = foro senza overbend ──
+// Overblow: fori 1,4,5,6 → Eb,Eb,Gb,Bb in C (offset +3,+15,+18,+22)
+var BASE_OB=[3,null,null,15,18,22,null,null,null,null];
+// Overdraw: fori 7,9,10 → Db,Ab,Db in C (offset +13,+20,+25... ma:)
+// foro 7 draw=B(off23), OD=Db(off25)? No: in C draw7=B4=71, OD7=Db5=73, off=73-60=13
+// foro 9 draw=F(off29), OD=Ab(off32)? In C draw9=F5=77, OD9=Ab5=80, off=80-60=20 ✓
+// foro10 draw=A(off33), OD=Db(off37)? In C draw10=A5=81, OD10=Db6=85, off=85-60=25 ✓
+// Nota: off 13 = stesso di BASE_DB1[3] (Db4 per foro4), ma qui è per foro7 → no conflitto per foro
+// off 20 = stesso di BASE_BB1[6] (Bb5 per foro7 blowbend), ma foro diverso → ok per findClosest per foro
+// La chiave: findClosest cerca per frequenza assoluta. OD7=Db5=73, BB1_foro7=Bb4=70+22=... wait
+// BASE_BB1[6]=22 → root+22. In C: 60+22=82=Bb5. OD7=60+13=73=Db5. Diverse ✓
+var BASE_OD=[null,null,null,null,null,null,13,null,20,25];
+
 var KEYS=[
   {name:'C',root:60},{name:'D',root:62},{name:'E',root:64},{name:'F',root:65},
   {name:'G',root:67},{name:'A',root:57},{name:'Bb',root:58},{name:'Ab',root:56},
@@ -363,6 +404,7 @@ function buildMap(key){
     if(BASE_DB2[i]!=null)m.push({midi:r+BASE_DB2[i],hz:midi2hz(r+BASE_DB2[i]),hole:h,dir:'drawbend2',sym:"↓''",semis:2,blowbend:false});
     if(BASE_DB3[i]!=null)m.push({midi:r+BASE_DB3[i],hz:midi2hz(r+BASE_DB3[i]),hole:h,dir:'drawbend3',sym:"↓'''",semis:3,blowbend:false});
     if(BASE_BB1[i]!=null)m.push({midi:r+BASE_BB1[i],hz:midi2hz(r+BASE_BB1[i]),hole:h,dir:'blowbend1',sym:"↑'",semis:1,blowbend:true});
+    // overbend: NON inseriti in HMAP — solo manuali da griglia, non dal microfono
   }
   if(key.root>=65){
     var rL=key.root-12;
@@ -414,13 +456,11 @@ function toggleChordMode(){
   var addCB=document.getElementById('addChordBtn');
   if(chordMode){
     btn.style.background='rgba(136,85,221,.15)';btn.style.borderColor='var(--purple)';
-    lbl.textContent=t('chordOn');
-    addCB.style.display='';
+    lbl.textContent=t('chordOn');addCB.style.display='';
     document.getElementById('harpVisual').classList.add('chord-active');
   }else{
     btn.style.background='';btn.style.borderColor='var(--purple)';
-    lbl.textContent=t('chord');
-    addCB.style.display='none';
+    lbl.textContent=t('chord');addCB.style.display='none';
     document.getElementById('harpVisual').classList.remove('chord-active');
   }
   buildHarpVisual();
@@ -428,14 +468,8 @@ function toggleChordMode(){
 function addChord(){
   if(!chordSel.length)return;
   snap();
-  // build chord object — use sym/dir of first note as reference
   var first=chordSel[0];
-  tabList.push({
-    type:'chord',
-    sym:first.sym,
-    dir:first.dir,
-    notes:chordSel.map(copyNote)
-  });
+  tabList.push({type:'chord',sym:first.sym,dir:first.dir,notes:chordSel.map(copyNote)});
   chordSel=[];chordMode=false;
   document.getElementById('chordBtn').style.background='';
   document.getElementById('chordLbl').textContent=t('chord');
@@ -464,7 +498,6 @@ function buildHarpVisual(){
       var handler=(function(n,elem){return function(e){
         e.preventDefault();e.stopPropagation();
         if(chordMode){
-          // toggle in chordSel
           var found=-1;
           for(var j=0;j<chordSel.length;j++){if(chordSel[j].hole===n.hole&&chordSel[j].dir===n.dir){found=j;break;}}
           if(found>=0){chordSel.splice(found,1);elem.classList.remove('chord-sel');}
@@ -481,6 +514,16 @@ function buildHarpVisual(){
     return el;
   }
 
+  // ── Riga OVERBLOW (sopra il blow) ──
+  var obCells=[];
+  for(var i=0;i<10;i++){
+    var midi=BASE_OB[i]!=null?r+BASE_OB[i]:null;
+    var note=midi?{midi:midi,hz:midi2hz(midi),hole:i+1,dir:'overblow',sym:'↑°',semis:0,blowbend:false,cents:0}:null;
+    obCells.push(makeCell(midi?'hbend overblow':'hbend empty',midi?mn(midi):'',midi?'hv_ob_'+(i+1):'',note));
+  }
+  vis.appendChild(makeRow(t('rowOB'),obCells));
+
+  // ── Riga BLOW BEND ──
   var bbCells=[];
   for(var i=0;i<10;i++){
     var midi=BASE_BB1[i]!=null?r+BASE_BB1[i]:null;
@@ -489,6 +532,7 @@ function buildHarpVisual(){
   }
   vis.appendChild(makeRow(t('rowBB'),bbCells));
 
+  // ── Riga BLOW ──
   var blowCells=[];
   for(var i=0;i<10;i++){
     var note={midi:r+BASE_BLOW[i],hz:midi2hz(r+BASE_BLOW[i]),hole:i+1,dir:'blow',sym:'↑',semis:0,blowbend:false,cents:0};
@@ -496,12 +540,14 @@ function buildHarpVisual(){
   }
   vis.appendChild(makeRow(t('rowBlow'),blowCells));
 
+  // ── Riga numeri fori ──
   var holeRow=document.createElement('div');holeRow.className='harp-row';
   var hLbl=document.createElement('div');hLbl.className='harp-lbl';hLbl.textContent='Foro';
   var hWrap=document.createElement('div');hWrap.className='hole-wrap harp-cells';hWrap.style.background=holeBg;
   for(var i=0;i<10;i++){var hn=document.createElement('div');hn.className='hole-num';hn.textContent=i+1;hWrap.appendChild(hn);}
   holeRow.appendChild(hLbl);holeRow.appendChild(hWrap);vis.appendChild(holeRow);
 
+  // ── Riga DRAW ──
   var drawCells=[];
   for(var i=0;i<10;i++){
     var note={midi:r+BASE_DRAW[i],hz:midi2hz(r+BASE_DRAW[i]),hole:i+1,dir:'draw',sym:'↓',semis:0,blowbend:false,cents:0};
@@ -509,6 +555,7 @@ function buildHarpVisual(){
   }
   vis.appendChild(makeRow(t('rowDraw'),drawCells));
 
+  // ── Righe DRAW BEND ──
   var bends=[
     {arr:BASE_DB1,cls:'drawbend1',key:'db1',lbl:t('rowDB1'),sym:"↓'",semis:1},
     {arr:BASE_DB2,cls:'drawbend2',key:'db2',lbl:t('rowDB2'),sym:"↓''",semis:2},
@@ -526,13 +573,22 @@ function buildHarpVisual(){
     }
     vis.appendChild(makeRow(bend.lbl,cells));
   }
+
+  // ── Riga OVERDRAW (sotto i draw bend) ──
+  var odCells=[];
+  for(var i=0;i<10;i++){
+    var midi=BASE_OD[i]!=null?r+BASE_OD[i]:null;
+    var note=midi?{midi:midi,hz:midi2hz(midi),hole:i+1,dir:'overdraw',sym:'↓°',semis:0,blowbend:false,cents:0}:null;
+    odCells.push(makeCell(midi?'hbend overdraw':'hbend empty',midi?mn(midi):'',midi?'hv_od_'+(i+1):'',note));
+  }
+  vis.appendChild(makeRow(t('rowOD'),odCells));
 }
 
 var lastActId=null;
 function highlight(match){
   if(lastActId){var e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
   lastActId=null;if(!match)return;
-  var km={blow:'blow',draw:'draw',blowbend1:'bb1',drawbend1:'db1',drawbend2:'db2',drawbend3:'db3'};
+  var km={blow:'blow',draw:'draw',blowbend1:'bb1',drawbend1:'db1',drawbend2:'db2',drawbend3:'db3',overblow:'ob',overdraw:'od'};
   var id='hv_'+(km[match.dir]||match.dir)+'_'+match.hole;
   var e=document.getElementById(id);
   if(e){e.classList.add('active');lastActId=id;}
@@ -625,7 +681,8 @@ function setAddBtn(on,match){
   if(!on){ab.textContent=t('add');ab.className='btn primary';}
   else{
     var isDB=match.dir.indexOf('drawbend')===0,isBB=match.blowbend;
-    ab.className='btn primary'+(isDB?' bend':isBB?' blowbend':'');
+    var isOB=match.dir==='overblow',isOD=match.dir==='overdraw';
+    ab.className='btn primary'+(isDB?' bend':isBB?' blowbend':isOB?' overblow':isOD?' overdraw':'');
     ab.innerHTML='<span style="pointer-events:none;display:block;width:100%;text-align:center">+ '+match.sym+match.hole+' ('+mn(match.midi)+')</span>';
   }
   if(selected.size===1){rb.style.display='';rb.disabled=false;rl.textContent=t('replace')+(match?' '+match.sym+match.hole:'...');}
@@ -705,9 +762,7 @@ function clearSel(){selected.clear();render();}
 function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter(function(_,i){return !selected.has(i);});selected.clear();render();}
 function clearAll(){if(!tabList.length)return;snap();tabList=[];selected.clear();render();}
 
-/* ---- CHORD TEXT helper ---- */
 function chordToText(n){
-  // e.g. "[↓2-3-4 (G-B-D)]"
   var notes=n.notes||[];
   var holes=notes.map(function(x){return x.sym+x.hole;}).join('-');
   var names=notes.map(function(x){return mn(x.midi);}).join('-');
@@ -742,7 +797,6 @@ function render(){
         chip.className='chip chord'+(selected.has(idx)?' sel':'');
         var notes=n.notes||[];
         var holeTxt=notes.map(function(x){return x.sym+x.hole;}).join('-');
-        var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
       }else{
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
@@ -825,8 +879,8 @@ function exportPDF(){
   if(!tabList.length){alert(t('noExport'));return;}
   var date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
   var sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
-  var colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',chord:'#8855dd'};
-  var bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)',chord:'rgba(136,85,221,.12)'};
+  var colors={blow:'#4ae8b4',draw:'#e8c84a',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',chord:'#8855dd',overblow:'#9933ee',overdraw:'#2299dd'};
+  var bgs={blow:'rgba(74,232,180,.12)',draw:'rgba(232,200,74,.12)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)',chord:'rgba(136,85,221,.12)',overblow:'rgba(153,51,238,.12)',overdraw:'rgba(34,153,221,.12)'};
   var noteRows=[],lines=[[]];
   for(var i=0;i<tabList.length;i++){var n=tabList[i];if(n.type==='newline')lines.push([]);else lines[lines.length-1].push(n);}
   for(var l=0;l<lines.length;l++){
@@ -853,7 +907,7 @@ function exportPDF(){
     if(n.type==='chord')return chordToText(n);
     return n.sym+n.hole;
   }).join(' ');
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+sessName+'</title><style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800}.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec}.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body><h1>'+sessName+'</h1><div class="sub">'+t('sub')+' '+currentKey.name+' · '+tabList.length+' '+(lang==='it'?'note':'notes')+' · '+date+'</div><div class="sec"><h2>'+t('pdfLeg')+'</h2><div class="leg"><div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>'+t('legBlow')+'</div><div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>'+t('legDraw')+'</div><div class="li"><div class="ls" style="border-color:#e88c32;background:rgba(232,140,50,.12)"></div>'+t('legB1')+'</div><div class="li"><div class="ls" style="border-color:#e84a4a;background:rgba(232,74,74,.12)"></div>'+t('legB2')+'</div><div class="li"><div class="ls" style="border-color:#8b5a2b;background:rgba(139,90,43,.12)"></div>'+t('legB3')+'</div></div></div><div class="sec"><h2>'+t('pdfGraph')+'</h2><table><tbody>'+noteRows.join('')+'</tbody></table></div><div class="sec"><h2>'+t('pdfTxt')+'</h2><div class="txt">'+tabTxt+'</div></div><div class="foot">'+t('pdfFoot')+'</div></body></html>';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+sessName+'</title><style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800}.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec}.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body><h1>'+sessName+'</h1><div class="sub">'+t('sub')+' '+currentKey.name+' · '+tabList.length+' '+(lang==='it'?'note':'notes')+' · '+date+'</div><div class="sec"><h2>'+t('pdfLeg')+'</h2><div class="leg"><div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>'+t('legBlow')+'</div><div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>'+t('legDraw')+'</div><div class="li"><div class="ls" style="border-color:#e88c32;background:rgba(232,140,50,.12)"></div>'+t('legB1')+'</div><div class="li"><div class="ls" style="border-color:#e84a4a;background:rgba(232,74,74,.12)"></div>'+t('legB2')+'</div><div class="li"><div class="ls" style="border-color:#8b5a2b;background:rgba(139,90,43,.12)"></div>'+t('legB3')+'</div><div class="li"><div class="ls" style="border-color:#9933ee;background:rgba(153,51,238,.12)"></div>'+t('legOB')+'</div><div class="li"><div class="ls" style="border-color:#2299dd;background:rgba(34,153,221,.12)"></div>'+t('legOD')+'</div></div></div><div class="sec"><h2>'+t('pdfGraph')+'</h2><table><tbody>'+noteRows.join('')+'</tbody></table></div><div class="sec"><h2>'+t('pdfTxt')+'</h2><div class="txt">'+tabTxt+'</div></div><div class="foot">'+t('pdfFoot')+'</div></body></html>';
   var win=window.open('','_blank');win.document.write(html);win.document.close();win.onload=function(){win.print();};
 }
 
