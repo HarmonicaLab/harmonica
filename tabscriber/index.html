@@ -154,6 +154,9 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
 .sess-del{font-size:.8rem;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .15s}
 .sess-del:hover{color:var(--danger);background:rgba(232,74,74,.1)}
 .sess-empty{font-size:.8rem;color:var(--muted);font-family:'DM Mono',monospace}
+#sensSlider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 6px rgba(232,200,74,.4);border:2px solid var(--surface)}
+#sensSlider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--surface)}
+#sensSlider::-webkit-slider-runnable-track{height:4px;border-radius:3px}
 </style>
 </head>
 <body>
@@ -192,6 +195,19 @@ header p{font-size:.82rem;color:var(--muted);font-weight:300;letter-spacing:.06e
     <div class="mic-row">
       <button class="mic-btn" id="micBtn" onclick="toggleMic()"><span class="mic-dot"></span><span id="micLbl"></span></button>
       <button class="mic-btn" id="autoBtn" onclick="toggleAuto()"><span class="mic-dot"></span><span id="autoLbl">Auto</span></button>
+    </div>
+    <div style="margin-top:16px;padding:12px 16px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase" id="sensLbl">Sensibilità microfono</span>
+        <span style="font-size:.72rem;font-family:'DM Mono',monospace;color:var(--accent)" id="sensVal">5</span>
+      </div>
+      <input type="range" id="sensSlider" min="1" max="10" value="5" step="1"
+        style="-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:var(--border);outline:none;cursor:pointer"
+        oninput="setSens(this.value)">
+      <div style="display:flex;justify-content:space-between;margin-top:5px">
+        <span style="font-size:.62rem;color:var(--muted);font-family:'DM Mono',monospace" id="sensLow">− meno</span>
+        <span style="font-size:.62rem;color:var(--muted);font-family:'DM Mono',monospace" id="sensHigh">più +</span>
+      </div>
     </div>
   </div>
 </div>
@@ -293,6 +309,7 @@ var TX={
     metro:'Metronomo',metroTime:'Tempo:',
     sessions:'Sessioni salvate',newSess:'+ Nuova sessione',noSess:'Nessuna sessione',noNotes:'Nessuna nota ancora',
     promptName:'Nome sessione:',confirmDel:'Eliminare la sessione?',noSave:'Nessuna nota da salvare.',noExport:'Nessuna nota da esportare.',
+    sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
     chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo'},
@@ -310,6 +327,7 @@ var TX={
     metro:'Metronome',metroTime:'Time:',
     sessions:'Saved sessions',newSess:'+ New session',noSess:'No sessions',noNotes:'No notes yet',
     promptName:'Session name:',confirmDel:'Delete this session?',noSave:'No notes to save.',noExport:'No notes to export.',
+    sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
     chord:'Chord',chordOn:'Chord ON',addChord:'Add chord'}
@@ -360,6 +378,9 @@ function applyTx(){
   document.getElementById('newSessBtn').textContent=t('newSess');
   document.getElementById('chordLbl').textContent=chordMode?t('chordOn'):t('chord');
   document.getElementById('addChordLbl').textContent=t('addChord');
+  document.getElementById('sensLbl').textContent=t('sens');
+  document.getElementById('sensLow').textContent=t('sensLow');
+  document.getElementById('sensHigh').textContent=t('sensHigh');
   var ab=document.getElementById('addBtn');
   if(ab.disabled)ab.textContent=t('add');
 }
@@ -607,6 +628,23 @@ function highlight(match){
   if(e){e.classList.add('active');lastActId=id;}
 }
 
+// Sensibilità: slider 1..10 → rmsThreshold alto(poco sensibile)..basso(molto sensibile)
+// 1 = minima sensibilità (threshold alto 0.05 = solo suoni forti)
+// 10 = massima sensibilità (threshold basso 0.001 = cattura anche suoni deboli)
+var rmsThreshold = 0.008; // default = livello 5
+function setSens(v){
+  v = parseInt(v);
+  // mappa 1..10 → 0.05..0.001 in modo logaritmico
+  var t = 0.05 * Math.pow(0.001/0.05, (v-1)/9);
+  rmsThreshold = t;
+  document.getElementById('sensVal').textContent = v;
+  // aggiorna il colore della track in base al valore
+  var pct = (v-1)/9*100;
+  document.getElementById('sensSlider').style.background =
+    'linear-gradient(to right, var(--accent) '+pct+'%, var(--border) '+pct+'%)';
+  localStorage.setItem('harp_sens', v);
+}
+
 var actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null,lastStableMatch=null;
 var autoCapture=false,autoTimer=null,autoHoldMatch=null,autoCaptureCooldown=false;
 
@@ -643,7 +681,7 @@ function copyNote(n){return{midi:n.midi,hz:n.hz,hole:n.hole,dir:n.dir,sym:n.sym,
 function detectPitch(buf,sr){
   var N=buf.length,rms=0;
   for(var i=0;i<N;i++)rms+=buf[i]*buf[i];
-  rms=Math.sqrt(rms/N);if(rms<0.002)return -1;
+  rms=Math.sqrt(rms/N);if(rms<rmsThreshold)return -1;
   var tauMin=Math.floor(sr/2200),tauMax=Math.floor(sr/80),W=Math.min(Math.floor(N/2),tauMax+1);
   var d=new Float32Array(W);
   for(var tau=tauMin;tau<W;tau++)for(var j=0;j<W;j++){var diff=buf[j]-buf[j+tau];d[tau]+=diff*diff;}
@@ -706,7 +744,7 @@ function loop(){
   raf=requestAnimationFrame(loop);
   var buf=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(buf);
   var rms=0;for(var i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
-  if(rms<0.002){
+  if(rms<rmsThreshold){
     curMatch=null;
     document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
     document.getElementById('freqSub').textContent='';
@@ -982,6 +1020,9 @@ function setupLongPress(id,fn){
 
 var savedTheme=localStorage.getItem('harp_theme')||'light';
 setTheme(savedTheme);
+var savedSens=parseInt(localStorage.getItem('harp_sens')||'5');
+document.getElementById('sensSlider').value=savedSens;
+setSens(savedSens);
 buildKeyBtns();
 HMAP=buildMap(currentKey);
 buildHarpVisual();
