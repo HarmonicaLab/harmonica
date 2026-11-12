@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Harmonica Lab Tool — Bozza A · Cristallo HL</title>
+<title>Harmonica Lab Tool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
 <style>
   /* ── THEMES ── */
@@ -363,7 +363,7 @@
     .top-bar { justify-content: center; }
   }
 
-:root, body, body.light {
+:root, body.light {
  --hl-black:#111111; --hl-gold:#BF8C3A; --hl-gold-deep:#A9741F; --hl-red:#A02818;
  --note-blow:#0f9d76; --note-draw:#c8962a;
  --font-head:'Anton',sans-serif; --font-body:'Montserrat',sans-serif; --head-weight:800; --head-track:-0.02em;
@@ -376,6 +376,19 @@
  --glass-shadow:0 18px 50px rgba(60,45,20,.15), 0 2px 6px rgba(60,45,20,.07);
  --pill-active:linear-gradient(180deg,#2b2b2b,#0b0b0b); --pill-active-text:#E6C168; --pill-glow:rgba(17,17,17,.32);
  --cta:linear-gradient(180deg,#E3BF63,#B98F2E); --cta-text:#111111; --bar:rgba(17,17,17,.88); --zone:rgba(201,162,74,.16); --done-bg:rgba(201,162,74,.22);
+}
+
+/* ===== VERSIONE NOTTE: nero HL ===== */
+body:not(.light) {
+ --hl-black:#111111; --hl-gold:#D6A94F; --hl-gold-deep:#D6A94F; --hl-red:#D4503C;
+ --note-blow:#2fd1a0; --note-draw:#e3b04a;
+ --page-base:#111111; --page-bg:#111111;
+ --text:#F2EEE6; --muted:#9b958a; --accent:#D6A94F; --accent2:#D4503C; --in-tune:#2fd1a0; --close:#D6A94F; --danger:#E05A4A;
+ --surface:transparent; --surface2:rgba(255,255,255,.07); --border:rgba(255,255,255,.14);
+ --glass:rgba(255,255,255,.06); --glass-in:rgba(255,255,255,.08); --glass-edge:rgba(255,255,255,.14); --glass-hi:rgba(255,255,255,.2); --glass-lo:rgba(0,0,0,.3);
+ --glass-shadow:0 18px 50px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+ --pill-active:linear-gradient(180deg,#E3BF63,#B98F2E); --pill-active-text:#111111; --pill-glow:rgba(214,169,79,.35);
+ --cta:linear-gradient(180deg,#E3BF63,#B98F2E); --cta-text:#111111; --bar:rgba(255,255,255,.1); --zone:rgba(214,169,79,.16); --done-bg:rgba(214,169,79,.22);
 }
 
 /* ===== LIQUID GLASS OVERRIDE ===== */
@@ -462,16 +475,23 @@ h2.section-label, .key-btn, .scale-btn, .metro-time-btn, .toggle-pill button, .v
 /* titolo: mai gradiente */
 header h1 { background:none !important; -webkit-background-clip:border-box !important; background-clip:border-box !important; color:var(--hl-gold) !important; -webkit-text-fill-color:var(--hl-gold) !important; text-transform:uppercase; font-style:italic; }
 header h1 .tool { color:var(--hl-red) !important; -webkit-text-fill-color:var(--hl-red) !important; }
-body::before { filter:none !important; background:#F2EEE6 !important; }
+body::before { filter:none !important; background:var(--page-bg) !important; }
 header img.hl-logo { height:130px; width:130px; margin-bottom:6px; filter:drop-shadow(0 8px 18px rgba(60,45,20,.22)); }
 .version-badge { color: var(--hl-black) !important; }
+body:not(.light) .metro-beat.active-normal { background:#F2EEE6 !important; border-color:#F2EEE6 !important; color:#111 !important; box-shadow:0 0 12px rgba(242,238,230,.3) !important; }
+body:not(.light) .version-badge, body:not(.light) .level-chip.done .lnum { color:var(--text) !important; }
+body:not(.light) .level-chip.done .lnum { color:var(--hl-gold) !important; }
+body:not(.light) .level-done-btn { border-color:rgba(212,80,60,.6) !important; }
+body:not(.light) .cof-info { background:var(--glass-in) !important; }
+/* numeri dei fori: dritti */
+.hole-number-cell { font-style:normal !important; }
 
 </style>
 </head>
 <body class="light">
 
 <div class="top-bar">
-  <div class="version-badge">v1.3 · Bozza A · Cristallo HL</div>
+  <div class="version-badge">v1.3</div>
   <div class="toggle-pill">
     <button id="langIt" class="active" onclick="setLang('it')">IT</button>
     <button id="langEn" onclick="setLang('en')">EN</button>
