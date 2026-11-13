@@ -293,6 +293,11 @@ footer,body > .wrap > div:last-child{font-family:'Montserrat',sans-serif !import
         <span style="font-size:.62rem;color:var(--muted);font-family:'Montserrat',monospace" id="sensLow">− meno</span>
         <span style="font-size:.62rem;color:var(--muted);font-family:'Montserrat',monospace" id="sensHigh">più +</span>
       </div>
+      <div style="margin-top:12px;font-size:.6rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase" id="lvlLbl"></div>
+      <div style="position:relative;height:8px;border-radius:4px;background:var(--border);margin-top:5px;overflow:hidden">
+        <div id="lvlFill" style="height:100%;width:0;background:var(--accent2);transition:width .06s"></div>
+        <div id="lvlThr" style="position:absolute;top:0;bottom:0;width:3px;background:#A02818;left:50%"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -396,7 +401,7 @@ var TX={
     metro:'Metronomo',metroTime:'Tempo:',
     sessions:'Sessioni salvate',newSess:'+ Nuova sessione',noSess:'Nessuna sessione',noNotes:'Nessuna nota ancora',
     promptName:'Nome sessione:',confirmDel:'Eliminare la sessione?',noSave:'Nessuna nota da salvare.',noExport:'Nessuna nota da esportare.',
-    sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
+    lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
     chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo'},
@@ -414,7 +419,7 @@ var TX={
     metro:'Metronome',metroTime:'Time:',
     sessions:'Saved sessions',newSess:'+ New session',noSess:'No sessions',noNotes:'No notes yet',
     promptName:'Session name:',confirmDel:'Delete this session?',noSave:'No notes to save.',noExport:'No notes to export.',
-    sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
+    lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
     chord:'Chord',chordOn:'Chord ON',addChord:'Add chord'}
@@ -466,6 +471,7 @@ function applyTx(){
   document.getElementById('chordLbl').textContent=chordMode?t('chordOn'):t('chord');
   document.getElementById('addChordLbl').textContent=t('addChord');
   document.getElementById('sensLbl').textContent=t('sens');
+  document.getElementById('lvlLbl').textContent=t('lvl');
   document.getElementById('sensLow').textContent=t('sensLow');
   document.getElementById('sensHigh').textContent=t('sensHigh');
   var ab=document.getElementById('addBtn');
@@ -718,12 +724,14 @@ function highlight(match){
 // Sensibilità: slider 1..10 → rmsThreshold alto(poco sensibile)..basso(molto sensibile)
 // 1 = minima sensibilità (threshold alto 0.05 = solo suoni forti)
 // 10 = massima sensibilità (threshold basso 0.001 = cattura anche suoni deboli)
+function lvlPct(r){return Math.max(0,Math.min(100,(Math.log10(Math.max(r,1e-5))+3.3)/2.3*100));}
 var rmsThreshold = 0.008; // default = livello 5
 function setSens(v){
   v = parseInt(v);
   // mappa 1..10 → 0.05..0.001 in modo logaritmico
-  var t = 0.05 * Math.pow(0.001/0.05, (v-1)/9);
+  var t = 0.05 * Math.pow(0.0005/0.05, (v-1)/9);
   rmsThreshold = t;
+  var _m=document.getElementById('lvlThr');if(_m)_m.style.left=lvlPct(t)+'%';
   document.getElementById('sensVal').textContent = v;
   // aggiorna il colore della track in base al valore
   var pct = (v-1)/9*100;
@@ -732,6 +740,7 @@ function setSens(v){
   localStorage.setItem('harp_sens', v);
 }
 
+var pend=null,pendN=0,silN=0;
 var actx=null,analyser=null,stream=null,raf=null,listening=false,curMatch=null,lastStableMatch=null;
 var autoCapture=false,autoTimer=null,autoHoldMatch=null,autoCaptureCooldown=false;
 
@@ -766,9 +775,10 @@ function tickAuto(match){
 function copyNote(n){return{midi:n.midi,hz:n.hz,hole:n.hole,dir:n.dir,sym:n.sym,semis:n.semis,blowbend:n.blowbend,cents:n.cents||0};}
 
 function detectPitch(buf,sr){
+  var need=2*(Math.floor(sr/80)+2);if(buf.length>need)buf=buf.subarray(buf.length-need);
   var N=buf.length,rms=0;
   for(var i=0;i<N;i++)rms+=buf[i]*buf[i];
-  rms=Math.sqrt(rms/N);if(rms<rmsThreshold)return -1;
+  rms=Math.sqrt(rms/N);if(rms<rmsThreshold*0.5)return -1;
   var tauMin=Math.floor(sr/2200),tauMax=Math.floor(sr/80),W=Math.min(Math.floor(N/2),tauMax+1);
   var d=new Float32Array(W);
   for(var tau=tauMin;tau<W;tau++)for(var j=0;j<W;j++){var diff=buf[j]-buf[j+tau];d[tau]+=diff*diff;}
@@ -792,9 +802,9 @@ function detectPitch(buf,sr){
 
 function toggleMic(){
   if(!listening){
-    navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(s){
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false}).then(function(s){
       stream=s;actx=new(window.AudioContext||window.webkitAudioContext)();
-      analyser=actx.createAnalyser();analyser.fftSize=8192;
+      if(actx.state==='suspended'&&actx.resume)actx.resume();analyser=actx.createAnalyser();analyser.fftSize=2048;analyser.smoothingTimeConstant=0;
       actx.createMediaStreamSource(stream).connect(analyser);
       listening=true;document.getElementById('micBtn').classList.add('on');
       document.getElementById('micLbl').textContent=t('micOff');loop();
@@ -810,6 +820,7 @@ function stopMic(){
   document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
   document.getElementById('freqSub').textContent='';document.getElementById('cFill').style.width='0';
   document.getElementById('cLbl').textContent='— ct';
+  var _lf2=document.getElementById('lvlFill');if(_lf2)_lf2.style.width='0';pend=null;pendN=0;silN=0;
   setBadge('idle',t('idle'));setAddBtn(false,null);highlight(null);curMatch=null;resetAutoTimer();
 }
 function setBadge(cls,txt){var b=document.getElementById('badge');b.className='badge '+cls;b.textContent=txt;}
@@ -831,7 +842,9 @@ function loop(){
   raf=requestAnimationFrame(loop);
   var buf=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(buf);
   var rms=0;for(var i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
-  if(rms<rmsThreshold){
+  var _lf=document.getElementById('lvlFill');if(_lf)_lf.style.width=lvlPct(rms)+'%';
+  if(rms<rmsThreshold*(curMatch?0.6:1)){
+    if(curMatch&&++silN<8)return;silN=0;pend=null;pendN=0;
     curMatch=null;
     document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
     document.getElementById('freqSub').textContent='';
@@ -842,6 +855,11 @@ function loop(){
   if(freq>80&&freq<2200){
     var match=findClosest(freq);
     if(match){
+      if(curMatch&&(curMatch.hole!==match.hole||curMatch.dir!==match.dir)){
+        if(pend&&pend.hole===match.hole&&pend.dir===match.dir)pendN++;else{pend=match;pendN=1;}
+        if(pendN<3)return;
+      }
+      pend=null;pendN=0;silN=0;
       curMatch=match;lastStableMatch=match;
       var pb=document.getElementById('pitchBig');
       pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
@@ -866,6 +884,7 @@ function loop(){
       setBadge('oob',t('oob'));highlight(null);setAddBtn(false,null);resetAutoTimer();
     }
   }else{
+    if(curMatch&&++silN<8)return;silN=0;pend=null;pendN=0;
     curMatch=null;
     document.getElementById('pitchBig').textContent='—';document.getElementById('pitchBig').className='pitch-big';
     document.getElementById('freqSub').textContent='';
