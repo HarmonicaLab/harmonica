@@ -216,7 +216,16 @@ body.dark .toggle-pill,body.dark .key-btn,body.dark .btn,body.dark .metro-btn,bo
 .sel-bar{background:var(--tint) !important;color:var(--text) !important;border:1px solid var(--border) !important;border-radius:999px !important}
 .chip{border-radius:14px !important;background:var(--glass-in) !important}
 .chip.sel{background:var(--tint) !important;border-color:var(--text) !important}
-.chip.sel .hn,.chip.sel .nn,.chip.chord .arr,.chip.chord .hn{color:var(--text) !important}
+.chip.sel .hn,.chip.sel .nn{color:var(--text) !important}
+/* accordo: ogni nota col suo colore (soffiata verde, aspirata oro, bend arancio/rosso/marrone, overblow/overdraw) */
+.chip.chord .cn.blow{color:var(--accent2) !important}
+.chip.chord .cn.draw{color:var(--accent) !important}
+.chip.chord .cn.drawbend1,.chip.chord .cn.blowbend1{color:#e88c32 !important}
+.chip.chord .cn.drawbend2,.chip.chord .cn.blowbend2{color:#e84a4a !important}
+.chip.chord .cn.drawbend3{color:#8b5a2b !important}
+.chip.chord .cn.overblow{color:var(--violet) !important}
+.chip.chord .cn.overdraw{color:var(--sky) !important}
+.chip.chord .sepc{color:var(--muted) !important}
 .chip .arr,.chip .nn,.empty-msg,.txt-out,.grid-hint,.freq-sub,.cents-lbl{font-family:'Montserrat',sans-serif !important}
 .txt-out,.cents-wrap,.tuner-inner > div[style*="margin-top:16px"]{background:var(--glass-in) !important;border:1px solid var(--glass-edge) !important}
 body.dark .txt-out,body.dark .cents-wrap,body.dark .tuner-inner > div[style*="margin-top:16px"]{border-color:var(--border) !important}
@@ -953,8 +962,8 @@ function render(){
       }else if(n.type==='chord'){
         chip.className='chip chord'+(selected.has(idx)?' sel':'');
         var notes=n.notes||[];
-        var holeTxt=notes.map(function(x){return x.sym+x.hole;}).join('-');
-        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
+        var holeTxt=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('<span class="sepc">-</span>');
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
       }else{
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
