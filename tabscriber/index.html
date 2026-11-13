@@ -251,6 +251,20 @@ body.dark .metro-beat.normal{background:#F2EEE6 !important;border-color:#F2EEE6 
 #sensSlider::-webkit-slider-thumb{background:var(--hl-gold);box-shadow:0 0 6px rgba(191,140,58,.5)}
 #sensSlider::-moz-range-thumb{background:var(--hl-gold)}
 footer,body > .wrap > div:last-child{font-family:'Montserrat',sans-serif !important}
+
+/* nota lunga / trillo */
+.lng{display:flex;flex-direction:column;align-items:center;margin-top:4px;font-size:.5rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.06em;line-height:1;color:var(--red);pointer-events:none}
+.lbar{display:block;position:relative;width:36px;height:8px;margin-top:3px}
+.lbar:before{content:'';position:absolute;left:0;top:3px;width:30px;height:2px;background:currentColor;border-radius:1px}
+.lbar:after{content:'';position:absolute;right:0;top:0;border-left:7px solid currentColor;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.lgarrow{color:var(--red) !important;font-weight:800}
+.chip.trill .nn{color:var(--red) !important;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.06em}
+.trill-panel .btn.primary{background:var(--cta) !important;color:#111 !important;border-color:transparent !important;box-shadow:0 6px 18px rgba(185,143,46,.35),inset 0 1px 0 rgba(255,255,255,.5) !important}
+.btn.on{background:var(--pill-active) !important;color:var(--pill-active-text) !important;border-color:transparent !important}
+.trill-panel{display:none;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 14px;padding:12px 16px;border-radius:22px;background:var(--glass-in);border:1px solid var(--glass-edge);box-shadow:inset 0 1px 0 var(--glass-hi)}
+body.dark .trill-panel{border-color:var(--border)}
+.trill-panel label{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;font-style:italic;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.trill-panel select{font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
 </style>
 </head>
 <body>
@@ -331,12 +345,20 @@ footer,body > .wrap > div:last-child{font-family:'Montserrat',sans-serif !import
     <button class="btn" id="replaceBtn" onclick="replaceNote()" style="display:none;border-color:#8855dd;color:#8855dd">⟳ <span id="replaceLbl"></span></button>
     <button class="btn" id="chordBtn" onclick="toggleChordMode()" style="border-color:var(--purple);color:var(--purple)">🎵 <span id="chordLbl">Accordo</span></button>
     <button class="btn" id="addChordBtn" onclick="addChord()" style="display:none;border-color:var(--purple);color:var(--purple)">+ <span id="addChordLbl">Aggiungi accordo</span></button>
+    <button class="btn" id="longBtn" onclick="toggleLong()" style="color:var(--red)">→ <span id="longLbl"></span></button>
+    <button class="btn" id="trillBtn" onclick="toggleTrillPanel()">〰 <span id="trillLbl"></span></button>
     <button class="btn" onclick="addSeparator()"><span style="pointer-events:none;display:block;width:100%;text-align:center">| <span id="sepLbl"></span></span></button>
     <button class="btn" onclick="addNewline()"><span style="pointer-events:none;display:block;width:100%;text-align:center">↵ <span id="nlLbl"></span></span></button>
     <div class="spacer"></div>
     <button class="btn" id="undoBtn" onclick="undo()" disabled></button>
     <button class="btn" id="redoBtn" onclick="redo()" disabled></button>
     <button class="btn danger" id="clearBtn" onclick="clearAll()"></button>
+  </div>
+  <div class="trill-panel" id="trillPanel">
+    <label><span id="trillALbl"></span><select id="trillA"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+    <label><span id="trillBLbl"></span><select id="trillB"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+    <div class="metro-btns"><button class="metro-btn active" id="trillDirBlow" onclick="setTrillDir('blow')"></button><button class="metro-btn" id="trillDirDraw" onclick="setTrillDir('draw')"></button></div>
+    <button class="btn primary" onclick="addTrill()">+ <span id="addTrillLbl"></span></button>
   </div>
   <span class="sel-bar" id="selBar">
     <span id="selCount">0</span> <span id="selLbl"></span>&nbsp;
@@ -413,7 +435,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',lng:'Nota lunga',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -431,7 +453,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',lng:'Long note',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -481,6 +503,9 @@ function applyTx(){
   document.getElementById('addChordLbl').textContent=t('addChord');
   document.getElementById('sensLbl').textContent=t('sens');
   document.getElementById('lvlLbl').textContent=t('lvl');
+  document.getElementById('longLbl').textContent=t('lng');document.getElementById('trillLbl').textContent=t('trill');
+  document.getElementById('addTrillLbl').textContent=t('addTrill');document.getElementById('trillALbl').textContent=t('trillA');document.getElementById('trillBLbl').textContent=t('trillB');
+  document.getElementById('trillDirBlow').textContent=t('trillBlow');document.getElementById('trillDirDraw').textContent=t('trillDraw');
   document.getElementById('sensLow').textContent=t('sensLow');
   document.getElementById('sensHigh').textContent=t('sensHigh');
   var ab=document.getElementById('addBtn');
@@ -935,6 +960,31 @@ function chordToText(n){
   return '['+holes+' ('+names+')]';
 }
 
+function trillToText(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLowerCase()+' '+a.sym+a.hole+'~'+b.sym+b.hole+' ('+mn(a.midi)+'~'+mn(b.midi)+')]';}
+function trillToHtml(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLowerCase()+' <span class="cn '+a.dir+'">'+a.sym+a.hole+'</span>~<span class="cn '+b.dir+'">'+b.sym+b.hole+'</span> ('+mn(a.midi)+'~'+mn(b.midi)+')]';}
+function itemTxt(n){var x=n.type==='chord'?chordToText(n):n.type==='trill'?trillToText(n):n.sym+n.hole;return x+(n.long?'→':'');}
+function itemHtml(n){var x=n.type==='chord'?chordToHtml(n):n.type==='trill'?trillToHtml(n):'<span class="cn '+n.dir+'">'+n.sym+n.hole+'</span>';return x+(n.long?'<span class="lgarrow">→</span>':'');}
+var trillDir='blow';
+function toggleTrillPanel(){var p=document.getElementById('trillPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('trillBtn').classList.toggle('on',open);}
+function setTrillDir(d){trillDir=d;document.getElementById('trillDirBlow').classList.toggle('active',d==='blow');document.getElementById('trillDirDraw').classList.toggle('active',d==='draw');}
+function findHM(hole,dir){for(var i=0;i<HMAP.length;i++){if(HMAP[i].hole===hole&&HMAP[i].dir===dir)return HMAP[i];}return null;}
+function addTrill(){
+  var a=parseInt(document.getElementById('trillA').value),b=parseInt(document.getElementById('trillB').value);
+  if(a===b){alert(t('trillSame'));return;}
+  var na=findHM(a,trillDir),nb=findHM(b,trillDir);if(!na||!nb)return;
+  snap();tabList.push({type:'trill',sym:na.sym,dir:trillDir,notes:[copyNote(na),copyNote(nb)]});render();
+}
+function toggleLong(){
+  var idxs=[];
+  if(selected.size){selected.forEach(function(i){idxs.push(i);});}
+  else{for(var i=tabList.length-1;i>=0;i--){var ty=tabList[i].type;if(ty!=='newline'&&ty!=='separator'){idxs.push(i);break;}}}
+  idxs=idxs.filter(function(i){var ty=tabList[i].type;return ty!=='separator'&&ty!=='newline';});
+  if(!idxs.length)return;
+  snap();
+  var allLong=idxs.every(function(i){return tabList[i].long;});
+  idxs.forEach(function(i){tabList[i].long=!allLong;});
+  render();
+}
 function chordToHtml(n){
   var notes=n.notes||[];
   var holes=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('-');
@@ -953,8 +1003,7 @@ function render(){
     else{
       lines[lines.length-1].push({n:n,i:i});
       if(n.type==='separator'){str+='| ';strH+='| ';}
-      else if(n.type==='chord'){str+=chordToText(n)+' ';strH+=chordToHtml(n)+' ';}
-      else{str+=n.sym+n.hole+' ';strH+='<span class="cn '+n.dir+'">'+n.sym+n.hole+'</span> ';}
+      else{str+=itemTxt(n)+' ';strH+=itemHtml(n)+' ';}
     }
   }
   cont.innerHTML='';
@@ -971,10 +1020,15 @@ function render(){
         var notes=n.notes||[];
         var holeTxt=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('<span class="sepc">-</span>');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
+      }else if(n.type==='trill'){
+        chip.className='chip trill '+n.dir+(selected.has(idx)?' sel':'');
+        var ta=n.notes[0],tb=n.notes[1];
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn"><span class="cn '+ta.dir+'">'+ta.hole+'</span><span class="sepc">~</span><span class="cn '+tb.dir+'">'+tb.hole+'</span></span><span class="nn">'+t('trill')+'</span></span>';
       }else{
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
       }
+      if(n.long&&n.type!=='separator')chip.insertAdjacentHTML('beforeend','<span class="lng">'+t('lng')+'<span class="lbar"></span></span>');
       chip.onclick=(function(ii){return function(){toggleSel(ii);};})(idx);
       rowEl.appendChild(chip);
     }
@@ -999,8 +1053,7 @@ function saveSession(){
   if(!tabList.length){alert(t('noSave'));return;}
   var str=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){
     if(n.type==='separator')return '|';
-    if(n.type==='chord')return chordToText(n);
-    return n.sym+n.hole;
+    return itemTxt(n);
   }).join(' ');
   if(activeSess!==null){
     var nm=prompt(t('promptName'),sessions[activeSess].name);if(nm===null)return;
@@ -1068,17 +1121,20 @@ function exportPDF(){
         var holeTxt=notes.map(function(x){return '<span style="color:'+(colors[x.dir]||'#888')+'">'+x.sym+x.hole+'</span>';}).join('-');
         var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700">'+holeTxt+'</div><div style="font-size:10px;color:#666">accordo</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
+      }else if(n.type==='trill'){
+        var pa=n.notes[0],pb=n.notes[1];
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700"><span style="color:'+(colors[pa.dir]||'#888')+'">'+pa.sym+pa.hole+'</span>~<span style="color:'+(colors[pb.dir]||'#888')+'">'+pb.sym+pb.hole+'</span></div><div style="font-size:10px;color:#A02818;font-weight:700">'+t('trill').toLowerCase()+'</div><div style="font-size:9px;color:#888">'+mn(pa.midi)+'~'+mn(pb.midi)+'</div></td>');
       }else{
         var col=colors[n.dir]||'#888',bg=bgs[n.dir]||'transparent';
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:'+bg+';color:'+col+';border:1px solid '+col+'44"><div style="font-size:16px;opacity:.9">'+n.sym+'</div><div style="font-size:20px;font-weight:700">'+n.hole+'</div><div style="font-size:9px;color:#888">'+mn(n.midi)+'</div></td>');
       }
+      if(n.long&&n.type!=='separator'){cells[cells.length-1]=cells[cells.length-1].replace(/<\/td>$/,'<div style="font-size:9px;color:#A02818;font-weight:700;margin-top:2px">&#9473;&#9473;&#9654; '+t('lng').toLowerCase()+'</div></td>');}
     }
     noteRows.push('<tr>'+cells.join('<td style="width:3px"></td>')+'</tr><tr style="height:8px"></tr>');
   }
   var tabTxt=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){
     if(n.type==='separator')return '|';
-    if(n.type==='chord')return chordToText(n);
-    return n.sym+n.hole;
+    return itemTxt(n);
   }).join(' ');
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+sessName+'</title><style>body{font-family:-apple-system,sans-serif;color:#1a1d26;padding:32px 40px;max-width:800px;margin:0 auto}h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#c9a800}.sub{font-size:12px;color:#888;margin-bottom:24px;text-transform:uppercase;letter-spacing:.06em}.sec{margin-bottom:20px}.sec h2{font-size:11px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e0e4ec}table{border-collapse:separate;border-spacing:0}.txt{font-family:monospace;font-size:13px;background:#f5f5f5;border-radius:8px;padding:12px 16px;word-break:break-all;letter-spacing:2px;border:1px solid #e0e4ec}.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}.ls{width:10px;height:10px;border-radius:3px;border:1.5px solid}.foot{margin-top:32px;font-size:11px;color:#ccc;text-align:center}</style></head><body><h1>'+sessName+'</h1><div class="sub">'+t('sub')+' '+currentKey.name+' · '+tabList.length+' '+(lang==='it'?'note':'notes')+' · '+date+'</div><div class="sec"><h2>'+t('pdfLeg')+'</h2><div class="leg"><div class="li"><div class="ls" style="border-color:#4ae8b4;background:rgba(74,232,180,.12)"></div>'+t('legBlow')+'</div><div class="li"><div class="ls" style="border-color:#e8c84a;background:rgba(232,200,74,.12)"></div>'+t('legDraw')+'</div><div class="li"><div class="ls" style="border-color:#e88c32;background:rgba(232,140,50,.12)"></div>'+t('legB1')+'</div><div class="li"><div class="ls" style="border-color:#e84a4a;background:rgba(232,74,74,.12)"></div>'+t('legB2')+'</div><div class="li"><div class="ls" style="border-color:#8b5a2b;background:rgba(139,90,43,.12)"></div>'+t('legB3')+'</div><div class="li"><div class="ls" style="border-color:#9933ee;background:rgba(153,51,238,.12)"></div>'+t('legOB')+'</div><div class="li"><div class="ls" style="border-color:#2299dd;background:rgba(34,153,221,.12)"></div>'+t('legOD')+'</div></div></div><div class="sec"><h2>'+t('pdfGraph')+'</h2><table><tbody>'+noteRows.join('')+'</tbody></table></div><div class="sec"><h2>'+t('pdfTxt')+'</h2><div class="txt">'+tabTxt+'</div></div><div class="foot">'+t('pdfFoot')+'</div></body></html>';
   var win=window.open('','_blank');win.document.write(html);win.document.close();win.onload=function(){win.print();};
