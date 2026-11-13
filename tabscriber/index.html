@@ -347,6 +347,7 @@ body.dark .trill-panel{border-color:var(--border)}
     <button class="btn" id="addChordBtn" onclick="addChord()" style="display:none;border-color:var(--purple);color:var(--purple)">+ <span id="addChordLbl">Aggiungi accordo</span></button>
     <button class="btn" id="longBtn" onclick="toggleLong()" style="color:var(--red)">→ <span id="longLbl"></span></button>
     <button class="btn" id="trillBtn" onclick="toggleTrillPanel()">〰 <span id="trillLbl"></span></button>
+    <button class="btn" id="dualBtn" onclick="toggleDualPanel()">∥ <span id="dualLbl"></span></button>
     <button class="btn" onclick="addSeparator()"><span style="pointer-events:none;display:block;width:100%;text-align:center">| <span id="sepLbl"></span></span></button>
     <button class="btn" onclick="addNewline()"><span style="pointer-events:none;display:block;width:100%;text-align:center">↵ <span id="nlLbl"></span></span></button>
     <div class="spacer"></div>
@@ -359,6 +360,12 @@ body.dark .trill-panel{border-color:var(--border)}
     <label><span id="trillBLbl"></span><select id="trillB"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
     <div class="metro-btns"><button class="metro-btn active" id="trillDirBlow" onclick="setTrillDir('blow')"></button><button class="metro-btn" id="trillDirDraw" onclick="setTrillDir('draw')"></button></div>
     <button class="btn primary" onclick="addTrill()">+ <span id="addTrillLbl"></span></button>
+  </div>
+  <div class="trill-panel" id="dualPanel">
+    <label><span id="dualALbl"></span><select id="dualA"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+    <label><span id="dualBLbl"></span><select id="dualB"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+    <div class="metro-btns"><button class="metro-btn active" id="dualDirBlow" onclick="setDualDir('blow')"></button><button class="metro-btn" id="dualDirDraw" onclick="setDualDir('draw')"></button></div>
+    <button class="btn primary" onclick="addDual()">+ <span id="addDualLbl"></span></button>
   </div>
   <span class="sel-bar" id="selBar">
     <span id="selCount">0</span> <span id="selLbl"></span>&nbsp;
@@ -435,7 +442,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',lng:'Nota lunga',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -453,7 +460,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',lng:'Long note',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -506,6 +513,8 @@ function applyTx(){
   document.getElementById('longLbl').textContent=t('lng');document.getElementById('trillLbl').textContent=t('trill');
   document.getElementById('addTrillLbl').textContent=t('addTrill');document.getElementById('trillALbl').textContent=t('trillA');document.getElementById('trillBLbl').textContent=t('trillB');
   document.getElementById('trillDirBlow').textContent=t('trillBlow');document.getElementById('trillDirDraw').textContent=t('trillDraw');
+  document.getElementById('dualLbl').textContent=t('dual');document.getElementById('addDualLbl').textContent=t('addDual');document.getElementById('dualALbl').textContent=t('trillA');document.getElementById('dualBLbl').textContent=t('trillB');
+  document.getElementById('dualDirBlow').textContent=t('trillBlow');document.getElementById('dualDirDraw').textContent=t('trillDraw');
   document.getElementById('sensLow').textContent=t('sensLow');
   document.getElementById('sensHigh').textContent=t('sensHigh');
   var ab=document.getElementById('addBtn');
@@ -965,7 +974,18 @@ function trillToHtml(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLo
 function itemTxt(n){var x=n.type==='chord'?chordToText(n):n.type==='trill'?trillToText(n):n.sym+n.hole;return x+(n.long?'→':'');}
 function itemHtml(n){var x=n.type==='chord'?chordToHtml(n):n.type==='trill'?trillToHtml(n):'<span class="cn '+n.dir+'">'+n.sym+n.hole+'</span>';return x+(n.long?'<span class="lgarrow">→</span>':'');}
 var trillDir='blow';
-function toggleTrillPanel(){var p=document.getElementById('trillPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('trillBtn').classList.toggle('on',open);}
+function closeDual(){document.getElementById('dualPanel').style.display='none';document.getElementById('dualBtn').classList.remove('on');}
+function closeTrill(){document.getElementById('trillPanel').style.display='none';document.getElementById('trillBtn').classList.remove('on');}
+var dualDir='blow';
+function toggleDualPanel(){closeTrill();var p=document.getElementById('dualPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('dualBtn').classList.toggle('on',open);}
+function setDualDir(d){dualDir=d;document.getElementById('dualDirBlow').classList.toggle('active',d==='blow');document.getElementById('dualDirDraw').classList.toggle('active',d==='draw');}
+function addDual(){
+  var a=parseInt(document.getElementById('dualA').value),b=parseInt(document.getElementById('dualB').value);
+  if(a===b){alert(t('dualSame'));return;}
+  var na=findHM(a,dualDir),nb=findHM(b,dualDir);if(!na||!nb)return;
+  snap();tabList.push({type:'chord',two:true,sym:na.sym,dir:dualDir,notes:[copyNote(na),copyNote(nb)]});render();
+}
+function toggleTrillPanel(){closeDual();var p=document.getElementById('trillPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('trillBtn').classList.toggle('on',open);}
 function setTrillDir(d){trillDir=d;document.getElementById('trillDirBlow').classList.toggle('active',d==='blow');document.getElementById('trillDirDraw').classList.toggle('active',d==='draw');}
 function findHM(hole,dir){for(var i=0;i<HMAP.length;i++){if(HMAP[i].hole===hole&&HMAP[i].dir===dir)return HMAP[i];}return null;}
 function addTrill(){
@@ -1019,7 +1039,7 @@ function render(){
         chip.className='chip chord'+(selected.has(idx)?' sel':'');
         var notes=n.notes||[];
         var holeTxt=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('<span class="sepc">-</span>');
-        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">'+(n.two?t('dualChip'):'accordo')+'</span></span>';
       }else if(n.type==='trill'){
         chip.className='chip trill '+n.dir+(selected.has(idx)?' sel':'');
         var ta=n.notes[0],tb=n.notes[1];
@@ -1120,7 +1140,7 @@ function exportPDF(){
         var notes=n.notes||[];
         var holeTxt=notes.map(function(x){return '<span style="color:'+(colors[x.dir]||'#888')+'">'+x.sym+x.hole+'</span>';}).join('-');
         var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
-        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700">'+holeTxt+'</div><div style="font-size:10px;color:#666">accordo</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700">'+holeTxt+'</div><div style="font-size:10px;color:#666">'+(n.two?t('dualChip'):'accordo')+'</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
       }else if(n.type==='trill'){
         var pa=n.notes[0],pb=n.notes[1];
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700"><span style="color:'+(colors[pa.dir]||'#888')+'">'+pa.sym+pa.hole+'</span>~<span style="color:'+(colors[pb.dir]||'#888')+'">'+pb.sym+pb.hole+'</span></div><div style="font-size:10px;color:#A02818;font-weight:700">'+t('trill').toLowerCase()+'</div><div style="font-size:9px;color:#888">'+mn(pa.midi)+'~'+mn(pb.midi)+'</div></td>');
