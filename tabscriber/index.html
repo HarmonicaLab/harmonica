@@ -216,7 +216,16 @@ body.dark .toggle-pill,body.dark .key-btn,body.dark .btn,body.dark .metro-btn,bo
 .sel-bar{background:var(--tint) !important;color:var(--text) !important;border:1px solid var(--border) !important;border-radius:999px !important}
 .chip{border-radius:14px !important;background:var(--glass-in) !important}
 .chip.sel{background:var(--tint) !important;border-color:var(--text) !important}
-.chip.sel .hn,.chip.sel .nn,.chip.chord .arr,.chip.chord .hn{color:var(--text) !important}
+.chip.sel .hn,.chip.sel .nn{color:var(--text) !important}
+/* accordo: ogni nota col suo colore (soffiata verde, aspirata oro, bend arancio/rosso/marrone, overblow/overdraw) */
+.cn.blow{color:var(--accent2) !important}
+.cn.draw{color:var(--accent) !important}
+.cn.drawbend1,.cn.blowbend1{color:#e88c32 !important}
+.cn.drawbend2,.cn.blowbend2{color:#e84a4a !important}
+.cn.drawbend3{color:#8b5a2b !important}
+.cn.overblow{color:var(--violet) !important}
+.cn.overdraw{color:var(--sky) !important}
+.chip.chord .sepc{color:var(--muted) !important}
 .chip .arr,.chip .nn,.empty-msg,.txt-out,.grid-hint,.freq-sub,.cents-lbl{font-family:'Montserrat',sans-serif !important}
 .txt-out,.cents-wrap,.tuner-inner > div[style*="margin-top:16px"]{background:var(--glass-in) !important;border:1px solid var(--glass-edge) !important}
 body.dark .txt-out,body.dark .cents-wrap,body.dark .tuner-inner > div[style*="margin-top:16px"]{border-color:var(--border) !important}
@@ -926,19 +935,26 @@ function chordToText(n){
   return '['+holes+' ('+names+')]';
 }
 
+function chordToHtml(n){
+  var notes=n.notes||[];
+  var holes=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('-');
+  var names=notes.map(function(x){return mn(x.midi);}).join('-');
+  return '['+holes+' ('+names+')]';
+}
+
 function render(){
   var cont=document.getElementById('tabNotes'),txt=document.getElementById('txtOut');
   var sb=document.getElementById('selBar'),sc=document.getElementById('selCount');
   if(!tabList.length){cont.innerHTML='<span class="empty-msg">'+t('noNotes')+'</span>';txt.textContent='—';sb.classList.remove('on');return;}
-  var lines=[[]],str='';
+  var lines=[[]],str='',strH='';
   for(var i=0;i<tabList.length;i++){
     var n=tabList[i];
-    if(n.type==='newline'){lines.push([]);str+='\n';}
+    if(n.type==='newline'){lines.push([]);str+='\n';strH+='\n';}
     else{
       lines[lines.length-1].push({n:n,i:i});
-      if(n.type==='separator') str+='| ';
-      else if(n.type==='chord') str+=chordToText(n)+' ';
-      else str+=n.sym+n.hole+' ';
+      if(n.type==='separator'){str+='| ';strH+='| ';}
+      else if(n.type==='chord'){str+=chordToText(n)+' ';strH+=chordToHtml(n)+' ';}
+      else{str+=n.sym+n.hole+' ';strH+='<span class="cn '+n.dir+'">'+n.sym+n.hole+'</span> ';}
     }
   }
   cont.innerHTML='';
@@ -953,8 +969,8 @@ function render(){
       }else if(n.type==='chord'){
         chip.className='chip chord'+(selected.has(idx)?' sel':'');
         var notes=n.notes||[];
-        var holeTxt=notes.map(function(x){return x.sym+x.hole;}).join('-');
-        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
+        var holeTxt=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('<span class="sepc">-</span>');
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">accordo</span></span>';
       }else{
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
@@ -964,7 +980,7 @@ function render(){
     }
     cont.appendChild(rowEl);
   }
-  txt.textContent=str.trim();
+  txt.innerHTML=strH.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
   setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
 }
@@ -1049,9 +1065,9 @@ function exportPDF(){
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;border:1.5px dashed #aaa"><div style="font-size:18px;font-weight:700">|</div></td>');
       }else if(n.type==='chord'){
         var notes=n.notes||[];
-        var holeTxt=notes.map(function(x){return x.sym+x.hole;}).join('-');
+        var holeTxt=notes.map(function(x){return '<span style="color:'+(colors[x.dir]||'#888')+'">'+x.sym+x.hole+'</span>';}).join('-');
         var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
-        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(136,85,221,.12);color:#8855dd;border:1px solid rgba(136,85,221,.4)"><div style="font-size:13px;opacity:.9">'+holeTxt+'</div><div style="font-size:10px;color:#666">accordo</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700">'+holeTxt+'</div><div style="font-size:10px;color:#666">accordo</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
       }else{
         var col=colors[n.dir]||'#888',bg=bgs[n.dir]||'transparent';
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:monospace;border-radius:6px;background:'+bg+';color:'+col+';border:1px solid '+col+'44"><div style="font-size:16px;opacity:.9">'+n.sym+'</div><div style="font-size:20px;font-weight:700">'+n.hole+'</div><div style="font-size:9px;color:#888">'+mn(n.midi)+'</div></td>');
