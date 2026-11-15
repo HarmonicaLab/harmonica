@@ -8,6 +8,7 @@ Stile "Cristallo": nero, oro e rosso, fondo crema, vetro chiaro, Montserrat e An
 | Cartella | Contenuto | Quando usarlo |
 |---|---|---|
 | `logo/` | Logo Cristallo completo, PNG trasparente: 2112, 1024, 512, 260, 64, 32 px | Intro dei video, miniature, PDF, banner, avatar. Da 96 px in su |
+| `academy/` | Logo Harmonica Lab Academy, PNG trasparente: 2472, 1200, 600, 300 px di larghezza | Tutto ciò che riguarda l'Academy (corsi, pagine, materiali). Da 150 px di larghezza in su |
 | `icona/` | Icona "HL" rotonda, PNG trasparente: 512, 180, 64, 32 px | Favicon, icona app, watermark, tutto ciò che è sotto i 96 px |
 | `font/` | Anton, Montserrat Bold / Bold Italic / ExtraBold / ExtraBold Italic (.ttf) con le licenze OFL | Da installare sul Mac (doppio clic sul file → Installa) |
 
@@ -18,6 +19,13 @@ Stile "Cristallo": nero, oro e rosso, fondo crema, vetro chiaro, Montserrat e An
 - Sotto i 96 px le scritte non si leggono: usa l'icona HL.
 - Composizione: illustrazione originale ripulita (microfono, chiave, cacciavite, ingranaggi, armonica), poi
   HARMONICA (Montserrat 800 corsivo, oro), LAB (Anton, rosso), pillola nera con bordo oro e BY SIMONE NOBILE (Montserrat 700).
+
+## Logo Academy
+
+- File in `academy/`: stemma con cornice oro, microfono, raggi, nastro con stelle e armonica.
+- Scritte: HARMONICA in Montserrat 800 corsivo oro, LAB in Anton rosso, ACADEMY in Montserrat 800 corsivo nero sul nastro oro.
+- Senza marchi di terzi (niente Hohner / Marine Band sull'armonica, niente Astatic sul microfono): non rimetterli.
+- Stesse regole del logo principale: si usa così com'è, su crema o su nero.
 
 ## Colori
 
