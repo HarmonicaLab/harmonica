@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La nota piegata · reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* Stile Harmonica Lab: intro scura col logo, poi fondo chiaro liquid glass.
+   Soffiate verdi #1FBF84, aspirate e bending arancio #F07A1A, testo #1E1916, etichette pillola nera. */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1E1916;--mute:#7A706A;--blow:#1FBF84;--draw:#F07A1A;--pill:rgba(22,17,14,.9);--cream:#EFE6D2;--dark:#16110E}
+html,body{background:#0b0908;height:100%}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:'Barlow Condensed',sans-serif;color:var(--ink)}
+#stage{position:relative;width:540px;height:960px;overflow:hidden;flex:none;transform-origin:center center;background:var(--dark)}
+.abs{position:absolute}
+#intro{inset:0;background:radial-gradient(circle at 50% 44%,#2a211b 0%,#16110E 55%)}
+#logo{left:120px;top:250px;width:300px;height:300px;border-radius:50%}
+#introTxt{left:0;right:0;top:582px;text-align:center;font-weight:800;font-size:40px;letter-spacing:.14em;color:var(--cream)}
+#light{inset:0;background:linear-gradient(170deg,#F5F3EF 0%,#ECE9E3 100%)}
+.blob{border-radius:50%;filter:blur(50px)}
+.glass{background:rgba(255,255,255,.58);backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2);border:1.5px solid rgba(255,255,255,.95);border-radius:28px;box-shadow:0 24px 60px rgba(60,45,30,.13),0 2px 6px rgba(60,45,30,.05),inset 0 1px 0 rgba(255,255,255,.9)}
+#title{left:0;right:0;top:74px;text-align:center;font-weight:800;font-size:54px;line-height:1;text-transform:uppercase}
+.sub{left:24px;right:24px;top:136px;text-align:center;font-weight:500;font-size:19px;color:#4d4540;line-height:1.2}
+#row{left:18px;right:18px;top:176px;height:66px;display:flex;justify-content:center;gap:8px}
+.nc{position:relative;flex:0 0 auto;width:84px;height:66px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nc b{font-weight:800;font-size:30px;line-height:1;color:var(--draw)}
+.nc i{font-style:normal;font-weight:600;font-size:12px;letter-spacing:.06em;color:var(--mute);margin-top:2px}
+.nc.blow b{color:var(--blow)}
+#cardB{left:18px;top:254px;width:504px;height:300px;overflow:hidden}
+#cardL{left:18px;top:566px;width:246px;height:178px}
+#cardM{left:276px;top:566px;width:246px;height:178px}
+#cardMap{left:18px;top:254px;width:504px;height:490px}
+#endT{left:0;right:0;top:370px;text-align:center}
+#endT h2{font-weight:800;font-size:64px;letter-spacing:.06em;line-height:1}
+#endT p{font-weight:500;font-size:22px;color:#4d4540;margin-top:10px;padding:0 30px}
+#endT .dots{display:flex;justify-content:center;gap:10px;margin-top:22px}
+#endT .dots span{font-weight:800;font-size:18px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;color:#fff;background:var(--draw)}
+svg{display:block;width:100%;height:100%;overflow:visible}
+svg text{font-family:'Barlow Condensed',sans-serif}
+.t-s{font-size:10.5px;font-weight:500;fill:#8a817a}
+.t-n{font-size:12px;font-weight:600;fill:#4d4540}
+.t-h{font-size:13px;font-weight:800;letter-spacing:.05em;fill:#1E1916}
+.t-pill{font-size:11px;font-weight:800;letter-spacing:.05em;fill:var(--cream)}
+#play{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);cursor:pointer;z-index:9;color:#fff;font:800 28px 'Barlow Condensed',sans-serif;letter-spacing:.1em}
+#play span{padding:16px 30px;border-radius:999px;background:var(--pill);border:1.5px solid rgba(255,255,255,.3)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="intro" class="abs">
+    <img id="logo" class="abs" src="logo-cerchio.jpg" alt="Harmonica Lab">
+    <div id="introTxt" class="abs">HARMONICA LAB</div>
+  </div>
+  <div id="light" class="abs">
+    <div class="abs blob" id="b1" style="width:340px;height:340px;background:rgba(31,191,132,.08)"></div>
+    <div class="abs blob" id="b2" style="width:400px;height:400px;background:rgba(240,122,26,.11)"></div>
+    <div class="abs blob" id="b3" style="width:300px;height:300px;background:rgba(255,255,255,.9)"></div>
+    <div id="title" class="abs">La nota piegata</div>
+    <div id="subA" class="abs sub"></div><div id="subB" class="abs sub"></div>
+    <div id="row" class="abs"></div>
+    <div id="cardB" class="abs glass"><svg id="sec" viewBox="0 0 400 262"></svg></div>
+    <div id="cardL" class="abs glass"><svg id="lad" viewBox="0 0 246 178"></svg></div>
+    <div id="cardM" class="abs glass"><svg id="mouth" viewBox="0 0 246 178"></svg></div>
+    <div id="cardMap" class="abs glass"><svg id="map" viewBox="0 0 504 490"></svg></div>
+    <div id="endT" class="abs"><h2>HARMONICA LAB</h2><p>Bending: la bocca cambia forma, le due lamelle vibrano insieme e la nota scende.</p>
+      <div class="dots"><span>-4 → -4'</span><span>-3 → -3'''</span></div></div>
+  </div>
+</div>
+<div id="play"><span>▶ GUARDA CON AUDIO</span></div>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const el=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const C={ink:'#1E1916',mute:'#7A706A',blow:'#1FBF84',draw:'#F07A1A',pill:'rgba(22,17,14,.9)',cream:'#EFE6D2',metal:'#d6d1c9',metalD:'#a39b91',wood:'#e3d3b6',woodL:'#c4a97c'};
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),seg=(t,a,d)=>clamp((t-a)/d);
+const eo=x=>1-Math.pow(1-x,4),eio=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+const back=x=>{const c=1.9;x=x-1;return 1+(c+1)*x*x*x+c*x*x};
+const IT=['DO','DO♯','RE','MI♭','MI','FA','FA♯','SOL','LA♭','LA','SI♭','SI'];
+const BLOW=[60,64,67,72,76,79,84,88,91,96],DRAW=[62,67,71,74,77,81,83,86,89,93];
+const hz=m=>440*Math.pow(2,(m-69)/12),nm=m=>IT[((Math.round(m)%12)+12)%12]+(Math.floor(Math.round(m)/12)-1);
+const LEN=f=>16*Math.sqrt(261.63/f),fmt=(x,d)=>x.toFixed(d).replace('.',',');
+const tabOf=(h,md,b)=>(md==='d'?'-':'')+h+"'".repeat(b);
+const BENDS=[1,2,3,1,0,1,0,1,1,2];            // mezzi toni ottenibili per foro
+const bendMd=h=>h<=6?'d':'b';                  // fori 1-6: si piega l'aspirata; 7-10 la soffiata
+
+// ---------- copione: frasi con la curva del bending (secondo, semitoni) ----------
+const S1=6.2,S2=13.6,S3=22.0,S4=29.8,END=33.2;
+const phrases=[
+  {h:4,md:'d',t:7.0, sc:1,k:[[0,0],[1.3,0],[1.6,-1],[2.9,-1],[3.15,0],[4.2,0]]},
+  {h:3,md:'d',t:14.4,sc:2,k:[[0,0],[1.0,0],[1.25,-1],[2.1,-1],[2.35,-2],[3.2,-2],[3.45,-3],[4.7,-3],[5.05,0],[5.8,0]]},
+  {h:8,md:'b',t:25.6,sc:3,k:[[0,0],[1.0,0],[1.25,-1],[2.5,-1],[2.75,0],[3.3,0]]},
+];
+phrases.forEach(p=>{p.m=(p.md==='b'?BLOW:DRAW)[p.h-1];p.end=p.t+p.k[p.k.length-1][0];
+  p.lo=(p.md==='b'?DRAW:BLOW)[p.h-1];p.max=BENDS[p.h-1]});
+const semisAt=(p,t)=>{const x=t-p.t,k=p.k;if(x<=0)return 0;for(let i=1;i<k.length;i++){if(x<=k[i][0]){const u=(x-k[i-1][0])/(k[i][0]-k[i-1][0]);return k[i-1][1]+(k[i][1]-k[i-1][1])*eio(u)}}return k[k.length-1][1]};
+const whooshes=[.25,4.3,5.25,13.6,22.0,29.8];
+const scenes={1:{a:S1,b:S2,cards:[[4,'d',0],[4,'d',1]]},2:{a:S2,b:S3,cards:[[3,'d',0],[3,'d',1],[3,'d',2],[3,'d',3]]},3:{a:S3,b:S4,cards:[[8,'b',0],[8,'b',1]]}};
+const subs=[[5.3,'Cosa succede dentro quando pieghi una nota'],[7.0,'Foro 4 aspirato: RE5'],[8.6,'Cambi la forma della bocca e la nota scende a DO♯5'],
+  [S2,'Foro 3: si piega fino a tre mezzi toni'],[16.4,'Più pieghi, più vibra anche la lamella soffiata'],
+  [S3,'Si piega la nota più alta del foro, verso quella più bassa'],[25.6,'Dal foro 7 in su si piega la soffiata'],[S4,'']];
+
+function bg(t){[[$('b1'),-60,230,.31],[$('b2'),250,540,.23],[$('b3'),120,40,.17]].forEach(([e,x,y,w],i)=>{e.style.transform=`translate(${x+Math.sin(t*w+i)*26}px,${y+Math.cos(t*w*1.3+i)*20}px) scale(${1+.06*Math.sin(t*w*2+i)})`})}
+
+// ---------- sezione ----------
+const sec=$('sec');
+const S={px:8.6,topY:90,topH:8,botY:170,botH:8,front:40,back:345,wall:330,bRiv:300,dRiv:82};
+const defs=el('defs',{},sec);
+const pat=el('pattern',{id:'wd',width:5,height:5,patternUnits:'userSpaceOnUse',patternTransform:'rotate(35)'},defs);
+el('rect',{width:5,height:5,fill:C.wood},pat);el('line',{x1:0,y1:0,x2:0,y2:5,stroke:C.woodL,'stroke-width':.6},pat);
+const cp=el('clipPath',{id:'cl'},defs);el('rect',{x:-60,y:0,width:520,height:262},cp);
+const world=el('g',{'clip-path':'url(#cl)'},sec),cam=el('g',{},world);
+el('path',{d:'M30 92 L30 52 Q30 42 40 42 L352 42 L352 60',fill:'none',stroke:C.ink,'stroke-width':1.6},cam);
+el('path',{d:'M30 176 L30 214 Q30 224 40 224 L352 224 L352 206',fill:'none',stroke:C.ink,'stroke-width':1.6},cam);
+el('rect',{x:S.wall,y:S.topY+S.topH,width:S.back-S.wall,height:S.botY-S.topY-S.topH,fill:'url(#wd)',stroke:C.woodL,'stroke-width':.8},cam);
+const gPl=el('g',{},cam),gAir=el('g',{},cam);
+const bReed=el('path',{fill:'none','stroke-width':3.2,'stroke-linecap':'round'},cam),dReed=el('path',{fill:'none','stroke-width':3.2,'stroke-linecap':'round'},cam);
+const gRv=el('g',{},cam);
+const st=(x,y,s,anc,rot)=>{const e=el('text',{x,y,class:'t-s','text-anchor':anc||'start'},cam);e.textContent=s;if(rot)e.setAttribute('transform',`rotate(-90 ${x} ${y})`);return e};
+st(36,86,'PIASTRA DI SOPRA');st(36,192,'PIASTRA DI SOTTO');st(341,134,'PETTINE','middle',1);st(8,124,'BOCCA');
+const mouthA=el('path',{fill:'none','stroke-width':1.8},cam),mouthH=el('path',{},cam);
+const P=[];for(let i=0;i<34;i++)P.push({o:i/34,j:Math.sin(i*91.7)*3,c:el('circle',{r:2.3},gAir)});
+function mkLabel(){const g=el('g',{},sec);return{g,line:el('line',{'stroke-width':1},g),dot:el('circle',{r:2.6},g),box:el('rect',{height:20,rx:10},g),txt:el('text',{class:'t-pill','text-anchor':'middle'},g)}}
+const labB=mkLabel(),labD=mkLabel(),labX=mkLabel();
+function setLabel(L,cx,cy,text,px,py,active,col,alpha){
+  const w=text.length*5.5+22;L.box.setAttribute('x',cx-w/2);L.box.setAttribute('y',cy-10);L.box.setAttribute('width',w);
+  L.box.setAttribute('fill',active?C.pill:'rgba(255,255,255,.85)');L.box.setAttribute('stroke',active?'none':'#d8d1c7');
+  L.txt.setAttribute('x',cx);L.txt.setAttribute('y',cy+4);L.txt.textContent=text;L.txt.style.fill=active?C.cream:C.mute;
+  const show=px!=null;L.line.style.display=L.dot.style.display=show?'':'none';
+  if(show){L.line.setAttribute('x1',cx);L.line.setAttribute('y1',py<cy?cy-10:cy+10);L.line.setAttribute('x2',px);L.line.setAttribute('y2',py);
+  L.line.setAttribute('stroke',active?C.ink:'#b9b1a6');L.dot.setAttribute('cx',px);L.dot.setAttribute('cy',py);L.dot.setAttribute('fill',active?col:'#b9b1a6')}
+  L.g.setAttribute('opacity',alpha)}
+let geo=null,geoKey=0;
+function plen(p){let s=0;for(let i=1;i<p.length;i++)s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]);return s}
+function along(p,tot,u){let d=u*tot;for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i],s=Math.hypot(b[0]-a[0],b[1]-a[1]);if(d<=s){const k=s?d/s:0;return[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,a[1]===b[1]]}d-=s}const q=p[p.length-1];return[q[0],q[1],true]}
+function reed(root,dir,len,y,defl){let d=`M${root-dir*12} ${y} L${root} ${y}`;for(let i=1;i<=14;i++){const s=i/14,sh=s*s*(3-s)/2;d+=` L${(root+dir*s*len).toFixed(1)} ${(y+defl*sh).toFixed(1)}`}return d}
+function build(h){
+  if(geoKey===h)return;geoKey=h;gPl.innerHTML='';gRv.innerHTML='';
+  const Lb=LEN(hz(BLOW[h-1]))*S.px,Ld=LEN(hz(DRAW[h-1]))*S.px,bTip=S.bRiv-Lb,dTip=S.dRiv+Ld;
+  const pr=(x,y,w,hh)=>el('rect',{x,y,width:w,height:hh,fill:C.metal,stroke:C.metalD,'stroke-width':.8},gPl);
+  pr(S.front,S.topY,bTip-3-S.front,S.topH);pr(S.bRiv-2,S.topY,S.back-S.bRiv+2,S.topH);
+  pr(S.front,S.botY,S.dRiv+2-S.front,S.botH);pr(dTip+3,S.botY,S.back-dTip-3,S.botH);
+  el('rect',{x:S.bRiv,y:S.topY+S.topH,width:12,height:3,fill:C.metalD},gRv);el('rect',{x:S.bRiv+4,y:S.topY-2,width:4,height:S.topH+7,rx:1,fill:C.ink},gRv);
+  el('rect',{x:S.dRiv-12,y:S.botY+S.botH,width:12,height:3,fill:C.metalD},gRv);el('rect',{x:S.dRiv-8,y:S.botY-2,width:4,height:S.botH+7,rx:1,fill:C.ink},gRv);
+  const bMid=S.bRiv-Lb/2,dMid=S.dRiv+Ld/2,mid=(S.topY+S.topH+S.botY)/2;
+  geo={Lb,Ld,bMid,dMid,mid,bp:[[0,mid],[S.front,mid],[bMid,mid],[bMid,86],[bMid,68],[352,68],[400,74]],
+    dp:[[400,198],[352,198],[dMid,198],[dMid,182],[dMid,mid],[S.front,mid],[0,mid]]};
+  geo.bl=plen(geo.bp);geo.dl=plen(geo.dp);
+}
+
+// ---------- scala del foro (dal suono basso a quello alto) ----------
+const lad=$('lad');
+el('text',{x:16,y:24,class:'t-h'},lad).textContent='DOVE VA LA NOTA';
+const ladG=el('g',{},lad);let ladKey='';const LY0=152,LY1=44;
+const ladDotHalo=el('circle',{r:12,fill:C.draw,opacity:.2},lad),ladDot=el('circle',{r:6.5,fill:C.draw,stroke:'#fff','stroke-width':2},lad);
+function buildLadder(p){const key=p.h+p.md;if(ladKey===key)return;ladKey=key;ladG.innerHTML='';
+  const n=p.m-p.lo;el('line',{x1:70,y1:LY0,x2:70,y2:LY1,stroke:C.ink,'stroke-width':1.2},ladG);
+  for(let s=0;s<=n;s++){const y=LY0-(s/n)*(LY0-LY1),m=p.lo+s;const top=s===n,bot=s===0,b=n-s;
+    el('line',{x1:64,y1:y,x2:76,y2:y,stroke:C.ink,'stroke-width':top||bot?1.6:1},ladG);
+    const lbl=bot?tabOf(p.h,p.md==='d'?'b':'d',0):tabOf(p.h,p.md,b);
+    const ok=bot||b<=p.max;
+    const tl=el('text',{x:58,y:y+4,'text-anchor':'end',class:'t-h'},ladG);tl.textContent=lbl;tl.style.fill=bot?(p.md==='d'?C.blow:C.draw):ok?C.draw:'#c9c1b7';
+    if(bot&&p.md==='b')tl.style.fill=C.draw;
+    const tn=el('text',{x:86,y:y+4,class:'t-n'},ladG);tn.textContent=nm(m)+(top?' · NORMALE':bot?' · ALTRA LAMELLA':ok?' · PIEGATA':'');if(!ok)tn.style.fill='#c9c1b7'}
+}
+
+// ---------- bocca (schema di profilo) ----------
+const mo=$('mouth');
+el('text',{x:16,y:24,class:'t-h'},mo).textContent='LA BOCCA';
+const moTxt=el('text',{x:16,y:166,class:'t-n'},mo);
+el('path',{d:'M40 60 Q120 34 210 70 L210 150 L40 150',fill:'rgba(240,122,26,.06)',stroke:'none'},mo);
+el('path',{d:'M40 60 Q120 34 210 70',fill:'none',stroke:C.ink,'stroke-width':1.6},mo); // palato
+el('text',{x:118,y:48,'text-anchor':'middle',class:'t-s'},mo).textContent='PALATO';
+const cav=el('path',{fill:'rgba(240,122,26,.16)',stroke:'none'},mo);
+const tongue=el('path',{fill:'#e9a3a0',stroke:'#b86d69','stroke-width':1.2},mo);
+el('rect',{x:20,y:84,width:22,height:30,rx:8,fill:'#fff',stroke:C.ink,'stroke-width':1.2},mo); // armonica alle labbra
+el('text',{x:31,y:126,'text-anchor':'middle',class:'t-s'},mo).textContent='ARMONICA';
+el('text',{x:150,y:144,'text-anchor':'middle',class:'t-s'},mo).textContent='LINGUA';
+function drawMouth(b){ // b: 0 lingua alta (I), 1 bassa e indietro (U)
+  const hx=mix(118,150,b),hy=mix(70,108,b);
+  tongue.setAttribute('d',`M44 150 C60 ${mix(96,128,b)} ${hx-40} ${hy} ${hx} ${hy} C${hx+30} ${hy} 200 ${mix(92,118,b)} 210 ${mix(100,124,b)} L210 150 Z`);
+  cav.setAttribute('d',`M44 99 Q${hx-30} ${hy-10} ${hx} ${hy-2} Q${hx+40} ${hy} 210 ${mix(98,122,b)} L210 70 Q120 34 44 60 Z`);
+  moTxt.textContent=b<.15?'LINGUA ALTA, COME DIRE «I»':'LINGUA GIÙ E INDIETRO, COME «U»';
+}
+const mix=(a,b,k)=>a+(b-a)*k;
+
+// ---------- mappa: quanto si piega ogni foro ----------
+const map=$('map');
+el('text',{x:20,y:34,class:'t-h'},map).style.cssText='font-size:20px';map.lastChild.textContent='QUANTI MEZZI TONI SI PIEGA OGNI FORO';
+el('text',{x:20,y:56,class:'t-n'},map).textContent='Armonica in Do. Si piega la nota più alta delle due, verso quella più bassa.';
+map.lastChild.style.fontWeight=500;
+const mapCols=[];
+for(let i=0;i<10;i++){const h=i+1,cx=36+i*48,md=bendMd(h),g=el('g',{},map);
+  const hl=el('rect',{x:cx-21,y:76,width:42,height:270,rx:14,fill:C.draw,opacity:0},g);
+  const hiM=Math.max(BLOW[i],DRAW[i]),loM=Math.min(BLOW[i],DRAW[i]),hiMd=BLOW[i]>DRAW[i]?'b':'d';
+  const t1=el('text',{x:cx,y:104,'text-anchor':'middle',class:'t-h'},g);t1.textContent=tabOf(h,hiMd,0);t1.style.fill=hiMd==='b'?C.blow:C.draw;t1.style.fontSize='18px';
+  el('text',{x:cx,y:120,'text-anchor':'middle',class:'t-s'},g).textContent=nm(hiM);
+  const dots=[];for(let b=1;b<=3;b++){const y=134+b*44;const on=b<=BENDS[i];
+    const c=el('circle',{cx,cy:y,r:15,fill:on?C.draw:'none',stroke:on?'none':'#d8d1c7','stroke-dasharray':on?'':'3 3',opacity:on?1:.8},g);
+    const tt=el('text',{x:cx,y:y+4,'text-anchor':'middle',class:'t-pill'},g);tt.textContent=on?"'".repeat(b):'';tt.style.fontSize='14px';dots.push(c)}
+  const t2=el('text',{x:cx,y:304,'text-anchor':'middle',class:'t-h'},g);t2.textContent=tabOf(h,hiMd==='b'?'d':'b',0);t2.style.fill=hiMd==='b'?C.draw:C.blow;t2.style.fontSize='15px';t2.style.opacity=.7;
+  el('text',{x:cx,y:320,'text-anchor':'middle',class:'t-s'},g).textContent=nm(loM);
+  el('text',{x:cx,y:366,'text-anchor':'middle',class:'t-n'},g).textContent=h;
+  mapCols.push({g,hl,cx});}
+el('text',{x:20,y:458,class:'t-s'},map).textContent='Foro 5 e 7: le due lamelle distano solo mezzo tono, quindi non c’è spazio per piegare.';
+el('rect',{x:16,y:346,width:472,height:1,fill:'#e0d9cf'},map);
+[[20,'FORI 1–6: SI PIEGA L\u2019ASPIRATA'],[262,'FORI 8–10: SI PIEGA LA SOFFIATA']].forEach(([x,tx])=>{el('rect',{x,y:398,width:222,height:30,rx:15,fill:C.pill},map);const e=el('text',{x:x+111,y:418,'text-anchor':'middle',class:'t-pill'},map);e.style.fontSize='14px';e.textContent=tx});
+
+// ---------- riga di schede ----------
+const row=$('row');let rowKey=null,rowEls=[];
+function buildRow(sc){if(rowKey===sc)return;rowKey=sc;row.innerHTML='';rowEls=[];if(!scenes[sc])return;
+  scenes[sc].cards.forEach(([h,md,b])=>{const m=(md==='b'?BLOW:DRAW)[h-1]-b;const d=document.createElement('div');d.className='nc glass'+(md==='b'&&!b?' blow':'');
+    d.innerHTML=`<b>${tabOf(h,md,b)}</b><i>${nm(m)}</i>`;row.appendChild(d);rowEls.push({d,h,md,b})})}
+
+// ---------- stato ----------
+function phraseAt(t){let cur=null;for(const p of phrases)if(t>=p.t-.02)cur=p;return cur}
+function envAt(p,t){if(!p)return 0;return Math.min(eo(seg(t,p.t,.07)),1-seg(t,p.end,.18))}
+const vis=f=>1.6+7*Math.log2(f/261.63)/3;
+function sceneAt(t){return t<S2?1:t<S3?2:t<S4?3:4}
+
+function seek(t){
+  const lg=back(seg(t,.3,.8));$('logo').style.transform=`scale(${.55+.45*lg})`;$('logo').style.opacity=seg(t,.3,.25);
+  $('logo').style.boxShadow=`0 0 ${80+20*Math.sin(t*2)}px rgba(239,230,210,${.12+.06*Math.sin(t*2)})`;
+  const it=eo(seg(t,1.2,.6));$('introTxt').style.opacity=it;$('introTxt').style.transform=`translateY(${(1-it)*14}px)`;
+  const R=eo(seg(t,4.3,.85))*1150;$('light').style.clipPath=`circle(${R}px at 270px 400px)`;$('intro').style.visibility=R>1100?'hidden':'visible';
+  bg(t);
+  const ti=eo(seg(t,5.1,.6)),tOut=eo(seg(t,S4,.5));
+  $('title').style.opacity=ti*(1-tOut);$('title').style.transform=`translateY(${(1-ti)*-20}px)`;
+  let si=-1;for(let i=0;i<subs.length;i++)if(t>=subs[i][0])si=i;
+  const sA=$('subA'),sB=$('subB');
+  if(si>=0){const k=eo(seg(t,subs[si][0],.45));sA.textContent=subs[si][1];sA.style.opacity=k*ti;sA.style.transform=`translateY(${(1-k)*8}px)`;
+    sB.textContent=si>0?subs[si-1][1]:'';sB.style.opacity=(1-k)*ti;sB.style.transform=`translateY(${-k*8}px)`}else{sA.style.opacity=sB.style.opacity=0}
+  const sc=sceneAt(t);let p=phraseAt(t);if(p&&p.sc!==sc)p=null;
+  const first=phrases.find(x=>x.sc===sc)||phrases[0],pp=p||first;
+  const amp=p?envAt(p,t):0,semis=p?semisAt(p,t):0,bendN=Math.round(-semis);
+  const bDepth=pp.max?clamp(-semis/pp.max):0;           // 0..1 rispetto al massimo del foro
+  const f=hz(pp.m+semis),md=pp.md,h=pp.h;
+  // schede
+  buildRow(sc);
+  if(scenes[sc]){const s=scenes[sc];rowEls.forEach((r,i)=>{const k=back(seg(t,s.a+.15+i*.08,.45)),out=eo(seg(t,s.b-.35,.3));
+    const near=1-clamp(Math.abs(-semis-r.b)*1.6),on=p&&r.h===h?amp*near:0,col=r.md==='b'&&!r.b?'31,191,132':'240,122,26';
+    r.d.style.opacity=clamp(k)*(1-out);r.d.style.transform=`translateX(${(1-clamp(k))*-30}px) scale(${(.8+.2*k)*(1+.08*on)})`;r.d.style.filter=out?`blur(${out*6}px)`:'';
+    r.d.style.boxShadow=`0 24px 60px rgba(60,45,30,.13), 0 0 0 ${2*on}px rgba(${col},${on}), 0 0 ${30*on}px rgba(${col},${.55*on})`})}
+  // schede di vetro: entrano dal basso, escono alla scena 3 (mappa)
+  const inB=eo(seg(t,5.25,.7)),inL=eo(seg(t,5.5,.7)),inM=eo(seg(t,5.65,.7)),out=eo(seg(t,S3,.55));
+  [[$('cardB'),inB],[$('cardL'),inL],[$('cardM'),inM]].forEach(([e,k])=>{e.style.opacity=clamp(k*1.4)*(1-out);e.style.transform=`translateY(${(1-k)*420+out*40}px) scale(${1-out*.05})`;e.style.filter=out?`blur(${out*10}px)`:'';e.style.visibility=(out>=1||t<5.2)?'hidden':'visible'});
+  // sezione
+  build(h);
+  const camK=eo(clamp(amp*1.4)),fx=mix(md==='b'?geo.bMid:geo.dMid,200,bDepth*.85),fy=mix(md==='b'?S.topY+S.topH:S.botY,134,bDepth*.85),s=1+.16*camK*(1-bDepth*.6);
+  cam.setAttribute('transform',`translate(${fx} ${fy}) scale(${s}) translate(${-fx} ${-fy})`);
+  const scr=(x,y)=>[fx+(x-fx)*s,fy+(y-fy)*s];
+  const ph=p?2*Math.PI*vis(f)*(t-p.t):0,sn=Math.sin(ph);
+  // nel bending vibrano tutte e due le lamelle alla stessa frequenza
+  const ampMain=13*amp*(1-.5*bDepth),ampOther=12*amp*bDepth;
+  const mainB=md==='b';
+  bReed.setAttribute('d',reed(S.bRiv,-1,geo.Lb,S.topY+S.topH+1.6,mainB?-ampMain*sn:(bDepth>.02?-ampOther*Math.sin(ph+2.4):3*amp)));
+  dReed.setAttribute('d',reed(S.dRiv,1,geo.Ld,S.botY+S.botH+1.6,!mainB?-ampMain*sn-2*amp:(bDepth>.02?-ampOther*Math.sin(ph+2.4):3*amp)));
+  const bActive=mainB||bDepth>.05,dActive=!mainB||bDepth>.05;
+  bReed.setAttribute('stroke',bActive?(mainB?C.blow:C.draw):C.metalD);dReed.setAttribute('stroke',dActive?C.draw:C.metalD);
+  const col=mainB&&!bDepth?C.blow:C.draw,mid=geo.mid;
+  if(mainB){mouthA.setAttribute('d',`M2 ${mid} L24 ${mid}`);mouthH.setAttribute('d',`M24 ${mid-5} L34 ${mid} L24 ${mid+5} Z`)}
+  else{mouthA.setAttribute('d',`M34 ${mid} L12 ${mid}`);mouthH.setAttribute('d',`M12 ${mid-5} L2 ${mid} L12 ${mid+5} Z`)}
+  mouthA.setAttribute('stroke',col);mouthH.setAttribute('fill',col);
+  const path=mainB?geo.bp:geo.dp,tot=mainB?geo.bl:geo.dl;
+  P.forEach(q=>{const u=(q.o+t*.28*(1-.45*bDepth))%1,[x,y,hor]=along(path,tot,u);q.c.setAttribute('cx',x+(hor?0:q.j*.6));q.c.setAttribute('cy',y+(hor?q.j:0));q.c.setAttribute('fill',col);
+    q.c.setAttribute('opacity',(amp*Math.min(1,u*8,(1-u)*8)*.9).toFixed(3))});
+  const [bx,by]=scr(geo.bMid,S.topY+S.topH+2),[dx,dy]=scr(geo.dMid,S.botY+S.botH+2),lab=clamp(inB*1.2-.2);
+  const vibB=amp>.05&&(mainB||bDepth>.05),vibD=amp>.05&&(!mainB||bDepth>.05);
+  setLabel(labB,clamp(bx,96,300),13,'LAMELLA SOFFIATA · '+(vibB?(mainB?'VIBRA':'VIBRA ANCHE LEI'):'FERMA'),bx,by,vibB,mainB?C.blow:C.draw,lab);
+  setLabel(labD,clamp(dx,96,300),249,'LAMELLA ASPIRATA · '+(vibD?(!mainB?'VIBRA':'VIBRA ANCHE LEI'):'FERMA'),dx,dy,vibD,C.draw,lab);
+  setLabel(labX,200,134,`${tabOf(h,md,bendN)} · ${nm(pp.m-bendN)} · ${Math.round(f)} HZ`,null,null,true,C.draw,lab*clamp(amp*1.5));
+  // scala della nota
+  buildLadder(pp);
+  const n=pp.m-pp.lo,ly=LY0-((pp.m+semis-pp.lo)/n)*(LY0-LY1);
+  ladDot.setAttribute('cx',70);ladDot.setAttribute('cy',ly);ladDotHalo.setAttribute('cx',70);ladDotHalo.setAttribute('cy',ly);
+  ladDot.setAttribute('fill',mainB&&!bDepth?C.blow:C.draw);ladDotHalo.setAttribute('fill',mainB&&!bDepth?C.blow:C.draw);
+  ladDotHalo.setAttribute('r',10+8*amp);ladDotHalo.setAttribute('opacity',.1+.2*amp);
+  drawMouth(eo(clamp(-semis/Math.max(1,pp.max)*1.2)));
+  // mappa
+  const mIn=eo(seg(t,S3+.35,.7)),mOut=eo(seg(t,S4,.5)),cm=$('cardMap');
+  cm.style.visibility=mIn>0&&mOut<1?'visible':'hidden';cm.style.opacity=clamp(mIn*1.3)*(1-mOut);
+  cm.style.transform=`translateY(${(1-mIn)*500}px) scale(${1-mOut*.05})`;cm.style.filter=mOut?`blur(${mOut*10}px)`:'';
+  mapCols.forEach((c,i)=>{const k=back(seg(t,S3+.8+i*.07,.4));c.g.setAttribute('opacity',clamp(k));c.g.setAttribute('transform',`translate(0 ${(1-clamp(k))*16})`);
+    const hot=(i===2&&t<25.4)?eo(seg(t,S3+2.0,.4)):(i===7?eo(seg(t,25.4,.4)):0);c.hl.setAttribute('opacity',.14*hot)});
+  const eIn=eo(seg(t,S4+.4,.7));$('endT').style.opacity=eIn;$('endT').style.transform=`translateY(${(1-eIn)*20}px)`;
+}
+
+// ---------- audio: lamella sintetica più realistica ----------
+// spettro ricco come una lamella che batte nella fessura, risonanza del pettine, fiato, attacco con piccola "scivolata"
+function reedWave(ctx){const N=48,re=new Float32Array(N+1),im=new Float32Array(N+1);
+  for(let n=1;n<=N;n++){im[n]=Math.pow(n,-1.05)*(n%2?1:.72)*(1+.9*Math.exp(-Math.pow((n-5)/3,2)))}return ctx.createPeriodicWave(re,im,{disableNormalization:false})}
+function noiseBuf(ctx,sec){const len=Math.floor(ctx.sampleRate*sec),b=ctx.createBuffer(1,len,ctx.sampleRate),d=b.getChannelData(0);let s=777;for(let i=0;i<len;i++){s=(s*16807)%2147483647;d[i]=(s/2147483647)*2-1}return b}
+function schedule(ctx,dest,t0){
+  const master=ctx.createGain();master.gain.value=.22;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=3;master.connect(comp);comp.connect(dest);
+  const wave=reedWave(ctx),nb=noiseBuf(ctx,8);
+  for(const p of phrases){const T=t0+p.t,E=t0+p.end,base=hz(p.m);
+    const o=ctx.createOscillator();o.setPeriodicWave(wave);
+    const o2=ctx.createOscillator();o2.setPeriodicWave(wave);const g2=ctx.createGain();g2.gain.value=0;   // lamella "di apertura" che entra nel bending
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.Q.value=.9;
+    const pk=ctx.createBiquadFilter();pk.type='peaking';pk.frequency.value=Math.min(base*3.2,4200);pk.Q.value=1.4;pk.gain.value=5;   // risonanza del pettine
+    const g=ctx.createGain();
+    // curva di altezza e timbro
+    const step=1/120;
+    for(let x=0;x<=p.end-p.t+.2;x+=step){const tt=T+x,sm=semisAt(p,p.t+x),dep=p.max?clamp(-sm/p.max):0;
+      const scoop=-.22*Math.exp(-x/.05);                        // attacco leggermente calante
+      const vib=x>.5?.06*Math.sin(2*Math.PI*5.2*x)*clamp((x-.5)/.4):0;
+      const fr=base*Math.pow(2,(sm+scoop+vib)/12);
+      o.frequency.setValueAtTime(fr,tt);o2.frequency.setValueAtTime(fr*1.0015,tt);
+      lp.frequency.setValueAtTime(Math.min(fr*(7-3.5*dep),9000),tt);
+      g2.gain.setValueAtTime(.45*dep,tt)}
+    g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(.85,T+.05);g.gain.linearRampToValueAtTime(1,T+.25);
+    g.gain.setValueAtTime(1,E);g.gain.linearRampToValueAtTime(0,E+.16);
+    o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(pk);pk.connect(g);g.connect(master);
+    o.start(T);o2.start(T);o.stop(E+.2);o2.stop(E+.2);
+    // fiato: rumore filtrato, un po' di più nel bending
+    const ns=ctx.createBufferSource();ns.buffer=nb;const nbp=ctx.createBiquadFilter();nbp.type='bandpass';nbp.Q.value=.7;nbp.frequency.value=Math.min(base*4,6000);
+    const ng=ctx.createGain();ng.gain.setValueAtTime(0,T);
+    for(let x=0;x<=p.end-p.t;x+=1/30){const dep=p.max?clamp(-semisAt(p,p.t+x)/p.max):0;ng.gain.setValueAtTime((x<.06?.09:.025)+.03*dep,T+x)}
+    ng.gain.setValueAtTime(.03,E);ng.gain.linearRampToValueAtTime(0,E+.12);
+    ns.connect(nbp);nbp.connect(ng);ng.connect(master);ns.start(T,Math.random()*0+p.t%3);ns.stop(E+.15);
+  }
+  const wb=noiseBuf(ctx,.6);
+  for(const w of whooshes){const t=t0+w,src=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=wb;
+    bp.type='bandpass';bp.Q.value=.8;bp.frequency.setValueAtTime(300,t);bp.frequency.exponentialRampToValueAtTime(1600,t+.45);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.05,t+.18);g.gain.linearRampToValueAtTime(0,t+.55);
+    src.connect(bp);bp.connect(g);g.connect(dest);src.start(t);src.stop(t+.6)}
+}
+window.REEL={duration:END,seek,schedule};
+
+const rec=/[?&]rec\b/.test(location.search);
+function fit(){$('stage').style.transform=`scale(${rec?1:Math.min(innerWidth/540,innerHeight/960)})`}
+addEventListener('resize',fit);fit();
+(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>seek(0));
+if(rec){$('play').remove();return}
+$('play').addEventListener('click',()=>{$('play').style.display='none';
+  const AC=window.AudioContext||window.webkitAudioContext,ctx=AC?new AC():null,t0=ctx?ctx.currentTime+.1:0;if(ctx)schedule(ctx,ctx.destination,t0);
+  const start=performance.now()+100;
+  (function loop(){const t=ctx?ctx.currentTime-t0:(performance.now()-start)/1000;seek(Math.max(0,t));if(t<END)requestAnimationFrame(loop);else{$('play').style.display='flex';if(ctx)ctx.close()}})()});
+})();
+</script>
+</body>
+</html>
