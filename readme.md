@@ -17,6 +17,10 @@ Real-time pitch detection and tablature builder for diatonic harmonica.
 Supports all 12 keys, blow/draw/bend detection, session saving and PDF export.
 → [harmonicalab.github.io/harmonica/tabscriber](https://harmonicalab.github.io/harmonica/tabscriber)
 
+### 🔬 Come funziona l'armonica
+Animated explainer: what happens inside when you blow and draw, which reed vibrates and why the note changes.
+→ [harmonicalab.github.io/harmonica/come-funziona](https://harmonicalab.github.io/harmonica/come-funziona)
+
 ---
 
 ## Features

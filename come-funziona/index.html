@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soffio o aspiro?</title>
+<meta name="description" content="Come funziona l'armonica diatonica: cosa succede dentro quando soffi e quando aspiri, quale lamella vibra e perché la nota cambia.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--paper:#fffdf8;--ink:#2a2620;--muted:#857d70;--line:#4a4237;--faint:#d9d2c4;
+  --metal:#c9c3b6;--metal-dark:#8f887a;--wood:#e6cfa3;--wood-line:#b8955a;
+  --blow:#1a9a74;--blow-soft:rgba(26,154,116,.14);
+  --draw:#e07b1f;--draw-soft:rgba(224,123,31,.15);
+  --arrow:#d23b2e;--btn:#efeae0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f;--paper:#1d1a15;--ink:#ece6da;--muted:#9a917f;--line:#cfc6b4;--faint:#3a352c;
+    --metal:#5d574c;--metal-dark:#8a8272;--wood:#5a4628;--wood-line:#9b7a45;
+    --blow:#3fd0a0;--blow-soft:rgba(63,208,160,.16);--draw:#f39a45;--draw-soft:rgba(243,154,69,.17);
+    --arrow:#ff6a5c;--btn:#2a261f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f;--paper:#1d1a15;--ink:#ece6da;--muted:#9a917f;--line:#cfc6b4;--faint:#3a352c;
+  --metal:#5d574c;--metal-dark:#8a8272;--wood:#5a4628;--wood-line:#9b7a45;
+  --blow:#3fd0a0;--blow-soft:rgba(63,208,160,.16);--draw:#f39a45;--draw-soft:rgba(243,154,69,.17);
+  --arrow:#ff6a5c;--btn:#2a261f;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Newsreader',Georgia,serif;min-height:100vh;display:flex;justify-content:center;padding:20px 16px 48px}
+.sheet{width:100%;max-width:620px;background:var(--paper);border:1px solid var(--faint);border-radius:14px;padding:22px 20px 18px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;font-family:'Montserrat',sans-serif;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.brand a{color:inherit;text-decoration:none}
+.brand .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e8c84a;margin-right:6px;vertical-align:middle}
+h1{font-weight:400;font-size:clamp(1.35rem,5vw,1.7rem);line-height:1.2;text-align:center;text-wrap:balance}
+.lede{font-size:.82rem;color:var(--muted);text-align:center;margin:6px 0 14px;font-style:italic}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:'Newsreader',Georgia,serif;fill:var(--muted)}
+svg .lbl{font-size:9px;font-style:italic}
+#sec .lbl{font-size:10.5px}
+svg .num{font-size:10px;fill:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr;gap:6px;margin-top:4px}
+.side{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}
+.cap{font-size:.7rem;font-style:italic;color:var(--muted);text-align:center;margin-top:2px}
+.eq{text-align:center;font-size:clamp(1rem,4vw,1.2rem);margin-top:14px;min-height:1.6em}
+.eq b{font-weight:600}
+.eq .c-blow{color:var(--blow)} .eq .c-draw{color:var(--draw)}
+.eq-sub{text-align:center;font-size:.78rem;font-style:italic;color:var(--muted);margin-top:2px}
+.eq-sub em{color:var(--arrow);font-style:italic}
+.controls{margin-top:16px;display:flex;flex-direction:column;gap:10px;font-family:'Montserrat',sans-serif}
+.holes{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.holes button{min-height:40px;border-radius:8px;border:1.5px solid var(--faint);background:var(--btn);color:var(--ink);font:700 .85rem 'Montserrat',sans-serif;cursor:pointer;touch-action:manipulation}
+.holes button.on{border-color:var(--arrow);color:var(--arrow)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mode{min-height:52px;border-radius:12px;border:2px solid var(--faint);background:var(--btn);color:var(--ink);font:700 .9rem 'Montserrat',sans-serif;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.mode small{font-weight:500;font-size:.62rem;color:var(--muted);letter-spacing:.03em}
+.mode.blow.on{border-color:var(--blow);background:var(--blow-soft);color:var(--blow)}
+.mode.draw.on{border-color:var(--draw);background:var(--draw-soft);color:var(--draw)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.pill{flex:1 1 auto;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--faint);background:var(--btn);color:var(--ink);font:700 .75rem 'Montserrat',sans-serif;cursor:pointer;touch-action:manipulation}
+.pill.on{border-color:var(--arrow);color:var(--arrow)}
+.hint{font-family:'Newsreader',serif;font-size:.74rem;font-style:italic;color:var(--muted);text-align:center}
+.explain{margin-top:20px;border-top:1px solid var(--faint);padding-top:14px;font-size:.92rem;line-height:1.5}
+.explain h2{font-weight:600;font-size:1rem;margin-bottom:6px}
+.explain ol{padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.explain .b{color:var(--blow);font-weight:600}.explain .d{color:var(--draw);font-weight:600}
+.foot{margin-top:14px;font-size:.7rem;color:var(--muted);font-style:italic;text-align:center}
+@media (prefers-reduced-motion: reduce){.mode,.pill,.holes button{transition:none}}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <div class="brand"><a href="../"><span class="dot"></span>Harmonica Lab</a><span>Come funziona</span></div>
+  <h1>Stesso foro: soffi o aspiri.<br>La nota sale o scende?</h1>
+  <p class="lede">Armonica diatonica in Do, 10 fori, accordatura Richter. Schema semplificato.</p>
+
+  <!-- vista dall'alto, ai raggi X -->
+  <svg id="top" viewBox="0 0 400 150" aria-label="Vista dall'alto dell'armonica con le 20 lamelle"></svg>
+
+  <div class="grid">
+    <div>
+      <svg id="sec" viewBox="0 0 400 290" aria-label="Sezione di un foro: piastre, lamelle e passaggio dell'aria"></svg>
+    </div>
+    <div class="side">
+      <div><svg id="graph" viewBox="0 0 200 170" aria-label="Grafico: lunghezza della lamella e frequenza"></svg></div>
+      <div><svg id="osc" viewBox="0 0 200 64" aria-label="Vibrazione della lamella, rallentata"></svg><p class="cap">la vibrazione della lamella, rallentata</p></div>
+    </div>
+  </div>
+
+  <p class="eq" id="eq"></p>
+  <p class="eq-sub" id="eqsub"></p>
+
+  <div class="controls">
+    <div class="holes" id="holes"></div>
+    <div class="modes">
+      <button class="mode blow" id="bBlow">+ SOFFIA<small>tieni premuto · ↑</small></button>
+      <button class="mode draw" id="bDraw">− ASPIRA<small>tieni premuto · ↓</small></button>
+    </div>
+    <div class="row">
+      <button class="pill" id="bSeq">▶ Scala di Do (fori 4–7)</button>
+      <button class="pill" id="bPair">⇅ Confronta soffio / aspiro</button>
+      <button class="pill" id="bSnd" aria-pressed="true">🔊 Suono</button>
+    </div>
+    <p class="hint">Tastiera: 1–9 e 0 per il foro, freccia su per soffiare, freccia giù per aspirare.</p>
+  </div>
+
+  <section class="explain">
+    <h2>Cosa succede dentro</h2>
+    <ol>
+      <li>Ogni foro ha <b>due lamelle</b> di ottone: una sulla piastra di sopra, una sulla piastra di sotto.</li>
+      <li>Quando <span class="b">soffi</span>, l'aria spinge la lamella di <span class="b">sopra</span> dentro la sua fessura: lei vibra e suona. Quella di sotto viene spinta fuori e resta quasi muta.</li>
+      <li>Quando <span class="d">aspiri</span>, l'aria entra da fuori e tira la lamella di <span class="d">sotto</span> dentro la sua fessura: adesso suona lei.</li>
+      <li>Le due lamelle hanno lunghezze diverse, quindi lo stesso foro dà due note. Più la lamella è corta, più vibra in fretta e più la nota è alta.</li>
+      <li>Dal foro 1 al 6 la nota aspirata è più alta di quella soffiata. Dal foro 7 in poi si inverte: la soffiata è più alta.</li>
+    </ol>
+  </section>
+  <p class="foot">Lunghezze calcolate con un modello semplice: stessa lamella, solo più corta o più lunga. Nelle armoniche vere conta anche lo spessore e il peso sulla punta.</p>
+</main>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+// ---------- dati: armonica in Do, Richter ----------
+const IT=['Do','Do♯','Re','Mi♭','Mi','Fa','Fa♯','Sol','La♭','La','Si♭','Si'];
+const EN=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const BLOW=[60,64,67,72,76,79,84,88,91,96];
+const DRAW=[62,67,71,74,77,81,83,86,89,93];
+const hz=m=>440*Math.pow(2,(m-69)/12);
+const name=m=>IT[m%12]+(Math.floor(m/12)-1);
+const nameEn=m=>EN[m%12]+(Math.floor(m/12)-1);
+const LEN=f=>16*Math.sqrt(261.63/f);           // mm, modello semplificato
+const fmt=(x,d)=>x.toFixed(d).replace('.',',');
+
+let hole=4, mode='blow', sounding=false, amp=0, phase=0, oscPhase=0;
+const cur=()=>{const m=(mode==='blow'?BLOW:DRAW)[hole-1];const f=hz(m);return{m,f,L:LEN(f)}};
+
+// ---------- vista dall'alto ----------
+const top=$('top');
+const T={x0:20,w:36,y0:28,y1:112,k:3.4};
+el('text',{x:200,y:12,'text-anchor':'middle',class:'lbl'},top).textContent='vista dall’alto, ai raggi X · retro';
+el('rect',{x:T.x0-6,y:T.y0,width:372,height:T.y1-T.y0,rx:7,fill:'none',stroke:css('--line'),'stroke-width':1.2,id:'tBody'},top);
+const tReeds=[];
+for(let i=0;i<10;i++){
+  const cx=T.x0+i*T.w+T.w/2;
+  if(i>0) el('line',{x1:cx-T.w/2,y1:T.y0+4,x2:cx-T.w/2,y2:T.y1-4,stroke:css('--faint'),'stroke-width':1},top);
+  const lb=LEN(hz(BLOW[i]))*T.k, ld=LEN(hz(DRAW[i]))*T.k;
+  const g=el('g',{},top);
+  const hl=el('rect',{x:cx-T.w/2+2,y:T.y0+2,width:T.w-4,height:T.y1-T.y0-4,rx:4,fill:'transparent'},g);
+  const b=el('rect',{x:cx-8,y:T.y0+5,width:5,height:lb,rx:1.5,fill:css('--blow'),opacity:.55},g);
+  el('circle',{cx:cx-5.5,cy:T.y0+8,r:1.6,fill:css('--paper')},g);
+  const d=el('rect',{x:cx+3,y:T.y1-5-ld,width:5,height:ld,rx:1.5,fill:'none',stroke:css('--draw'),'stroke-width':1.3,'stroke-dasharray':'2 1.5',opacity:.7},g);
+  el('rect',{x:cx-7,y:T.y1-4,width:14,height:7,rx:2,fill:css('--paper'),stroke:css('--line'),'stroke-width':1},g);
+  const n=el('text',{x:cx,y:T.y1+17,'text-anchor':'middle',class:'num'},g);n.textContent=i+1;
+  g.style.cursor='pointer';
+  g.addEventListener('click',()=>{select(i+1);tap()});
+  tReeds.push({hl,b,d,n,cx});
+}
+el('text',{x:T.x0-6,y:T.y1+31,class:'lbl'},top).textContent='imboccatura ↑';
+const lg=el('g',{},top);
+el('rect',{x:226,y:T.y1+24,width:9,height:4,rx:1,fill:css('--blow'),opacity:.6},lg);
+el('text',{x:239,y:T.y1+29,class:'lbl'},lg).textContent='soffio (sopra)';
+el('rect',{x:306,y:T.y1+24,width:9,height:4,rx:1,fill:'none',stroke:css('--draw'),'stroke-dasharray':'2 1.5'},lg);
+el('text',{x:319,y:T.y1+29,class:'lbl'},lg).textContent='aspiro (sotto)';
+const tArrow=el('path',{d:'',fill:css('--arrow')},top);
+
+// ---------- sezione di un foro ----------
+const sec=$('sec');
+const S={px:8.6,topY:100,topH:8,botY:192,botH:8,front:40,back:345,wall:330,bRiv:300,dRiv:82};
+const sDefs=el('defs',{},sec);
+const pat=el('pattern',{id:'woodp',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(35)'},sDefs);
+el('rect',{width:6,height:6,fill:css('--wood')},pat);
+el('line',{x1:0,y1:0,x2:0,y2:6,stroke:css('--wood-line'),'stroke-width':.6,opacity:.6},pat);
+// copripiastre
+el('path',{d:'M30 102 L30 60 Q30 50 40 50 L352 50 L352 68',fill:'none',stroke:css('--line'),'stroke-width':1.6},sec);
+el('path',{d:'M30 198 L30 240 Q30 250 40 250 L352 250 L352 232',fill:'none',stroke:css('--line'),'stroke-width':1.6},sec);
+// pettine (parete di fondo)
+el('rect',{x:S.wall,y:S.topY+S.topH,width:S.back-S.wall,height:S.botY-S.topY-S.topH,fill:'url(#woodp)',stroke:css('--wood-line'),'stroke-width':.8},sec);
+const gPlates=el('g',{},sec);
+const gAir=el('g',{},sec);
+const bReed=el('path',{fill:'none','stroke-width':3,'stroke-linecap':'round'},sec);
+const dReed=el('path',{fill:'none','stroke-width':3,'stroke-linecap':'round'},sec);
+const gRiv=el('g',{},sec);
+// etichette fisse
+const L1=(x,y,t,anchor)=>{const e=el('text',{x,y,class:'lbl','text-anchor':anchor||'start'},sec);e.textContent=t;return e};
+L1(36,44,'copripiastra');
+L1(36,96,'piastra di sopra');
+L1(36,214,'piastra di sotto');
+L1(338,150,'pettine','middle').setAttribute('transform','rotate(-90 338 150)');
+L1(322,180,'camera del foro','end');
+L1(4,140,'bocca');
+const sMouth=el('path',{d:'',fill:'none','stroke-width':1.6},sec);
+const sMouthHead=el('path',{d:'',stroke:'none'},sec);
+const sLabB=L1(0,0,'');const sLabD=L1(0,0,'');
+L1(200,272,'sezione del foro, di lato','middle');
+
+const P=[];for(let i=0;i<34;i++){P.push({o:i/34,c:el('circle',{r:2.1},gAir)})}
+
+let geom=null;
+function buildSection(){
+  gPlates.innerHTML='';gRiv.innerHTML='';
+  const Lb=LEN(hz(BLOW[hole-1]))*S.px, Ld=LEN(hz(DRAW[hole-1]))*S.px;
+  const bTip=S.bRiv-Lb, dTip=S.dRiv+Ld;
+  const mt=css('--metal'), md=css('--metal-dark');
+  // piastra sopra con fessura
+  el('rect',{x:S.front,y:S.topY,width:bTip-3-S.front,height:S.topH,fill:mt,stroke:md,'stroke-width':.8},gPlates);
+  el('rect',{x:S.bRiv-2,y:S.topY,width:S.back-S.bRiv+2,height:S.topH,fill:mt,stroke:md,'stroke-width':.8},gPlates);
+  // piastra sotto con fessura
+  el('rect',{x:S.front,y:S.botY,width:S.dRiv+2-S.front,height:S.botH,fill:mt,stroke:md,'stroke-width':.8},gPlates);
+  el('rect',{x:dTip+3,y:S.botY,width:S.back-dTip-3,height:S.botH,fill:mt,stroke:md,'stroke-width':.8},gPlates);
+  // rivetti e radici
+  el('rect',{x:S.bRiv,y:S.topY+S.topH,width:12,height:3,fill:md},gRiv);
+  el('rect',{x:S.bRiv+4,y:S.topY-2,width:4,height:S.topH+7,rx:1,fill:css('--line')},gRiv);
+  el('rect',{x:S.dRiv-12,y:S.botY+S.botH-3+3,width:12,height:3,fill:md},gRiv);
+  el('rect',{x:S.dRiv-8,y:S.botY-2,width:4,height:S.botH+7,rx:1,fill:css('--line')},gRiv);
+  const bMid=S.bRiv-Lb/2, dMid=S.dRiv+Ld/2;
+  geom={Lb,Ld,bTip,dTip,bMid,dMid,
+    blowPath:[[0,150],[S.front,150],[bMid,150],[bMid,96],[bMid,78],[352,78],[398,84]],
+    drawPath:[[398,222],[352,222],[dMid,222],[dMid,204],[dMid,150],[S.front,150],[0,150]]};
+  geom.blowLen=plen(geom.blowPath);geom.drawLen=plen(geom.drawPath);
+}
+function plen(p){let s=0;for(let i=1;i<p.length;i++)s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]);return s}
+function along(p,total,t){let d=t*total;for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i],s=Math.hypot(b[0]-a[0],b[1]-a[1]);if(d<=s){const u=s?d/s:0;return[a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u]}d-=s}return p[p.length-1]}
+function reedPath(root,dir,len,baseY,defl){
+  let d='M'+(root+dir*-12)+' '+baseY+' L'+root+' '+baseY;
+  for(let i=1;i<=14;i++){const s=i/14;const sh=s*s*(3-s)/2;d+=' L'+(root+dir*s*len).toFixed(1)+' '+(baseY+defl*sh).toFixed(1)}
+  return d;
+}
+
+// ---------- grafico ----------
+const gr=$('graph');
+const G={x0:30,x1:192,y0:142,y1:14,Lmin:5,Lmax:17,fmin:200,fmax:2200};
+const gx=L=>G.x0+(L-G.Lmin)/(G.Lmax-G.Lmin)*(G.x1-G.x0);
+const gy=f=>G.y0-(f-G.fmin)/(G.fmax-G.fmin)*(G.y0-G.y1);
+el('line',{x1:G.x0,y1:G.y0,x2:G.x1,y2:G.y0,stroke:css('--line'),'stroke-width':.8},gr);
+el('line',{x1:G.x0,y1:G.y0,x2:G.x0,y2:G.y1-4,stroke:css('--line'),'stroke-width':.8},gr);
+[6,10,14].forEach(L=>{el('line',{x1:gx(L),y1:G.y0,x2:gx(L),y2:G.y0+3,stroke:css('--line'),'stroke-width':.6},gr);const t=el('text',{x:gx(L),y:G.y0+11,'text-anchor':'middle',class:'lbl'},gr);t.textContent=L});
+[500,1000,1500,2000].forEach(f=>{el('line',{x1:G.x0-3,y1:gy(f),x2:G.x0,y2:gy(f),stroke:css('--line'),'stroke-width':.6},gr);const t=el('text',{x:G.x0-5,y:gy(f)+3,'text-anchor':'end',class:'lbl'},gr);t.textContent=f});
+el('text',{x:G.x0+4,y:G.y1-2,class:'lbl'},gr).textContent='nota, Hz';
+el('text',{x:G.x1,y:G.y0+22,'text-anchor':'end',class:'lbl'},gr).textContent='lunghezza lamella, mm';
+let cd='';for(let L=5.4;L<=17;L+=.2){const f=261.63*Math.pow(16/L,2);cd+=(cd?' L':'M')+gx(L).toFixed(1)+' '+gy(f).toFixed(1)}
+el('path',{d:cd,fill:'none',stroke:css('--line'),'stroke-width':1},gr);
+for(let i=0;i<10;i++){[[BLOW,'--blow'],[DRAW,'--draw']].forEach(([arr,c])=>{const f=hz(arr[i]);el('circle',{cx:gx(LEN(f)),cy:gy(f),r:1.8,fill:css(c),opacity:.45},gr)})}
+const gGuide=el('path',{fill:'none','stroke-width':.8,'stroke-dasharray':'2 2',stroke:css('--arrow')},gr);
+const gDot=el('circle',{r:4,fill:css('--arrow')},gr);
+
+// ---------- oscilloscopio ----------
+const osc=$('osc');
+el('line',{x1:0,y1:32,x2:200,y2:32,stroke:css('--faint'),'stroke-width':.8},osc);
+el('rect',{x:.5,y:2,width:199,height:60,rx:6,fill:'none',stroke:css('--faint')},osc);
+const oWave=el('path',{fill:'none','stroke-width':1.6},osc);
+
+// ---------- testi e stato ----------
+const holesBox=$('holes');
+for(let i=1;i<=10;i++){const b=document.createElement('button');b.textContent=i;b.setAttribute('aria-label','Foro '+i);b.onclick=()=>{select(i);tap()};holesBox.appendChild(b)}
+
+function render(){
+  const {m,f,L}=cur();
+  const col=css(mode==='blow'?'--blow':'--draw');
+  [...holesBox.children].forEach((b,i)=>b.classList.toggle('on',i+1===hole));
+  $('bBlow').classList.toggle('on',mode==='blow');$('bDraw').classList.toggle('on',mode==='draw');
+  tReeds.forEach((r,i)=>{
+    const on=i+1===hole;
+    r.hl.setAttribute('fill',on?(mode==='blow'?css('--blow-soft'):css('--draw-soft')):'transparent');
+    r.b.setAttribute('opacity',on&&mode==='blow'?1:.45);
+    r.d.setAttribute('opacity',on&&mode==='draw'?1:.55);
+    r.d.setAttribute('stroke-width',on&&mode==='draw'?2:1.3);
+    r.n.style.fontWeight=on?'700':'400';r.n.style.fill=on?css('--arrow'):'';
+  });
+  const cx=tReeds[hole-1].cx;
+  tArrow.setAttribute('d',`M${cx-5} 14 L${cx+5} 14 L${cx+5} 19 L${cx+9} 19 L${cx} 27 L${cx-9} 19 L${cx-5} 19 Z`);
+  buildSection();
+  // freccia bocca
+  if(mode==='blow'){sMouth.setAttribute('d','M2 150 L26 150');sMouthHead.setAttribute('d','M26 145 L36 150 L26 155 Z')}
+  else{sMouth.setAttribute('d','M36 150 L12 150');sMouthHead.setAttribute('d','M12 145 L2 150 L12 155 Z')}
+  sMouth.setAttribute('stroke',css('--arrow'));sMouthHead.setAttribute('fill',css('--arrow'));
+  sLabB.setAttribute('x',geom.bMid);sLabB.setAttribute('y',S.topY+S.topH+30);sLabB.setAttribute('text-anchor','middle');
+  sLabD.setAttribute('x',geom.dMid);sLabD.setAttribute('y',S.botY-24);sLabD.setAttribute('text-anchor','middle');
+  const mmB=fmt(LEN(hz(BLOW[hole-1])),1)+' mm', mmD=fmt(LEN(hz(DRAW[hole-1])),1)+' mm';
+  sLabB.textContent='lamella soffiata, '+mmB+(mode==='blow'?': vibra':': ferma');
+  sLabD.textContent='lamella aspirata, '+mmD+(mode==='draw'?': vibra':': ferma');
+  sLabB.style.fill=mode==='blow'?css('--blow'):'';sLabD.style.fill=mode==='draw'?css('--draw'):'';
+  sLabB.style.fontWeight=mode==='blow'?'600':'';sLabD.style.fontWeight=mode==='draw'?'600':'';
+  bReed.setAttribute('stroke',mode==='blow'?css('--blow'):css('--metal-dark'));
+  dReed.setAttribute('stroke',mode==='draw'?css('--draw'):css('--metal-dark'));
+  P.forEach(p=>p.c.setAttribute('fill',col));
+  oWave.setAttribute('stroke',col);
+  // grafico
+  const X=gx(L),Y=gy(f);
+  gGuide.setAttribute('d',`M${G.x0} ${Y} L${X} ${Y} L${X} ${G.y0}`);
+  gDot.setAttribute('cx',X);gDot.setAttribute('cy',Y);gDot.setAttribute('fill',col);gGuide.setAttribute('stroke',col);
+  // equazione
+  const other=(mode==='blow'?DRAW:BLOW)[hole-1];
+  const cls=mode==='blow'?'c-blow':'c-draw';
+  $('eq').innerHTML=`foro ${hole} ${mode==='blow'?'+ soffio':'− aspiro'} = lamella di ${mode==='blow'?'sopra':'sotto'} da ${fmt(L,1)} mm = <b class="${cls}">${name(m)}</b> · <b class="${cls}">${Math.round(f)} Hz</b>`;
+  const higher=m>other, same=m===other;
+  $('eqsub').innerHTML=same
+    ? `stessa lunghezza dell’altra lamella del foro: stessa nota (${name(m)})`
+    : `${mode==='blow'?'aspirando':'soffiando'} nello stesso foro: ${name(other)}, una lamella ${higher?'<em>più lunga</em>':'<em>più corta</em>'}, quindi la nota ${higher?'scende':'sale'}`;
+}
+
+function select(h){hole=h;render()}
+function setMode(md){if(mode!==md){mode=md;render()}}
+
+// ---------- audio: lamella sintetica ----------
+let ctx=null,master=null,voice=null,soundOn=true;
+function ensureAudio(){if(!ctx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;ctx=new AC();master=ctx.createGain();master.gain.value=.16;master.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume();return ctx}
+function noteOn(){
+  sounding=true;
+  if(!soundOn||!ensureAudio())return;
+  noteOff(true);
+  const f=cur().f,t=ctx.currentTime;
+  const o1=ctx.createOscillator(),o2=ctx.createOscillator(),lp=ctx.createBiquadFilter(),g=ctx.createGain();
+  o1.type='sawtooth';o2.type='square';o1.frequency.value=f;o2.frequency.value=f*1.003;
+  const g2=ctx.createGain();g2.gain.value=.35;
+  lp.type='lowpass';lp.frequency.value=Math.min(f*5,7000);lp.Q.value=2.2;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.035);g.gain.setTargetAtTime(.8,t+.04,.15);
+  o1.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(master);
+  o1.start(t);o2.start(t);voice={o1,o2,g};
+}
+function noteOff(silentOnly){
+  if(!silentOnly)sounding=false;
+  if(voice&&ctx){const t=ctx.currentTime,v=voice;v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(v.g.gain.value,t);v.g.gain.linearRampToValueAtTime(0,t+.09);v.o1.stop(t+.12);v.o2.stop(t+.12);voice=null}
+}
+let tapT=null;
+function tap(ms){stopSeq();clearTimeout(tapT);noteOn();tapT=setTimeout(()=>noteOff(),ms||900)}
+
+// ---------- pulsanti tieni premuto ----------
+function holdBtn(btn,md){
+  const down=e=>{e.preventDefault();stopSeq();clearTimeout(tapT);setMode(md);try{btn.setPointerCapture(e.pointerId)}catch(_){};noteOn()};
+  const up=()=>{if(sounding)noteOff()};
+  btn.addEventListener('pointerdown',down);
+  btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('lostpointercapture',up);
+  btn.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();setMode(md);noteOn()}});
+  btn.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')noteOff()});
+}
+holdBtn($('bBlow'),'blow');holdBtn($('bDraw'),'draw');
+
+// ---------- sequenze automatiche ----------
+let seqTimer=null,seqBtn=null;
+function runSeq(btn,steps,on,gap){
+  if(seqBtn===btn){stopSeq();return}
+  stopSeq();clearTimeout(tapT);seqBtn=btn;btn.classList.add('on');
+  let i=0;
+  const step=()=>{
+    if(i>=steps.length){stopSeq();return}
+    const [h,md]=steps[i++];hole=h;mode=md;render();noteOn();
+    seqTimer=setTimeout(()=>{noteOff();seqTimer=setTimeout(step,gap)},on);
+  };
+  step();
+}
+function stopSeq(){clearTimeout(seqTimer);if(seqBtn){seqBtn.classList.remove('on');seqBtn=null;noteOff()}}
+$('bSeq').onclick=()=>runSeq($('bSeq'),[[4,'blow'],[4,'draw'],[5,'blow'],[5,'draw'],[6,'blow'],[6,'draw'],[7,'draw'],[7,'blow']],1050,280);
+$('bPair').onclick=()=>runSeq($('bPair'),[[hole,'blow'],[hole,'draw'],[hole,'blow'],[hole,'draw']],1300,450);
+$('bSnd').onclick=e=>{soundOn=!soundOn;e.currentTarget.textContent=soundOn?'🔊 Suono':'🔇 Muto';e.currentTarget.setAttribute('aria-pressed',soundOn);if(!soundOn)noteOff(true)};
+
+// ---------- tastiera ----------
+const held=new Set();
+addEventListener('keydown',e=>{
+  if(e.target.closest&&e.target.closest('button')&&(e.key===' '||e.key==='Enter'))return;
+  if(/^[0-9]$/.test(e.key)){select(e.key==='0'?10:+e.key);if(!held.size)tap();return}
+  if((e.key==='ArrowUp'||e.key==='ArrowDown')&&!e.repeat){e.preventDefault();stopSeq();clearTimeout(tapT);held.add(e.key);setMode(e.key==='ArrowUp'?'blow':'draw');noteOn()}
+});
+addEventListener('keyup',e=>{if(held.delete(e.key)&&!held.size)noteOff()});
+
+// ---------- animazione ----------
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  amp+=((sounding?1:0)-amp)*Math.min(1,dt*(sounding?14:7));
+  const {f}=cur();
+  const vis=1.6+7*Math.log2(f/261.63)/3;            // vibrazione visibile, rallentata
+  phase+=dt*2*Math.PI*(reduce?vis*.3:vis);
+  const A=13*amp, s=Math.sin(phase);
+  const bBase=S.topY+S.topH+1.5, dBase=S.botY+S.botH+1.5;
+  const bDefl=mode==='blow'?-A*s:3*amp;           // soffio: entra nella fessura
+  const dDefl=mode==='draw'?-A*s-2*amp:3*amp;      // aspiro: tirata dentro la fessura (verso l'alto)
+  bReed.setAttribute('d',reedPath(S.bRiv,-1,geom.Lb,bBase,bDefl));
+  dReed.setAttribute('d',reedPath(S.dRiv,1,geom.Ld,dBase,dDefl));
+  // particelle d'aria
+  const path=mode==='blow'?geom.blowPath:geom.drawPath, tot=mode==='blow'?geom.blowLen:geom.drawLen;
+  const tt=now/1000*0.28;
+  P.forEach(p=>{const t=(p.o+tt)%1;const [x,y]=along(path,tot,t);const j=Math.sin(p.o*91)*3;
+    p.c.setAttribute('cx',x+(Math.abs(path[2][1]-y)<1?0:j*.6));p.c.setAttribute('cy',y+(Math.abs(path[2][1]-y)<1?j:0));
+    const edge=Math.min(1,t*8,(1-t)*8);p.c.setAttribute('opacity',(amp*edge*.85).toFixed(3))});
+  // onda
+  oscPhase+=dt*(reduce?.5:2.2);
+  const cyc=f/120, a=24*Math.max(amp,.04);
+  let d='';for(let x=2;x<=198;x+=1){const y=32-a*Math.sin((x/196)*cyc*2*Math.PI-oscPhase*2*Math.PI);d+=(d?' L':'M')+x+' '+y.toFixed(1)}
+  oWave.setAttribute('d',d);
+  requestAnimationFrame(frame);
+}
+render();requestAnimationFrame(frame);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>location.reload());
+})();
+</script>
+</body>
+</html>
