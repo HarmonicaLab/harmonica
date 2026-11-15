@@ -489,6 +489,18 @@ body:not(.light) .cof-info { background:var(--glass-in) !important; }
 /* numeri dei fori: dritti */
 .hole-number-cell { font-style:normal !important; }
 
+/* ===== MOBILE: griglia note interamente visibile (fori 1-10) ===== */
+@media (max-width:560px){
+ .card:has(.chart-wrap){padding:22px 10px !important}
+ .note-chart{min-width:0 !important}
+ .note-chart col:first-child{width:50px !important}
+ .note-chart col:not(:first-child){width:auto !important}
+ .note-chart td.row-label{width:50px !important;min-width:50px !important;max-width:50px !important;font-size:.5rem !important;letter-spacing:0 !important;padding-right:3px !important}
+ .cell-btn{font-size:.62rem !important;border-radius:10px !important;padding:9px 0 !important}
+ .hole-number-cell{font-size:.9rem !important;padding:8px 0 !important}
+ .chart-legend{flex-wrap:wrap !important;gap:6px 12px !important;font-size:.62rem !important}
+ .chart-legend span{white-space:nowrap}
+}
 </style>
 </head>
 <body class="light">
