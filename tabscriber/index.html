@@ -265,6 +265,9 @@ footer,body > .wrap > div:last-child{font-family:'Montserrat',sans-serif !import
 body.dark .trill-panel{border-color:var(--border)}
 .trill-panel label{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;font-style:italic;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .trill-panel select{font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
+.auto-hint{margin:10px auto 0;max-width:340px;font-size:.7rem;font-weight:700;font-style:italic;line-height:1.4;color:var(--muted);text-align:center;transition:color .2s}
+.auto-hint:before{content:'\23F1  ';font-style:normal}
+.auto-hint.on{color:var(--red)}
 </style>
 </head>
 <body>
@@ -304,6 +307,7 @@ body.dark .trill-panel{border-color:var(--border)}
       <button class="mic-btn" id="micBtn" onclick="toggleMic()"><span class="mic-dot"></span><span id="micLbl"></span></button>
       <button class="mic-btn" id="autoBtn" onclick="toggleAuto()"><span class="mic-dot"></span><span id="autoLbl">Auto</span></button>
     </div>
+    <div class="auto-hint" id="autoHint"></div>
     <div style="margin-top:16px;padding:12px 16px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <span style="font-size:.72rem;color:var(--muted);font-family:'Montserrat',monospace;letter-spacing:.06em;text-transform:uppercase" id="sensLbl">Sensibilità microfono</span>
@@ -442,7 +446,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -460,7 +464,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -510,6 +514,7 @@ function applyTx(){
   document.getElementById('addChordLbl').textContent=t('addChord');
   document.getElementById('sensLbl').textContent=t('sens');
   document.getElementById('lvlLbl').textContent=t('lvl');
+  document.getElementById('autoHint').textContent=t('autoHint');
   document.getElementById('longLbl').textContent=t('lng');document.getElementById('trillLbl').textContent=t('trill');
   document.getElementById('addTrillLbl').textContent=t('addTrill');document.getElementById('trillALbl').textContent=t('trillA');document.getElementById('trillBLbl').textContent=t('trillB');
   document.getElementById('trillDirBlow').textContent=t('trillBlow');document.getElementById('trillDirDraw').textContent=t('trillDraw');
@@ -792,6 +797,7 @@ function toggleAuto(){
   var btn=document.getElementById('autoBtn'),lbl=document.getElementById('autoLbl');
   if(autoCapture){btn.classList.add('auto-on');lbl.textContent='Auto ON';}
   else{btn.classList.remove('auto-on');lbl.textContent='Auto';resetAutoTimer();}
+  document.getElementById('autoHint').classList.toggle('on',autoCapture);
 }
 function resetAutoTimer(){
   clearTimeout(autoTimer);autoTimer=null;autoHoldMatch=null;
