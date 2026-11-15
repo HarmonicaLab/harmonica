@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soffio o aspiro · reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* Stile Harmonica Lab: intro scura col logo, poi fondo chiaro liquid glass.
+   Soffiate verdi #1FBF84, aspirate arancio #F07A1A, testo #1E1916, etichette pillola nera. */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1E1916;--mute:#7A706A;--blow:#1FBF84;--draw:#F07A1A;--pill:rgba(22,17,14,.9);--cream:#EFE6D2;--dark:#16110E}
+html,body{background:#0b0908;height:100%}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:'Barlow Condensed',sans-serif;color:var(--ink)}
+#stage{position:relative;width:540px;height:960px;overflow:hidden;flex:none;transform-origin:center center;background:var(--dark)}
+.abs{position:absolute}
+/* intro */
+#intro{inset:0;background:radial-gradient(circle at 50% 44%,#2a211b 0%,#16110E 55%)}
+#logo{left:120px;top:250px;width:300px;height:300px;border-radius:50%;box-shadow:0 0 80px rgba(239,230,210,.12)}
+#introTxt{left:0;right:0;top:582px;text-align:center;font-weight:800;font-size:40px;letter-spacing:.14em;color:var(--cream)}
+/* contenuto chiaro */
+#light{inset:0;background:linear-gradient(170deg,#F5F3EF 0%,#ECE9E3 100%)}
+.blob{border-radius:50%;filter:blur(50px)}
+.glass{background:rgba(255,255,255,.58);backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2);border:1.5px solid rgba(255,255,255,.95);border-radius:28px;box-shadow:0 24px 60px rgba(60,45,30,.13),0 2px 6px rgba(60,45,30,.05),inset 0 1px 0 rgba(255,255,255,.9)}
+#title{left:0;right:0;top:74px;text-align:center;font-weight:800;font-size:54px;line-height:1;letter-spacing:.01em;text-transform:uppercase}
+.sub{left:24px;right:24px;top:136px;text-align:center;font-weight:500;font-size:19px;color:#4d4540;line-height:1.2}
+#row{left:18px;right:18px;top:176px;height:66px;display:flex;justify-content:center;gap:8px}
+.nc{position:relative;flex:0 0 auto;width:72px;height:66px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nc b{font-weight:800;font-size:30px;line-height:1}
+.nc i{font-style:normal;font-weight:600;font-size:12px;letter-spacing:.06em;color:var(--mute);margin-top:2px}
+.nc.blow b{color:var(--blow)} .nc.draw b{color:var(--draw)}
+#cardA{left:18px;top:254px;width:504px;height:150px;padding:6px 10px}
+#cardB{left:18px;top:414px;width:504px;height:330px;overflow:hidden}
+#cardG{left:18px;top:184px;width:504px;height:560px;padding:10px 12px}
+#endT{left:0;right:0;top:380px;text-align:center}
+#endT h2{font-weight:800;font-size:64px;letter-spacing:.06em;line-height:1}
+#endT p{font-weight:500;font-size:22px;color:#4d4540;margin-top:10px}
+#endT .dots{display:flex;justify-content:center;gap:10px;margin-top:22px}
+#endT .dots span{font-weight:800;font-size:18px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;color:#fff}
+svg{display:block;width:100%;height:100%;overflow:visible}
+svg text{font-family:'Barlow Condensed',sans-serif}
+.t-s{font-size:10.5px;font-weight:500;fill:#8a817a}
+.t-n{font-size:12px;font-weight:600;fill:#4d4540}
+.t-pill{font-size:11px;font-weight:800;letter-spacing:.05em;fill:var(--cream)}
+/* anteprima */
+#play{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);cursor:pointer;z-index:9;color:#fff;font:800 28px 'Barlow Condensed',sans-serif;letter-spacing:.1em}
+#play span{padding:16px 30px;border-radius:999px;background:var(--pill);border:1.5px solid rgba(255,255,255,.3)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="intro" class="abs">
+    <img id="logo" class="abs" src="logo-cerchio.jpg" alt="Harmonica Lab">
+    <div id="introTxt" class="abs">HARMONICA LAB</div>
+  </div>
+  <div id="light" class="abs">
+    <div class="abs blob" id="b1" style="width:340px;height:340px;background:rgba(31,191,132,.10)"></div>
+    <div class="abs blob" id="b2" style="width:380px;height:380px;background:rgba(240,122,26,.09)"></div>
+    <div class="abs blob" id="b3" style="width:300px;height:300px;background:rgba(255,255,255,.9)"></div>
+    <div id="title" class="abs">Soffio o aspiro?</div>
+    <div id="subA" class="abs sub"></div><div id="subB" class="abs sub"></div>
+    <div id="row" class="abs"></div>
+    <div id="cardA" class="abs glass"><svg id="top" viewBox="0 0 484 138"></svg></div>
+    <div id="cardB" class="abs glass"><svg id="sec" viewBox="0 0 400 262" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div id="cardG" class="abs glass"><svg id="graph" viewBox="0 0 480 540"></svg></div>
+    <div id="endT" class="abs"><h2>HARMONICA LAB</h2><p>Soffi: suona la lamella di sopra. Aspiri: quella di sotto.</p>
+      <div class="dots"><span style="background:var(--blow)">4 SOFFIO</span><span style="background:var(--draw)">-4 ASPIRO</span></div></div>
+  </div>
+</div>
+<div id="play"><span>▶ GUARDA CON AUDIO</span></div>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const el=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const C={ink:'#1E1916',mute:'#7A706A',blow:'#1FBF84',draw:'#F07A1A',pill:'rgba(22,17,14,.9)',cream:'#EFE6D2',metal:'#d6d1c9',metalD:'#a39b91',wood:'#e3d3b6',woodL:'#c4a97c'};
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const seg=(t,a,d)=>clamp((t-a)/d);
+const eo=x=>1-Math.pow(1-x,4);                       // ~cubic-bezier(.25,1,.5,1)
+const back=x=>{const c=1.9;x=x-1;return 1+(c+1)*x*x*x+c*x*x};
+const mix=(a,b,k)=>a+(b-a)*k;
+
+// ---------- note: armonica in Do ----------
+const IT=['DO','DO♯','RE','MI♭','MI','FA','FA♯','SOL','LA♭','LA','SI♭','SI'];
+const BLOW=[60,64,67,72,76,79,84,88,91,96],DRAW=[62,67,71,74,77,81,83,86,89,93];
+const hz=m=>440*Math.pow(2,(m-69)/12),nm=m=>IT[m%12]+(Math.floor(m/12)-1);
+const LEN=f=>16*Math.sqrt(261.63/f);
+const midi=(h,md)=>(md==='b'?BLOW:DRAW)[h-1];
+const tab=(h,md)=>(md==='b'?'':'-')+h;
+const fmt=(x,d)=>x.toFixed(d).replace('.',',');
+
+// ---------- copione ----------
+const S1=6.2,S2=11.0,S3=20.0,S4=24.8,S5=30.9,END=33.6;
+const notes=[];const add=(h,md,t,d,sc)=>notes.push({h,md,t,d,sc,m:midi(h,md)});
+add(4,'b',6.9,1.5,1);add(4,'d',8.9,1.5,1);
+(()=>{let t=11.6;[[4,'b'],[4,'d'],[5,'b'],[5,'d'],[6,'b'],[6,'d'],[7,'d'],[7,'b']].forEach((n,i,a)=>{const d=i===a.length-1?1.2:.8;add(n[0],n[1],t,d,2);t+=d+.15})})();
+add(8,'b',20.7,1.4,3);add(8,'d',22.6,1.4,3);
+(()=>{let t=26.0;for(let h=1;h<=8;h++){const d=h===8?1.0:.42;add(h,'b',t,d,4);t+=d+.06}})();
+const whooshes=[.25,4.3,5.25,11.0,20.0,24.8,30.9];
+const scenes={1:{a:S1,b:S2,cards:[[4,'b'],[4,'d']]},2:{a:S2,b:S3,cards:[[4,'b'],[4,'d'],[5,'b'],[5,'d'],[6,'b'],[6,'d'],[7,'d'],[7,'b']]},3:{a:S3,b:S4,cards:[[8,'b'],[8,'d']]}};
+const subs=[[5.3,'Stesso foro, due lamelle, due note'],[8.9,'Aspiri: suona la lamella di sotto, più corta. La nota sale'],
+  [S2,'La scala di Do, fori 4–7'],[S3,'Dal foro 7 in su si inverte'],[22.6,'Qui è la soffiata ad avere la lamella più corta'],
+  [S4,'Più corta la lamella, più alta la nota'],[S5,'']];
+
+// ---------- sfondo ----------
+function bg(t){
+  const b=[[$('b1'),-60,230,.31],[$('b2'),260,560,.23],[$('b3'),120,40,.17]];
+  b.forEach(([e,x,y,w],i)=>{e.style.transform=`translate(${x+Math.sin(t*w+i)*26}px,${y+Math.cos(t*w*1.3+i)*20}px) scale(${1+.06*Math.sin(t*w*2+i)})`});
+}
+
+// ---------- vista dall'alto ----------
+const top=$('top');const T={x0:12,w:46,y0:16,y1:104,k:3.3};
+el('rect',{x:T.x0-4,y:T.y0,width:468,height:T.y1-T.y0,rx:10,fill:'rgba(255,255,255,.55)',stroke:C.ink,'stroke-width':1.3},top);
+const cols=[];
+for(let i=0;i<10;i++){
+  const cx=T.x0+i*T.w+T.w/2;
+  if(i)el('line',{x1:cx-T.w/2,y1:T.y0+5,x2:cx-T.w/2,y2:T.y1-5,stroke:'#ddd6cc','stroke-width':1},top);
+  const g=el('g',{},top);
+  const hl=el('rect',{x:cx-T.w/2+3,y:T.y0+3,width:T.w-6,height:T.y1-T.y0-6,rx:7,fill:C.blow,opacity:0},g);
+  const lb=LEN(hz(BLOW[i]))*T.k,ld=LEN(hz(DRAW[i]))*T.k;
+  const b=el('rect',{x:cx-9,y:T.y0+6,width:6,height:lb,rx:2,fill:C.blow,opacity:.5},g);
+  const d=el('rect',{x:cx+3,y:T.y1-6-ld,width:6,height:ld,rx:2,fill:'none',stroke:C.draw,'stroke-width':1.4,'stroke-dasharray':'2.5 1.8',opacity:.65},g);
+  el('rect',{x:cx-8,y:T.y1-4,width:16,height:8,rx:2.5,fill:'#fff',stroke:C.ink,'stroke-width':1.1},g);
+  const n=el('text',{x:cx,y:T.y1+20,'text-anchor':'middle',class:'t-n'},g);n.textContent=i+1;
+  cols.push({hl,b,d,n,cx});
+}
+const mark=el('path',{d:'',fill:C.ink},top);
+const tx=(x,y,s,cls,anc)=>{const e=el('text',{x,y,class:cls,'text-anchor':anc||'start'},top);e.textContent=s;return e};
+tx(T.x0-4,10,'VISTA DALL’ALTO · RETRO','t-s');
+tx(T.x0-4,136,'IMBOCCATURA ↑','t-s');
+el('rect',{x:300,y:129,width:10,height:5,rx:1.5,fill:C.blow,opacity:.7},top);tx(314,135,'SOFFIATE (SOPRA)','t-s');
+el('rect',{x:392,y:129,width:10,height:5,rx:1.5,fill:'none',stroke:C.draw,'stroke-dasharray':'2 1.5'},top);tx(406,135,'ASPIRATE (SOTTO)','t-s');
+
+// ---------- sezione ----------
+const sec=$('sec');
+const S={px:8.6,topY:90,topH:8,botY:170,botH:8,front:40,back:345,wall:330,bRiv:300,dRiv:82};
+const defs=el('defs',{},sec);
+const pat=el('pattern',{id:'wd',width:5,height:5,patternUnits:'userSpaceOnUse',patternTransform:'rotate(35)'},defs);
+el('rect',{width:5,height:5,fill:C.wood},pat);el('line',{x1:0,y1:0,x2:0,y2:5,stroke:C.woodL,'stroke-width':.6},pat);
+const cp=el('clipPath',{id:'cl'},defs);el('rect',{x:0,y:0,width:400,height:262},cp);
+const world=el('g',{'clip-path':'url(#cl)'},sec);
+const cam=el('g',{},world);
+el('path',{d:'M30 92 L30 52 Q30 42 40 42 L352 42 L352 60',fill:'none',stroke:C.ink,'stroke-width':1.6},cam);
+el('path',{d:'M30 176 L30 214 Q30 224 40 224 L352 224 L352 206',fill:'none',stroke:C.ink,'stroke-width':1.6},cam);
+el('rect',{x:S.wall,y:S.topY+S.topH,width:S.back-S.wall,height:S.botY-S.topY-S.topH,fill:'url(#wd)',stroke:C.woodL,'stroke-width':.8},cam);
+const gPl=el('g',{},cam),gAir=el('g',{},cam);
+const bReed=el('path',{fill:'none','stroke-width':3.2,'stroke-linecap':'round'},cam);
+const dReed=el('path',{fill:'none','stroke-width':3.2,'stroke-linecap':'round'},cam);
+const gRv=el('g',{},cam);
+const st=(x,y,s,anc,rot)=>{const e=el('text',{x,y,class:'t-s','text-anchor':anc||'start'},cam);e.textContent=s;if(rot)e.setAttribute('transform',`rotate(-90 ${x} ${y})`);return e};
+st(36,36,'COPRIPIASTRA');st(36,86,'PIASTRA DI SOPRA');st(36,192,'PIASTRA DI SOTTO');st(341,134,'PETTINE','middle',1);
+st(8,124,'BOCCA');
+const mouth=el('path',{fill:'none','stroke-width':1.8},cam),mouthH=el('path',{},cam);
+const P=[];for(let i=0;i<34;i++)P.push({o:i/34,j:Math.sin(i*91.7)*3,c:el('circle',{r:2.3},gAir)});
+// etichette con linea guida (fuori dalla camera, in coordinate schermo)
+function mkLabel(){const g=el('g',{},sec);return{g,line:el('line',{'stroke-width':1},g),dot:el('circle',{r:2.6},g),box:el('rect',{height:20,rx:10},g),txt:el('text',{class:'t-pill','text-anchor':'middle'},g)}}
+const labB=mkLabel(),labD=mkLabel();
+function setLabel(L,cx,cy,text,px,py,active,col,alpha){
+  const w=text.length*5.5+22;
+  L.box.setAttribute('x',cx-w/2);L.box.setAttribute('y',cy-10);L.box.setAttribute('width',w);
+  L.box.setAttribute('fill',active?C.pill:'rgba(255,255,255,.85)');L.box.setAttribute('stroke',active?'none':'#d8d1c7');
+  L.txt.setAttribute('x',cx);L.txt.setAttribute('y',cy+4);L.txt.textContent=text;L.txt.style.fill=active?C.cream:C.mute;
+  const ly=py<cy?cy-10:cy+10;L.line.setAttribute('x1',cx);L.line.setAttribute('y1',ly);L.line.setAttribute('x2',px);L.line.setAttribute('y2',py);
+  L.line.setAttribute('stroke',active?C.ink:'#b9b1a6');L.dot.setAttribute('cx',px);L.dot.setAttribute('cy',py);L.dot.setAttribute('fill',active?col:'#b9b1a6');
+  L.g.setAttribute('opacity',alpha);
+}
+let geo=null,geoKey='';
+function build(h){
+  if(geoKey===h)return;geoKey=h;gPl.innerHTML='';gRv.innerHTML='';
+  const Lb=LEN(hz(BLOW[h-1]))*S.px,Ld=LEN(hz(DRAW[h-1]))*S.px,bTip=S.bRiv-Lb,dTip=S.dRiv+Ld;
+  const pr=(x,y,w,hh)=>el('rect',{x,y,width:w,height:hh,fill:C.metal,stroke:C.metalD,'stroke-width':.8},gPl);
+  pr(S.front,S.topY,bTip-3-S.front,S.topH);pr(S.bRiv-2,S.topY,S.back-S.bRiv+2,S.topH);
+  pr(S.front,S.botY,S.dRiv+2-S.front,S.botH);pr(dTip+3,S.botY,S.back-dTip-3,S.botH);
+  el('rect',{x:S.bRiv,y:S.topY+S.topH,width:12,height:3,fill:C.metalD},gRv);el('rect',{x:S.bRiv+4,y:S.topY-2,width:4,height:S.topH+7,rx:1,fill:C.ink},gRv);
+  el('rect',{x:S.dRiv-12,y:S.botY+S.botH,width:12,height:3,fill:C.metalD},gRv);el('rect',{x:S.dRiv-8,y:S.botY-2,width:4,height:S.botH+7,rx:1,fill:C.ink},gRv);
+  const bMid=S.bRiv-Lb/2,dMid=S.dRiv+Ld/2,mid=(S.topY+S.topH+S.botY)/2;
+  geo={h,Lb,Ld,bMid,dMid,mmB:LEN(hz(BLOW[h-1])),mmD:LEN(hz(DRAW[h-1])),
+    bp:[[0,mid],[S.front,mid],[bMid,mid],[bMid,86],[bMid,68],[352,68],[400,74]],
+    dp:[[400,198],[352,198],[dMid,198],[dMid,182],[dMid,mid],[S.front,mid],[0,mid]]};
+  geo.bl=plen(geo.bp);geo.dl=plen(geo.dp);
+}
+function plen(p){let s=0;for(let i=1;i<p.length;i++)s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]);return s}
+function along(p,tot,u){let d=u*tot;for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i],s=Math.hypot(b[0]-a[0],b[1]-a[1]);if(d<=s){const k=s?d/s:0;return[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,a[1]===b[1]]}d-=s}const q=p[p.length-1];return[q[0],q[1],true]}
+function reed(root,dir,len,y,defl){let d=`M${root-dir*12} ${y} L${root} ${y}`;for(let i=1;i<=14;i++){const s=i/14,sh=s*s*(3-s)/2;d+=` L${(root+dir*s*len).toFixed(1)} ${(y+defl*sh).toFixed(1)}`}return d}
+
+// ---------- grafico ----------
+const gr=$('graph');
+const G={x0:52,x1:462,y0:470,y1:100,Lmin:5,Lmax:17,fmin:200,fmax:2200};
+const gx=L=>G.x0+(L-G.Lmin)/(G.Lmax-G.Lmin)*(G.x1-G.x0),gy=f=>G.y0-(f-G.fmin)/(G.fmax-G.fmin)*(G.y0-G.y1);
+const gt=(x,y,s,cls,anc)=>{const e=el('text',{x,y,class:cls,'text-anchor':anc||'start'},gr);e.textContent=s;return e};
+gt(12,30,'LUNGHEZZA DELLA LAMELLA E NOTA','t-pill').style.cssText='fill:#1E1916;font-size:20px';
+gt(12,52,'Armonica in Do: le 20 lamelle stanno tutte sulla stessa curva','t-n').style.fontWeight=500;
+el('line',{x1:G.x0,y1:G.y0,x2:G.x1,y2:G.y0,stroke:C.ink,'stroke-width':1},gr);
+el('line',{x1:G.x0,y1:G.y0,x2:G.x0,y2:G.y1-6,stroke:C.ink,'stroke-width':1},gr);
+[6,8,10,12,14,16].forEach(L=>{el('line',{x1:gx(L),y1:G.y0,x2:gx(L),y2:G.y0+4,stroke:C.ink},gr);gt(gx(L),G.y0+18,L,'t-n','middle')});
+[500,1000,1500,2000].forEach(f=>{el('line',{x1:G.x0-4,y1:gy(f),x2:G.x0,y2:gy(f),stroke:C.ink},gr);gt(G.x0-7,gy(f)+4,f,'t-n','end')});
+gt(G.x1,G.y0+38,'LUNGHEZZA LAMELLA (MM)','t-n','end');gt(G.x0+6,G.y1-8,'NOTA (HZ)','t-n');
+let cd='';for(let L=5.5;L<=17;L+=.1){cd+=(cd?' L':'M')+gx(L).toFixed(1)+' '+gy(261.63*Math.pow(16/L,2)).toFixed(1)}
+const curve=el('path',{d:cd,fill:'none',stroke:C.ink,'stroke-width':1.4},gr);const curveLen=curve.getTotalLength?0:0;
+const gpts=[];for(let i=0;i<10;i++){[[BLOW,C.blow],[DRAW,C.draw]].forEach(([a,c])=>{const f=hz(a[i]);gpts.push(el('circle',{cx:gx(LEN(f)),cy:gy(f),r:4,fill:c,opacity:.55},gr))})}
+const gGuide=el('path',{fill:'none','stroke-width':1,'stroke-dasharray':'3 3',stroke:C.blow},gr);
+const gHalo=el('circle',{r:16,fill:C.blow,opacity:.2},gr);const gDot=el('circle',{r:7,fill:C.blow,stroke:'#fff','stroke-width':2},gr);
+const gLabLong=mkLabelG(),gLabShort=mkLabelG(),gRead=mkLabelG();
+function mkLabelG(){const g=el('g',{},gr);return{g,line:el('line',{'stroke-width':1,stroke:C.ink},g),dot:el('circle',{r:3,fill:C.ink},g),box:el('rect',{height:26,rx:13,fill:C.pill},g),txt:el('text',{class:'t-pill','text-anchor':'middle'},g)}}
+function setLabG(L,cx,cy,text,px,py,alpha,col){const w=text.length*6.6+28;L.box.setAttribute('x',cx-w/2);L.box.setAttribute('y',cy-13);L.box.setAttribute('width',w);
+  L.txt.setAttribute('x',cx);L.txt.setAttribute('y',cy+5);L.txt.textContent=text;L.txt.style.fontSize='13.5px';
+  if(px==null){L.line.setAttribute('opacity',0);L.dot.setAttribute('opacity',0)}else{L.line.setAttribute('opacity',1);L.dot.setAttribute('opacity',1);
+  L.line.setAttribute('x1',cx);L.line.setAttribute('y1',py<cy?cy-13:cy+13);L.line.setAttribute('x2',px);L.line.setAttribute('y2',py);L.dot.setAttribute('cx',px);L.dot.setAttribute('cy',py);if(col)L.dot.setAttribute('fill',col)}
+  L.g.setAttribute('opacity',alpha);L.g.setAttribute('transform',`translate(0 ${(1-alpha)*8})`)}
+gRead.box.setAttribute('fill','#1FBF84');
+
+// ---------- riga di schede (notazione Transcriber) ----------
+const row=$('row');let rowKey=null,rowEls=[];
+function buildRow(sc){if(rowKey===sc)return;rowKey=sc;row.innerHTML='';rowEls=[];if(!scenes[sc])return;
+  const cs=scenes[sc].cards,w=cs.length>4?56:84;
+  cs.forEach(([h,md])=>{const d=document.createElement('div');d.className='nc glass '+(md==='b'?'blow':'draw');d.style.width=w+'px';d.style.borderRadius='18px';
+    d.innerHTML=`<b>${tab(h,md)}</b><i>${nm(midi(h,md))}</i>`;row.appendChild(d);rowEls.push({d,h,md})})}
+
+// ---------- stato a un istante ----------
+function noteAt(t){let cur=null;for(const n of notes){if(t>=n.t-.02)cur=n;else break}return cur}
+function envAt(n,t){if(!n)return 0;const a=seg(t,n.t,.07),r=1-seg(t,n.t+n.d,.16);return Math.min(eo(a),r)}
+const vis=f=>1.6+7*Math.log2(f/261.63)/3;
+function sceneAt(t){return t<S2?1:t<S3?2:t<S4?3:t<S5?4:5}
+
+function seek(t){
+  // intro e apertura a cerchio
+  const lg=back(seg(t,.3,.8)),la=seg(t,.3,.25);
+  $('logo').style.transform=`scale(${.55+.45*lg})`;$('logo').style.opacity=la;
+  const it=eo(seg(t,1.2,.6));$('introTxt').style.opacity=it;$('introTxt').style.transform=`translateY(${(1-it)*14}px)`;
+  const glow=.12+.06*Math.sin(t*2);$('logo').style.boxShadow=`0 0 ${80+20*Math.sin(t*2)}px rgba(239,230,210,${glow})`;
+  const R=eo(seg(t,4.3,.85))*1150;
+  $('light').style.clipPath=`circle(${R}px at 270px 400px)`;$('intro').style.visibility=R>1100?'hidden':'visible';
+  bg(t);
+  // titolo e sottotitoli
+  const ti=eo(seg(t,5.1,.6)),tOut=eo(seg(t,S5,.5));
+  $('title').style.opacity=ti*(1-tOut);$('title').style.transform=`translateY(${(1-ti)*-20}px)`;
+  let si=-1;for(let i=0;i<subs.length;i++)if(t>=subs[i][0])si=i;
+  const sA=$('subA'),sB=$('subB');
+  if(si>=0){const k=eo(seg(t,subs[si][0],.45));sA.textContent=subs[si][1];sA.style.opacity=k*ti;sA.style.transform=`translateY(${(1-k)*8}px)`;
+    sB.textContent=si>0?subs[si-1][1]:'';sB.style.opacity=(1-k)*ti;sB.style.transform=`translateY(${-k*8}px)`;}
+  else{sA.style.opacity=0;sB.style.opacity=0}
+  const sc=sceneAt(t),n=noteAt(t);
+  // schede
+  buildRow(sc);
+  if(scenes[sc]){const s=scenes[sc];rowEls.forEach((r,i)=>{const k=back(seg(t,s.a+.15+i*.08,.45)),out=eo(seg(t,s.b-.35,.3));
+    const on=n&&n.sc===sc&&n.h===r.h&&n.md===r.md?envAt(n,t):0,col=r.md==='b'?'31,191,132':'240,122,26';
+    r.d.style.opacity=clamp(k)*(1-out);r.d.style.transform=`translateX(${(1-clamp(k))*-30}px) scale(${(.8+.2*k)*(1+.08*on)})`;r.d.style.filter=out?`blur(${out*6}px)`:'';
+    r.d.style.boxShadow=`0 24px 60px rgba(60,45,30,.13), 0 0 0 ${2*on}px rgba(${col},${on}), 0 0 ${30*on}px rgba(${col},${.55*on})`;})}
+  // schede A, B: salgono dal basso, escono alla scena 4
+  const aIn=eo(seg(t,5.25,.7)),bIn=eo(seg(t,5.45,.7)),abOut=eo(seg(t,S4,.55));
+  [[ $('cardA'),aIn],[ $('cardB'),bIn]].forEach(([e,k])=>{e.style.opacity=clamp(k*1.4)*(1-abOut);e.style.transform=`translateY(${(1-k)*420+abOut*40}px) scale(${1-abOut*.05})`;e.style.filter=abOut?`blur(${abOut*10}px)`:''});
+  $('cardA').style.visibility=$('cardB').style.visibility=(abOut>=1||t<5.2)?'hidden':'visible';
+  // foro e modo correnti per i diagrammi
+  let h=4,md='b',amp=0,ph=0,f=hz(60);
+  if(sc<=3){const first=notes.find(x=>x.sc===sc);const cur=n&&n.sc===sc?n:first;h=cur.h;md=cur.md;f=hz(cur.m);
+    if(n&&n.sc===sc){amp=envAt(n,t);ph=2*Math.PI*vis(f)*(t-n.t)}}
+  const col=md==='b'?C.blow:C.draw;
+  // vista dall'alto
+  cols.forEach((c,i)=>{const on=i+1===h;c.hl.setAttribute('fill',col);c.hl.setAttribute('opacity',on?.14+.16*amp:0);
+    c.b.setAttribute('opacity',on&&md==='b'?.6+.4*amp:.45);c.d.setAttribute('opacity',on&&md==='d'?.7+.3*amp:.55);c.d.setAttribute('stroke-width',on&&md==='d'?2.2:1.4);
+    c.n.style.fontWeight=on?800:600;c.n.style.fill=on?C.ink:'#4d4540';c.n.style.fontSize=on?'15px':'12px'});
+  const cx=cols[h-1].cx;mark.setAttribute('d',`M${cx-7} 2 L${cx+7} 2 L${cx} 11 Z`);
+  // sezione
+  build(h);
+  const camK=eo(clamp(amp*1.4)),fx=md==='b'?geo.bMid:geo.dMid,fy=md==='b'?S.topY+S.topH:S.botY,s=1+.16*camK;
+  cam.setAttribute('transform',`translate(${fx} ${fy}) scale(${s}) translate(${-fx} ${-fy})`);
+  const scr=(x,y)=>[fx+(x-fx)*s,fy+(y-fy)*s];
+  const A=13*amp,sn=Math.sin(ph);
+  bReed.setAttribute('d',reed(S.bRiv,-1,geo.Lb,S.topY+S.topH+1.6,md==='b'?-A*sn:3*amp));
+  dReed.setAttribute('d',reed(S.dRiv,1,geo.Ld,S.botY+S.botH+1.6,md==='d'?-A*sn-2*amp:3*amp));
+  bReed.setAttribute('stroke',md==='b'?C.blow:C.metalD);dReed.setAttribute('stroke',md==='d'?C.draw:C.metalD);
+  const mid=(S.topY+S.topH+S.botY)/2;
+  if(md==='b'){mouth.setAttribute('d',`M2 ${mid} L24 ${mid}`);mouthH.setAttribute('d',`M24 ${mid-5} L34 ${mid} L24 ${mid+5} Z`)}
+  else{mouth.setAttribute('d',`M34 ${mid} L12 ${mid}`);mouthH.setAttribute('d',`M12 ${mid-5} L2 ${mid} L12 ${mid+5} Z`)}
+  mouth.setAttribute('stroke',col);mouthH.setAttribute('fill',col);
+  const path=md==='b'?geo.bp:geo.dp,tot=md==='b'?geo.bl:geo.dl;
+  P.forEach(p=>{const u=(p.o+t*.28)%1,[x,y,hor]=along(path,tot,u);p.c.setAttribute('cx',x+(hor?0:p.j*.6));p.c.setAttribute('cy',y+(hor?p.j:0));p.c.setAttribute('fill',col);
+    p.c.setAttribute('opacity',(amp*Math.min(1,u*8,(1-u)*8)*.9).toFixed(3))});
+  const [bx,by]=scr(geo.bMid,S.topY+S.topH+2),[dx,dy]=scr(geo.dMid,S.botY+S.botH+2);
+  const lab=clamp(bIn*1.2-.2);
+  setLabel(labB,clamp(bx,96,300),13,`LAMELLA SOFFIATA ${fmt(geo.mmB,1)} MM · ${md==='b'&&amp>.05?'VIBRA':'FERMA'}`,bx,by,md==='b',C.blow,lab);
+  setLabel(labD,clamp(dx,96,300),249,`LAMELLA ASPIRATA ${fmt(geo.mmD,1)} MM · ${md==='d'&&amp>.05?'VIBRA':'FERMA'}`,dx,dy,md==='d',C.draw,lab);
+  // grafico
+  const gIn=eo(seg(t,S4+.35,.7)),gOut=eo(seg(t,S5,.5));const cg=$('cardG');
+  cg.style.visibility=gIn>0&&gOut<1?'visible':'hidden';cg.style.opacity=clamp(gIn*1.3)*(1-gOut);
+  cg.style.transform=`translateY(${(1-gIn)*500}px) scale(${1-gOut*.05})`;cg.style.filter=gOut?`blur(${gOut*10}px)`:'';
+  if(sc>=4){const gn=n&&n.sc===4?n:notes.find(x=>x.sc===4);const ff=hz(gn.m),X=gx(LEN(ff)),Y=gy(ff),ga=n&&n.sc===4?envAt(n,t):0;
+    // il punto scivola tra una nota e l'altra
+    let PX=X,PY=Y;const nx=notes[notes.indexOf(gn)+1];
+    if(nx&&nx.sc===4){const k=eo(seg(t,nx.t-.12,.12));const f2=hz(nx.m);PX=mix(X,gx(LEN(f2)),k);PY=mix(Y,gy(f2),k)}
+    gDot.setAttribute('cx',PX);gDot.setAttribute('cy',PY);gHalo.setAttribute('cx',PX);gHalo.setAttribute('cy',PY);gHalo.setAttribute('r',12+10*ga);gHalo.setAttribute('opacity',.12+.2*ga);
+    gGuide.setAttribute('d',`M${G.x0} ${PY} L${PX} ${PY} L${PX} ${G.y0}`);
+    const l1=eo(seg(t,S4+1.0,.4)),l2=eo(seg(t,S4+1.4,.4));
+    const pL=[gx(LEN(hz(60))),gy(hz(60))],pS=[gx(LEN(hz(96))),gy(hz(96))];
+    setLabG(gLabLong,360,345,'LAMELLA LUNGA · NOTA BASSA',pL[0],pL[1]-6,l1);
+    setLabG(gLabShort,250,135,'LAMELLA CORTA · NOTA ALTA',pS[0]+6,pS[1],l2);
+    setLabG(gRead,350,230,`${gn.h} · ${nm(gn.m)} · ${Math.round(ff)} HZ`,null,null,eo(seg(t,26.0,.3)));
+  }
+  // chiusura
+  const eIn=eo(seg(t,S5+.4,.7));$('endT').style.opacity=eIn;$('endT').style.transform=`translateY(${(1-eIn)*20}px)`;
+}
+
+// ---------- audio ----------
+function schedule(ctx,dest,t0){
+  const master=ctx.createGain();master.gain.value=.16;master.connect(dest);
+  for(const n of notes){const f=hz(n.m),t=t0+n.t,e=t+n.d;
+    const o1=ctx.createOscillator(),o2=ctx.createOscillator(),lp=ctx.createBiquadFilter(),g=ctx.createGain(),g2=ctx.createGain();
+    o1.type='sawtooth';o2.type='square';o1.frequency.value=f;o2.frequency.value=f*1.003;g2.gain.value=.35;
+    lp.type='lowpass';lp.frequency.value=Math.min(f*5,7000);lp.Q.value=2.2;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.035);g.gain.setTargetAtTime(.8,t+.04,.15);
+    g.gain.setValueAtTime(.8,e);g.gain.linearRampToValueAtTime(0,e+.12);
+    o1.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(master);o1.start(t);o2.start(t);o1.stop(e+.15);o2.stop(e+.15)}
+  // fruscio morbido, solo quando l'armonica non suona
+  const len=Math.floor(ctx.sampleRate*.6),nb=ctx.createBuffer(1,len,ctx.sampleRate),dt=nb.getChannelData(0);
+  let s=12345;for(let i=0;i<len;i++){s=(s*16807)%2147483647;dt[i]=(s/2147483647)*2-1}
+  for(const w of whooshes){const t=t0+w,src=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=nb;
+    bp.type='bandpass';bp.Q.value=.8;bp.frequency.setValueAtTime(300,t);bp.frequency.exponentialRampToValueAtTime(1600,t+.45);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.05,t+.18);g.gain.linearRampToValueAtTime(0,t+.55);
+    src.connect(bp);bp.connect(g);g.connect(dest);src.start(t);src.stop(t+.6)}
+}
+
+window.REEL={duration:END,seek,schedule};
+
+// ---------- anteprima ----------
+const rec=/[?&]rec\b/.test(location.search);
+function fit(){const k=rec?1:Math.min(innerWidth/540,innerHeight/960);$('stage').style.transform=`scale(${k})`}
+addEventListener('resize',fit);fit();
+const ready=document.fonts?document.fonts.ready:Promise.resolve();
+ready.then(()=>seek(0));
+if(rec){$('play').remove();return}
+$('play').addEventListener('click',()=>{
+  $('play').style.display='none';
+  const AC=window.AudioContext||window.webkitAudioContext,ctx=AC?new AC():null;
+  const t0=ctx?ctx.currentTime+.1:0;if(ctx)schedule(ctx,ctx.destination,t0);
+  const start=performance.now()+100;
+  (function loop(){const t=ctx?ctx.currentTime-t0:(performance.now()-start)/1000;seek(Math.max(0,t));
+    if(t<END)requestAnimationFrame(loop);else{$('play').style.display='flex';if(ctx)ctx.close()}})();
+});
+})();
+</script>
+</body>
+</html>
