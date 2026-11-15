@@ -70,6 +70,18 @@ svg .num{font-size:10px;fill:var(--ink)}
 .explain .b{color:var(--blow);font-weight:600}.explain .d{color:var(--draw);font-weight:600}
 .foot{margin-top:14px;font-size:.7rem;color:var(--muted);font-style:italic;text-align:center}
 @media (prefers-reduced-motion: reduce){.mode,.pill,.holes button{transition:none}}
+/* modalità reel 9:16 (?reel) per registrare il video: testi importanti in alto, fuori dalla zona coperta da Instagram/TikTok */
+body.reel{padding:0;overflow:hidden}
+body.reel .sheet{max-width:none;width:540px;height:960px;overflow:hidden;border:0;border-radius:0;padding:64px 22px 0;display:flex;flex-direction:column}
+body.reel .controls,body.reel .explain,body.reel .foot,body.reel .lede{display:none}
+body.reel .grid{display:contents}
+body.reel .brand{order:0;font-size:.72rem;margin-bottom:8px}
+body.reel h1{order:1;font-size:1.7rem}
+body.reel .eq{order:2;font-size:1.12rem;margin-top:12px}
+body.reel .eq-sub{order:3;font-size:.88rem;margin:2px 0 6px}
+body.reel #top{order:4}
+body.reel .grid>div:first-child{order:5;margin-top:-14px}
+body.reel .side{order:6;margin-top:-8px}
 </style>
 </head>
 <body>
@@ -281,8 +293,8 @@ function render(){
   if(mode==='blow'){sMouth.setAttribute('d','M2 150 L26 150');sMouthHead.setAttribute('d','M26 145 L36 150 L26 155 Z')}
   else{sMouth.setAttribute('d','M36 150 L12 150');sMouthHead.setAttribute('d','M12 145 L2 150 L12 155 Z')}
   sMouth.setAttribute('stroke',css('--arrow'));sMouthHead.setAttribute('fill',css('--arrow'));
-  sLabB.setAttribute('x',geom.bMid);sLabB.setAttribute('y',S.topY+S.topH+30);sLabB.setAttribute('text-anchor','middle');
-  sLabD.setAttribute('x',geom.dMid);sLabD.setAttribute('y',S.botY-24);sLabD.setAttribute('text-anchor','middle');
+  sLabB.setAttribute('x',Math.min(geom.bMid,236));sLabB.setAttribute('y',S.topY+S.topH+30);sLabB.setAttribute('text-anchor','middle');
+  sLabD.setAttribute('x',Math.max(geom.dMid,124));sLabD.setAttribute('y',S.botY-24);sLabD.setAttribute('text-anchor','middle');
   const mmB=fmt(LEN(hz(BLOW[hole-1])),1)+' mm', mmD=fmt(LEN(hz(DRAW[hole-1])),1)+' mm';
   sLabB.textContent='lamella soffiata, '+mmB+(mode==='blow'?': vibra':': ferma');
   sLabD.textContent='lamella aspirata, '+mmD+(mode==='draw'?': vibra':': ferma');
@@ -398,6 +410,8 @@ function frame(now){
   oWave.setAttribute('d',d);
   requestAnimationFrame(frame);
 }
+if(/[?&]reel\b/.test(location.search)){document.body.classList.add('reel');soundOn=false;
+  window.HL={go(h,md){hole=h;mode=md;render()},on:noteOn,off:()=>noteOff(),notes:{BLOW,DRAW}}}
 render();requestAnimationFrame(frame);
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>location.reload());
 })();
