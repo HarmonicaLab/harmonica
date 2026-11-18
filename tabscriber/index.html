@@ -361,6 +361,11 @@ body.dark .rec-sync-zero{border-color:var(--border)}
 .top-bar{align-items:center}
 .version-badge{margin-right:auto;padding:5px 12px;border-radius:999px;background:var(--glass-in);border:1px solid var(--glass-edge);box-shadow:inset 0 1px 0 var(--glass-hi);font-family:'Montserrat',sans-serif;font-weight:800;font-style:italic;font-size:.72rem;color:var(--text)}
 body.dark .version-badge{border-color:var(--border)}
+.tk-name{flex:1;min-width:0;font-family:'Montserrat',sans-serif;font-weight:800;font-style:italic;font-size:.82rem;color:var(--text);background:transparent;border:1px dashed transparent;border-radius:10px;padding:4px 8px;margin-left:-8px;outline:none}
+.tk-name:hover{border-color:var(--border)}
+.tk-name:focus{border-style:solid;border-color:var(--hl-gold);background:var(--glass-in)}
+.tk-dur{font-size:.75rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.take-head:before{content:'\270E';font-style:normal;color:var(--muted);font-size:.8rem;order:3}
 </style>
 </head>
 <body>
@@ -586,7 +591,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -604,7 +609,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -1299,17 +1304,29 @@ function takeToggle(tk){
   takeStop(true);if(SP.playing)spPause();
   takeBuf(tk,function(){takeStart(tk);});
 }
+function takeName(tk){return (tk.name&&tk.name.trim())?tk.name.trim():t('recTake')+' '+tk.n;}
+function escAttr(x){return String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function takeFile(tk){
+  var base=(tk.name&&tk.name.trim())?tk.name.trim():'';
+  if(base){base=base.replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim();}
+  if(!base){var d=tk.when;base='harmonica-lab-'+d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'_'+pad2(d.getHours())+'-'+pad2(d.getMinutes())+'-'+pad2(d.getSeconds());}
+  return base+'.'+tk.ext;
+}
 function renderTakes(){
   var box=document.getElementById('takes');if(!box)return;
   box.innerHTML='';
   for(var i=takes.length-1;i>=0;i--){
     (function(tk){
-      var d=tk.when,fn='harmonica-lab-'+d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'_'+pad2(d.getHours())+'-'+pad2(d.getMinutes())+'-'+pad2(d.getSeconds())+'.'+tk.ext;
+      var d=tk.when,fn=takeFile(tk);
       var el=document.createElement('div');el.className='take';el.setAttribute('data-n',tk.n);
       var player=tk.fallback?'<audio controls preload="metadata" src="'+tk.url+'" style="width:100%"></audio>'
         :'<div class="tk-pl"><button class="tk-btn" type="button">'+TK_PLAY+'</button><input type="range" class="tk-seek" min="0" max="1000" step="1" value="0"><span class="tk-time"></span></div>';
-      el.innerHTML='<div class="take-head"><span>'+t('recTake')+' '+tk.n+' · '+fmtTime(tk.dur)+'</span></div>'+player
+      el.innerHTML='<div class="take-head"><input class="tk-name" type="text" maxlength="60" value="'+escAttr(takeName(tk))+'" aria-label="'+escAttr(t('recName'))+'"><span class="tk-dur">'+fmtTime(tk.dur)+'</span></div>'+player
         +'<div class="take-btns"><a class="btn primary" href="'+tk.url+'" download="'+fn+'">⬇ '+t('recDownload')+'</a><button class="btn danger tk-del" type="button">'+t('recDelete')+'</button></div>';
+      var nm=el.querySelector('.tk-name'),dl=el.querySelector('a[download]');
+      nm.addEventListener('input',function(){tk.name=nm.value;dl.setAttribute('download',takeFile(tk));});
+      nm.addEventListener('blur',function(){if(!nm.value.trim()){tk.name='';nm.value=takeName(tk);dl.setAttribute('download',takeFile(tk));}});
+      nm.addEventListener('keydown',function(e){if(e.key==='Enter')nm.blur();});
       if(!tk.fallback){
         el.querySelector('.tk-btn').onclick=function(){takeToggle(tk);};
         var sk=el.querySelector('.tk-seek');
