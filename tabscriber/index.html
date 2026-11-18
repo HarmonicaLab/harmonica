@@ -1666,6 +1666,7 @@ function playClick(i){
   if(metroFeel==='swing'){freq=i===0?1100:i===2?900:650;vol=i===0?0.7:i===2?0.5:0.25;}
   else if(metroFeel==='blues'){freq=i===0?1100:i===3?950:650;vol=i===0?0.7:i===3?0.55:0.25;}
   else{freq=i===0?1100:750;vol=i===0?0.7:0.35;}
+  vol=Math.min(1,vol*1.3); // volume metronomo +30%
   osc.frequency.value=freq;
   gain.gain.setValueAtTime(vol,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
