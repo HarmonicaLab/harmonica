@@ -327,6 +327,30 @@ body.dark .sp-wave{border-color:var(--border)}
 .rec-mix{display:none;align-items:flex-start;gap:8px;margin-top:12px;font-size:.72rem;font-weight:800;font-style:italic;color:var(--text);cursor:pointer;line-height:1.4}
 .rec-mix input{accent-color:var(--hl-gold);margin-top:2px}
 .rec-mix small{display:block;font-weight:700;color:var(--muted)}
+.hbend.drawmicro{background:rgba(214,140,40,.10);color:#C47A12;border:1.5px dashed rgba(214,140,40,.65) !important}
+.hbend.drawmicro.active{background:rgba(214,140,40,.30);border-style:solid !important;border-color:#C47A12 !important;box-shadow:0 0 10px rgba(214,140,40,.45);transform:scale(1.06)}
+body.dark .hbend.drawmicro{color:#E8A040}
+.chip.drawmicro .arr,.cn.drawmicro{color:#C47A12 !important}
+body.dark .chip.drawmicro .arr,body.dark .cn.drawmicro{color:#E8A040 !important}
+.mcb{display:flex;flex-direction:column;align-items:center;margin-top:3px;font-size:.5rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.06em;line-height:1;color:#C47A12;pointer-events:none}
+body.dark .mcb{color:#E8A040}
+.mcb svg{width:34px;height:12px;margin-bottom:2px}
+.pitch-big.micro{color:#C47A12}
+.badge.micro{background:rgba(214,140,40,.14);color:#C47A12;border-color:rgba(214,140,40,.4)}
+.hbend.drawmicro{flex-direction:column;gap:1px;line-height:1}
+.hbend.drawmicro .mbn{pointer-events:none}
+.hbend.drawmicro .mbl{pointer-events:none;font-size:.42rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.02em;text-align:center;white-space:normal;line-height:1.05}
+.rec-sync{display:none;margin-top:10px;padding:10px 14px;border-radius:18px;background:var(--glass-in);border:1px solid var(--glass-edge)}
+body.dark .rec-sync{border-color:var(--border)}
+.rec-sync-top{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:800;font-style:italic;color:var(--text)}
+.rec-sync-top input{flex:1;min-width:0;accent-color:var(--hl-gold)}
+.rec-sync-top b{min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.rec-sync small{display:block;margin-top:6px;font-size:.66rem;font-weight:700;font-style:italic;color:var(--muted);line-height:1.4}
+.tk-pl{display:flex;align-items:center;gap:10px}
+.tk-pl .tk-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--glass-edge);background:var(--cta);color:#111;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(185,143,46,.3),inset 0 1px 0 rgba(255,255,255,.5)}
+.tk-pl .tk-btn svg{width:18px;height:18px;fill:currentColor}
+.tk-pl input[type=range]{flex:1;min-width:0;accent-color:var(--hl-gold);cursor:pointer}
+.tk-time{font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -397,6 +421,7 @@ body.dark .sp-wave{border-color:var(--border)}
     <div class="leg"><div class="leg-sq" style="border-color:rgba(139,90,43,.6);background:rgba(139,90,43,.1)"></div><span id="legBend3"></span></div>
     <div class="leg"><div class="leg-sq" style="border-color:rgba(153,51,238,.6);background:rgba(153,51,238,.1)"></div><span id="legOB"></span></div>
     <div class="leg"><div class="leg-sq" style="border-color:rgba(34,153,221,.6);background:rgba(34,153,221,.1)"></div><span id="legOD"></span></div>
+    <div class="leg"><div class="leg-sq" style="border:1.5px dashed rgba(214,140,40,.75);background:rgba(214,140,40,.1)"></div><span id="legMB"></span></div>
   </div>
   <div class="grid-hint" id="gridHint"></div>
   <div class="harp-scroll" id="harpVisual"></div>
@@ -485,6 +510,7 @@ body.dark .sp-wave{border-color:var(--border)}
   </div>
   <div class="rec-hint" id="recHint"></div>
   <label class="rec-mix" id="recMixRow"><input type="checkbox" id="recMix" checked><span><span id="recMixLbl"></span><small id="recMixHint"></small></span></label>
+  <div class="rec-sync" id="recSyncRow"><div class="rec-sync-top"><span id="recSyncLbl"></span><input type="range" id="recSync" min="0" max="400" step="10" value="80"><b id="recSyncVal">80 ms</b></div><small id="recSyncHint"></small></div>
   <div class="takes" id="takes"></div>
 </div>
 <div class="card">
@@ -537,7 +563,7 @@ var TX={
     high:'troppo alta',low:'troppo bassa',blowbend:'blow bend',drawbend:'bend rilevato',
     overblow:'overblow',overdraw:'overdraw',oob:'fuori range',
     legBlow:'↑ soffiata',legDraw:'↓ aspirata',legB1:"↓' 1 semitono",legB2:"↓'' 2 semitoni",legB3:"↓''' 3 semitoni",
-    legOB:'↑ overblow',legOD:'↓ overdraw',
+    legOB:'↑ overblow',legOD:'↓ overdraw',legMB:'↓5↘ micro-bend (5 aspirato leggermente calante)',rowMB:'↓ micro',microLbl:'micro-bend',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Soffia',rowDraw:'↓ Aspira',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
     add:'+ Aggiungi',replace:'Sostituisci',sep:'Battuta',nl:'A capo',
@@ -549,13 +575,13 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recSync:'Sincronizza',recSyncHint:'Compensa il ritardo tra il brano e la tua voce nella registrazione. Se la voce arriva dopo il brano alza il valore, se arriva prima abbassalo. Con cuffie Bluetooth di solito servono 150-300 ms.',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
     overblow:'overblow',overdraw:'overdraw',oob:'out of range',
     legBlow:'↑ blow',legDraw:'↓ draw',legB1:"↓' 1 semitone",legB2:"↓'' 2 semitones",legB3:"↓''' 3 semitones",
-    legOB:'↑ overblow',legOD:'↓ overdraw',
+    legOB:'↑ overblow',legOD:'↓ overdraw',legMB:'↓5↘ micro-bend (5 draw, slightly flat)',rowMB:'↓ micro',microLbl:'micro-bend',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Blow',rowDraw:'↓ Draw',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
     add:'+ Add',replace:'Replace',sep:'Bar',nl:'New line',
@@ -567,7 +593,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recSync:'Sync',recSyncHint:'Compensates the delay between the track and your playing in the recording. If you sound late, raise it; if early, lower it. Bluetooth headphones usually need 150-300 ms.',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -597,6 +623,7 @@ function applyTx(){
   document.getElementById('legBend3').textContent=t('legB3');
   document.getElementById('legOB').textContent=t('legOB');
   document.getElementById('legOD').textContent=t('legOD');
+  document.getElementById('legMB').textContent=t('legMB');
   document.getElementById('micLbl').textContent=listening?t('micOff'):t('micOn');
   document.getElementById('badge').textContent=t('idle');
   document.getElementById('sepLbl').textContent=t('sep');
@@ -617,7 +644,7 @@ function applyTx(){
   document.getElementById('addChordLbl').textContent=t('addChord');
   document.getElementById('sensLbl').textContent=t('sens');
   document.getElementById('lvlLbl').textContent=t('lvl');
-  ['spTitle','spHint','spTempoLbl:spTempo','spPitchLbl:spPitch','spLoopLbl:spLoop','spSnapLbl:spSnap','spChooseLbl:spChoose','recMixLbl:recMix','recMixHint:recMixHint'].forEach(function(k){var a=k.split(':');var el=document.getElementById(a[0]);if(el)el.textContent=t(a[1]||a[0]);});
+  ['spTitle','spHint','spTempoLbl:spTempo','spPitchLbl:spPitch','spLoopLbl:spLoop','spSnapLbl:spSnap','spChooseLbl:spChoose','recMixLbl:recMix','recMixHint:recMixHint','recSyncLbl:recSync','recSyncHint:recSyncHint'].forEach(function(k){var a=k.split(':');var el=document.getElementById(a[0]);if(el)el.textContent=t(a[1]||a[0]);});
   document.getElementById('recTitle').textContent=t('recTitle');document.getElementById('recHint').textContent=t('recHint');
   document.getElementById('recBtnLbl').textContent=(window.recorder&&recorder.state==='recording')?t('recStop'):t('recStart');
   if(window.renderTakes)renderTakes();
@@ -692,6 +719,7 @@ function buildMap(key){
   }
   return m;
 }
+function microNote(m){return{midi:m.midi,hz:m.hz*Math.pow(2,-30/1200),hole:5,dir:'drawmicro',sym:'\u2193',semis:0,blowbend:false,cents:m.cents||0};}
 function findClosest(hz){
   var best=null,bd=9999;
   for(var i=0;i<HMAP.length;i++){var d=Math.abs(HMAP[i].hz-hz);if(d<bd){bd=d;best=HMAP[i];}}
@@ -837,6 +865,7 @@ function buildHarpVisual(){
   }
   vis.appendChild(makeRow(t('rowDraw'),drawCells));
 
+
   // ── Righe DRAW BEND ──
   var bends=[
     {arr:BASE_DB1,cls:'drawbend1',key:'db1',lbl:t('rowDB1'),sym:"↓'",semis:1},
@@ -849,6 +878,7 @@ function buildHarpVisual(){
     if(!hasAny)continue;
     var cells=[];
     for(var i=0;i<10;i++){
+      if(bend.key==='db1'&&i===4){var mm=r+BASE_DRAW[4];var mc=makeCell('hbend drawmicro',mn(mm),'hv_dm_5',microNote({midi:mm,hz:midi2hz(mm),hole:5,cents:0}));mc.innerHTML='<span class="mbn">'+mn(mm)+'</span><span class="mbl">micro bend</span>';cells.push(mc);continue;}
       var midi=bend.arr[i]!=null?r+bend.arr[i]:null;
       var note=midi?{midi:midi,hz:midi2hz(midi),hole:i+1,dir:bend.cls,sym:bend.sym,semis:bend.semis,blowbend:false,cents:0}:null;
       cells.push(makeCell(midi?'hbend '+bend.cls:'hbend empty',midi?mn(midi):'',midi?'hv_'+bend.key+'_'+(i+1):'',note));
@@ -870,7 +900,7 @@ var lastActId=null;
 function highlight(match){
   if(lastActId){var e=document.getElementById(lastActId);if(e)e.classList.remove('active');}
   lastActId=null;if(!match)return;
-  var km={blow:'blow',draw:'draw',blowbend1:'bb1',drawbend1:'db1',drawbend2:'db2',drawbend3:'db3',overblow:'ob',overdraw:'od'};
+  var km={drawmicro:'dm',blow:'blow',draw:'draw',blowbend1:'bb1',drawbend1:'db1',drawbend2:'db2',drawbend3:'db3',overblow:'ob',overdraw:'od'};
   var id='hv_'+(km[match.dir]||match.dir)+'_'+match.hole;
   var e=document.getElementById(id);
   if(e){e.classList.add('active');lastActId=id;}
@@ -1081,7 +1111,7 @@ function spLoadFile(file){
       document.getElementById('spName').textContent=file.name;
       document.getElementById('spBody').style.display='';
       document.getElementById('spDur').textContent=spFmt(SP.dur);
-      document.getElementById('recMixRow').style.display='flex';
+      document.getElementById('recMixRow').style.display='flex';document.getElementById('recSyncRow').style.display='block';recSyncInit();
       spUpdateLoopUI();spUpdatePlayBtn();SP.dirty=true;spResizeCanvas();
     };
     var fail=function(){document.getElementById('spName').textContent=t('spErr');};
@@ -1090,7 +1120,7 @@ function spLoadFile(file){
   rd.onerror=function(){document.getElementById('spName').textContent=t('spErr');};
   rd.readAsArrayBuffer(file);
 }
-function spPlay(){if(!SP.buf)return;spEnsureCtx();if(SP.ctx.state==='suspended')SP.ctx.resume();SP.fade=null;SP.eng.reset(SP.pos*SP.eng.sr);SP.playing=true;spUpdatePlayBtn();}
+function spPlay(){if(!SP.buf)return;if(window.takePlaying)takeStop(true);spEnsureCtx();if(SP.ctx.state==='suspended')SP.ctx.resume();SP.fade=null;SP.eng.reset(SP.pos*SP.eng.sr);SP.playing=true;spUpdatePlayBtn();}
 function spPause(){if(!SP.playing)return;SP.fade={r:SP_FADE,kind:'pause'};SP.playing=false;spUpdatePlayBtn();}
 function spToggle(){if(SP.playing)spPause();else spPlay();}
 function spSeek(t){
@@ -1171,8 +1201,17 @@ function spTick(){
   spUpdatePlayBtn();requestAnimationFrame(spTick);
 })();
 
-var recMixNodes=null;
-function recMixCleanup(){if(!recMixNodes)return;try{recMixNodes.ms.disconnect();}catch(e){}try{SP.gain.disconnect(recMixNodes.dst);}catch(e){}recMixNodes=null;}
+var recMixNodes=null,recSyncMs=80,recSyncReady=false;
+function recSyncInit(){
+  if(recSyncReady)return;recSyncReady=true;
+  var saved=null;try{saved=localStorage.getItem('hlt_recsync');}catch(e){}
+  if(saved!==null&&!isNaN(parseInt(saved,10)))recSyncMs=parseInt(saved,10);
+  else{var c=SP.ctx||{};recSyncMs=Math.round(((c.baseLatency||0.01)+(c.outputLatency||0.04)+0.02)*100)*10;}
+  recSyncMs=Math.max(0,Math.min(400,recSyncMs));
+  var sl=document.getElementById('recSync'),v=document.getElementById('recSyncVal');sl.value=recSyncMs;v.textContent=recSyncMs+' ms';
+  sl.addEventListener('input',function(){recSyncMs=parseInt(sl.value,10)||0;v.textContent=recSyncMs+' ms';try{localStorage.setItem('hlt_recsync',recSyncMs);}catch(e){}if(recMixNodes&&recMixNodes.dl)recMixNodes.dl.delayTime.value=recSyncMs/1000;});
+}
+function recMixCleanup(){if(!recMixNodes)return;try{recMixNodes.ms.disconnect();}catch(e){}try{SP.gain.disconnect(recMixNodes.dl);}catch(e){}try{recMixNodes.dl.disconnect();}catch(e){}recMixNodes=null;}
 function toggleRec(){
   if(recorder&&recorder.state==='recording'){recorder.stop();return;}
   var mime=recMime();
@@ -1180,7 +1219,7 @@ function toggleRec(){
   acquireMic().then(function(s){
     recStream=s;recChunks=[];
     var rs=s;
-    if(SP.buf&&SP.ctx&&document.getElementById('recMix').checked){try{if(SP.ctx.state==='suspended')SP.ctx.resume();var dst=SP.ctx.createMediaStreamDestination();var ms=SP.ctx.createMediaStreamSource(s);ms.connect(dst);SP.gain.connect(dst);recMixNodes={dst:dst,ms:ms};rs=dst.stream;}catch(e){recMixNodes=null;rs=s;}}
+    if(SP.buf&&SP.ctx&&document.getElementById('recMix').checked){try{if(SP.ctx.state==='suspended')SP.ctx.resume();var dst=SP.ctx.createMediaStreamDestination();var ms=SP.ctx.createMediaStreamSource(s);ms.connect(dst);var dl=SP.ctx.createDelay(1.0);dl.delayTime.value=recSyncMs/1000;SP.gain.connect(dl);dl.connect(dst);recMixNodes={dst:dst,ms:ms,dl:dl};rs=dst.stream;}catch(e){recMixNodes=null;rs=s;}}
     try{recorder=mime?new MediaRecorder(rs,{mimeType:mime}):new MediaRecorder(rs);}catch(e){recMixCleanup();releaseMic();recStream=null;alert(t('recErr'));return;}
     recorder.ondataavailable=function(e){if(e.data&&e.data.size)recChunks.push(e.data);};
     recorder.onstop=function(){
@@ -1188,13 +1227,13 @@ function toggleRec(){
       var dur=(Date.now()-recStart)/1000,type=(recorder&&recorder.mimeType)||mime||'audio/webm';
       var blob=new Blob(recChunks,{type:type});
       recMixCleanup();releaseMic();recStream=null;
-      if(blob.size>0){takeN++;takes.push({n:takeN,url:URL.createObjectURL(blob),dur:dur,ext:/mp4/.test(type)?'m4a':/ogg/.test(type)?'ogg':'webm',when:new Date()});}
+      if(blob.size>0){takeN++;takes.push({n:takeN,blob:blob,pos:0,url:URL.createObjectURL(blob),dur:dur,ext:/mp4/.test(type)?'m4a':/ogg/.test(type)?'ogg':'webm',when:new Date()});}
       document.getElementById('recBtn').classList.remove('on');
       document.getElementById('recBtnLbl').textContent=t('recStart');
       document.getElementById('recTime').classList.remove('on');
       renderTakes();
     };
-    recorder.start(1000);recStart=Date.now();
+    recorder.start();recStart=Date.now();
     document.getElementById('recBtn').classList.add('on');
     document.getElementById('recBtnLbl').textContent=t('recStop');
     var rt=document.getElementById('recTime');rt.classList.add('on');rt.textContent='0:00';
@@ -1205,20 +1244,65 @@ function toggleRec(){
   }).catch(function(){alert(t('recErr'));});
 }
 function pad2(n){return (n<10?'0':'')+n;}
+var takeCtx=null,takePlaying=null;
+var TK_PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>',TK_PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+function takeNow(){if(!takePlaying)return 0;return Math.max(0,takeCtx.currentTime-takePlaying.t0);}
+function takeUI(tk){
+  var el=document.querySelector('.take[data-n="'+tk.n+'"]');if(!el)return;
+  var playing=takePlaying&&takePlaying.tk===tk,pos=playing?takeNow():(tk.pos||0),d=tk.dur||0;
+  var b=el.querySelector('.tk-btn');if(b)b.innerHTML=playing?TK_PAUSE:TK_PLAY;
+  var sk=el.querySelector('.tk-seek');if(sk&&!tk.drag)sk.value=d?Math.round(Math.min(1,pos/d)*1000):0;
+  var tm=el.querySelector('.tk-time');if(tm)tm.textContent=fmtTime(pos)+' / '+fmtTime(d);
+}
+function takeLoop(){if(!takePlaying)return;takeUI(takePlaying.tk);requestAnimationFrame(takeLoop);}
+function takeStop(keepPos){
+  if(!takePlaying)return;var tp=takePlaying;tp.tk.pos=keepPos?takeNow():0;takePlaying=null;
+  try{tp.src.onended=null;tp.src.stop();}catch(e){}
+  takeUI(tp.tk);
+}
+function takeStart(tk){
+  if(!takeCtx)takeCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(takeCtx.state==='suspended')takeCtx.resume();
+  var off=tk.pos||0;if(off>=tk.buf.duration-0.05)off=0;
+  var src=takeCtx.createBufferSource();src.buffer=tk.buf;src.connect(takeCtx.destination);
+  src.onended=function(){if(takePlaying&&takePlaying.src===src){takePlaying=null;tk.pos=0;takeUI(tk);}};
+  src.start(0,off);takePlaying={tk:tk,src:src,t0:takeCtx.currentTime-off};takeLoop();takeUI(tk);
+}
+function takeBuf(tk,cb){
+  if(tk.buf){cb();return;}
+  if(tk.decoding)return;tk.decoding=true;
+  if(!takeCtx)takeCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(takeCtx.state==='suspended')takeCtx.resume();
+  var ok=function(buf){tk.decoding=false;tk.buf=buf;tk.dur=buf.duration;cb();};
+  var ko=function(){tk.decoding=false;tk.fallback=true;renderTakes();};
+  var dec=function(ab){try{var pr=takeCtx.decodeAudioData(ab,ok,ko);if(pr&&pr.catch)pr.catch(ko);}catch(e){ko();}};
+  if(tk.blob&&tk.blob.arrayBuffer)tk.blob.arrayBuffer().then(dec,ko);
+  else{var fr=new FileReader();fr.onload=function(){dec(fr.result);};fr.onerror=ko;fr.readAsArrayBuffer(tk.blob);}
+}
+function takeToggle(tk){
+  if(takePlaying&&takePlaying.tk===tk){takeStop(true);return;}
+  takeStop(true);if(SP.playing)spPause();
+  takeBuf(tk,function(){takeStart(tk);});
+}
 function renderTakes(){
   var box=document.getElementById('takes');if(!box)return;
   box.innerHTML='';
   for(var i=takes.length-1;i>=0;i--){
     (function(tk){
       var d=tk.when,fn='harmonica-lab-'+d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'_'+pad2(d.getHours())+'-'+pad2(d.getMinutes())+'-'+pad2(d.getSeconds())+'.'+tk.ext;
-      var el=document.createElement('div');el.className='take';
-      el.innerHTML='<div class="take-head"><span>'+t('recTake')+' '+tk.n+' · '+fmtTime(tk.dur)+'</span></div>'
-        +'<audio controls preload="metadata" src="'+tk.url+'"></audio>'
-        +'<div class="take-btns"><a class="btn primary" href="'+tk.url+'" download="'+fn+'">⬇ '+t('recDownload')+'</a><button class="btn danger" type="button">'+t('recDelete')+'</button></div>';
-      var a=el.querySelector('audio');
-      a.addEventListener('loadedmetadata',function(){if(a.duration===Infinity){a.currentTime=1e101;a.addEventListener('timeupdate',function f(){a.removeEventListener('timeupdate',f);a.currentTime=0;});}});
-      el.querySelector('button').onclick=function(){URL.revokeObjectURL(tk.url);takes=takes.filter(function(x){return x!==tk;});renderTakes();};
-      box.appendChild(el);
+      var el=document.createElement('div');el.className='take';el.setAttribute('data-n',tk.n);
+      var player=tk.fallback?'<audio controls preload="metadata" src="'+tk.url+'" style="width:100%"></audio>'
+        :'<div class="tk-pl"><button class="tk-btn" type="button">'+TK_PLAY+'</button><input type="range" class="tk-seek" min="0" max="1000" step="1" value="0"><span class="tk-time"></span></div>';
+      el.innerHTML='<div class="take-head"><span>'+t('recTake')+' '+tk.n+' · '+fmtTime(tk.dur)+'</span></div>'+player
+        +'<div class="take-btns"><a class="btn primary" href="'+tk.url+'" download="'+fn+'">⬇ '+t('recDownload')+'</a><button class="btn danger tk-del" type="button">'+t('recDelete')+'</button></div>';
+      if(!tk.fallback){
+        el.querySelector('.tk-btn').onclick=function(){takeToggle(tk);};
+        var sk=el.querySelector('.tk-seek');
+        sk.addEventListener('input',function(){tk.drag=true;var d2=tk.dur||0;tk.pos=(sk.value/1000)*d2;var tm=el.querySelector('.tk-time');if(tm)tm.textContent=fmtTime(tk.pos)+' / '+fmtTime(d2);});
+        sk.addEventListener('change',function(){tk.drag=false;var d2=tk.dur||0;tk.pos=(sk.value/1000)*d2;if(takePlaying&&takePlaying.tk===tk){var p0=tk.pos;takeStop(false);tk.pos=p0;takeStart(tk);}});
+      }
+      el.querySelector('.tk-del').onclick=function(){if(takePlaying&&takePlaying.tk===tk)takeStop(false);URL.revokeObjectURL(tk.url);takes=takes.filter(function(x){return x!==tk;});renderTakes();};
+      box.appendChild(el);takeUI(tk);
     })(takes[i]);
   }
 }
@@ -1253,6 +1337,7 @@ function loop(){
   var freq=detectPitch(buf,actx.sampleRate);
   if(freq>80&&freq<2200){
     var match=findClosest(freq);
+    if(match&&match.hole===5&&match.dir==='draw'&&match.cents<=-20)match=microNote(match);
     if(match){
       if(curMatch&&(curMatch.hole!==match.hole||curMatch.dir!==match.dir)){
         if(pend&&pend.hole===match.hole&&pend.dir===match.dir)pendN++;else{pend=match;pendN=1;}
@@ -1261,8 +1346,8 @@ function loop(){
       pend=null;pendN=0;silN=0;
       curMatch=match;lastStableMatch=match;
       var pb=document.getElementById('pitchBig');
-      pb.textContent=mn(match.midi)+' '+match.sym+match.hole;
-      pb.className='pitch-big '+(match.blowbend?'blowbend':match.dir.indexOf('drawbend')===0?'bend':'on');
+      pb.textContent=mn(match.midi)+' '+match.sym+match.hole+(match.dir==='drawmicro'?'\u2198':'');
+      pb.className='pitch-big '+(match.dir==='drawmicro'?'micro':match.blowbend?'blowbend':match.dir.indexOf('drawbend')===0?'bend':'on');
       document.getElementById('freqSub').textContent=freq.toFixed(1)+' Hz';
       var ct=match.cents,pct=Math.min(Math.max((ct+50)/100,0),1);
       if(!autoCapture){
@@ -1275,6 +1360,7 @@ function loop(){
       var tun=Math.abs(ct)<=20;
       var bc=tun?(match.blowbend?'blowbend':match.dir.indexOf('drawbend')===0?'bend':'intune'):(ct>20?'sharp':'flat');
       var bl=tun?(match.blowbend?t('blowbend'):match.dir.indexOf('drawbend')===0?t('drawbend'):t('intune')):(ct>20?t('high'):t('low'));
+      if(match.dir==='drawmicro'){bc='micro';bl=t('microLbl');}
       setBadge(bc,bl);highlight(match);setAddBtn(true,match);tickAuto(match);
     }else{
       curMatch=null;
@@ -1327,8 +1413,9 @@ function chordToText(n){
 
 function trillToText(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLowerCase()+' '+a.sym+a.hole+'~'+b.sym+b.hole+' ('+mn(a.midi)+'~'+mn(b.midi)+')]';}
 function trillToHtml(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLowerCase()+' <span class="cn '+a.dir+'">'+a.sym+a.hole+'</span>~<span class="cn '+b.dir+'">'+b.sym+b.hole+'</span> ('+mn(a.midi)+'~'+mn(b.midi)+')]';}
-function itemTxt(n){var x=n.type==='chord'?chordToText(n):n.type==='trill'?trillToText(n):n.sym+n.hole;return x+(n.long?'→':'');}
-function itemHtml(n){var x=n.type==='chord'?chordToHtml(n):n.type==='trill'?trillToHtml(n):'<span class="cn '+n.dir+'">'+n.sym+n.hole+'</span>';return x+(n.long?'<span class="lgarrow">→</span>':'');}
+function mbS(n){return n&&n.dir==='drawmicro'?'\u2198':'';}
+function itemTxt(n){var x=n.type==='chord'?chordToText(n):n.type==='trill'?trillToText(n):n.sym+n.hole+mbS(n);return x+(n.long?'→':'');}
+function itemHtml(n){var x=n.type==='chord'?chordToHtml(n):n.type==='trill'?trillToHtml(n):'<span class="cn '+n.dir+'">'+n.sym+n.hole+mbS(n)+'</span>';return x+(n.long?'<span class="lgarrow">→</span>':'');}
 var trillDir='blow';
 function closeDual(){document.getElementById('dualPanel').style.display='none';document.getElementById('dualBtn').classList.remove('on');}
 function closeTrill(){document.getElementById('trillPanel').style.display='none';document.getElementById('trillBtn').classList.remove('on');}
@@ -1404,6 +1491,7 @@ function render(){
         chip.className='chip '+n.dir+(selected.has(idx)?' sel':'');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr">'+n.sym+'</span><span class="hn">'+n.hole+'</span><span class="nn">'+mn(n.midi)+'</span></span>';
       }
+      if(n.dir==='drawmicro'&&!n.type)chip.insertAdjacentHTML('beforeend','<span class="mcb"><svg viewBox="0 0 34 12"><path d="M2 3 C12 3 15 3 18 6 C21 9 24 9 32 9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="2.5" cy="3" r="2" fill="currentColor"/><circle cx="31.5" cy="9" r="2" fill="currentColor"/></svg>micro</span>');
       if(n.long&&n.type!=='separator')chip.insertAdjacentHTML('beforeend','<span class="lng">'+t('lng')+'<span class="lbar"></span></span>');
       chip.onclick=(function(ii){return function(){toggleSel(ii);};})(idx);
       rowEl.appendChild(chip);
@@ -1481,8 +1569,8 @@ function exportPDF(){
   if(!tabList.length){alert(t('noExport'));return;}
   var date=new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
   var sessName=activeSess!==null?sessions[activeSess].name:(lang==='it'?'Tablatura':'Tab');
-  var colors={blow:'#0f9d76',draw:'#B07F2A',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',blowbend2:'#e84a4a',chord:'#8855dd',overblow:'#9933ee',overdraw:'#2299dd'};
-  var bgs={blow:'rgba(15,157,118,.12)',draw:'rgba(176,127,42,.14)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)',chord:'rgba(136,85,221,.12)',overblow:'rgba(153,51,238,.12)',overdraw:'rgba(34,153,221,.12)'};
+  var colors={drawmicro:'#C47A12',blow:'#0f9d76',draw:'#B07F2A',drawbend1:'#e88c32',blowbend1:'#e88c32',drawbend2:'#e84a4a',blowbend2:'#e84a4a',drawbend3:'#8b5a2b',blowbend2:'#e84a4a',chord:'#8855dd',overblow:'#9933ee',overdraw:'#2299dd'};
+  var bgs={drawmicro:'rgba(214,140,40,.12)',blow:'rgba(15,157,118,.12)',draw:'rgba(176,127,42,.14)',drawbend1:'rgba(232,140,50,.12)',blowbend1:'rgba(232,140,50,.12)',drawbend2:'rgba(232,74,74,.12)',blowbend2:'rgba(232,74,74,.12)',drawbend3:'rgba(139,90,43,.12)',chord:'rgba(136,85,221,.12)',overblow:'rgba(153,51,238,.12)',overdraw:'rgba(34,153,221,.12)'};
   var noteRows=[],lines=[[]];
   for(var i=0;i<tabList.length;i++){var n=tabList[i];if(n.type==='newline')lines.push([]);else lines[lines.length-1].push(n);}
   for(var l=0;l<lines.length;l++){
@@ -1504,6 +1592,7 @@ function exportPDF(){
         var col=colors[n.dir]||'#888',bg=bgs[n.dir]||'transparent';
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:Montserrat,sans-serif;font-weight:700;border-radius:12px;background:'+bg+';color:'+col+';border:1px solid '+col+'44"><div style="font-size:16px;opacity:.9">'+n.sym+'</div><div style="font-family:Anton,sans-serif;font-style:italic;font-weight:400;font-size:24px;line-height:1.1">'+n.hole+'</div><div style="font-size:9px;color:#888">'+mn(n.midi)+'</div></td>');
       }
+      if(n.dir==='drawmicro'&&!n.type){cells[cells.length-1]=cells[cells.length-1].replace('</div><div style="font-size:9px;color:#888">','\u2198</div><div style="font-size:9px;color:#888">').replace(/<\/td>$/,'<div style="font-size:9px;color:#C47A12;font-weight:700;margin-top:2px">micro-bend</div></td>');}
       if(n.long&&n.type!=='separator'){cells[cells.length-1]=cells[cells.length-1].replace(/<\/td>$/,'<div style="font-size:9px;color:#A02818;font-weight:700;margin-top:2px">&#9473;&#9473;&#9654; '+t('lng').toLowerCase()+'</div></td>');}
     }
     noteRows.push('<table style="margin-bottom:8px"><tbody><tr>'+cells.join('<td style="width:4px"></td>')+'</tr></tbody></table>');
@@ -1515,7 +1604,7 @@ function exportPDF(){
   var tabTxtH=tabList.map(function(n){return n.type==='newline'?'<br>':(n.type==='separator'?'|':itemHtml(n));}).join(' ');
   var logoSrc=(document.querySelector('.hl-logo')||{}).src||'';
   var lg=function(c,bg,l){return '<div class="li"><div class="ls" style="border-color:'+c+';background:'+bg+'"></div>'+l+'</div>';};
-  var legend=lg('#0f9d76','rgba(15,157,118,.12)',t('legBlow'))+lg('#B07F2A','rgba(176,127,42,.14)',t('legDraw'))+lg('#e88c32','rgba(232,140,50,.12)',t('legB1'))+lg('#e84a4a','rgba(232,74,74,.12)',t('legB2'))+lg('#8b5a2b','rgba(139,90,43,.12)',t('legB3'))+lg('#9933ee','rgba(153,51,238,.12)',t('legOB'))+lg('#2299dd','rgba(34,153,221,.12)',t('legOD'));
+  var legend=lg('#0f9d76','rgba(15,157,118,.12)',t('legBlow'))+lg('#B07F2A','rgba(176,127,42,.14)',t('legDraw'))+lg('#e88c32','rgba(232,140,50,.12)',t('legB1'))+lg('#e84a4a','rgba(232,74,74,.12)',t('legB2'))+lg('#8b5a2b','rgba(139,90,43,.12)',t('legB3'))+lg('#9933ee','rgba(153,51,238,.12)',t('legOB'))+lg('#2299dd','rgba(34,153,221,.12)',t('legOD'))+lg('#C47A12','rgba(214,140,40,.12)',t('legMB'));
   var css='@page{size:A4;margin:12mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}body{font-family:Montserrat,sans-serif;font-weight:700;color:#111;background:#F2EEE6;padding:26px 34px;max-width:820px;margin:0 auto}'
    +'.head{display:flex;align-items:center;gap:18px;margin-bottom:20px}.head img{width:92px;height:92px;border-radius:50%;object-fit:cover}'
    +'.brand{font-weight:800;font-style:italic;text-transform:uppercase;font-size:15px;color:#BF8C3A}.brand b{color:#A02818;font-weight:800}'
