@@ -366,6 +366,10 @@ body.dark .version-badge{border-color:var(--border)}
 .tk-name:focus{border-style:solid;border-color:var(--hl-gold);background:var(--glass-in)}
 .tk-dur{font-size:.75rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
 .take-head:before{content:'\270E';font-style:normal;color:var(--muted);font-size:.8rem;order:3}
+.chip.octave .nn{color:var(--red) !important;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.06em}
+.octdot{color:var(--muted) !important;opacity:.7;letter-spacing:-.05em;font-style:normal}
+.oct-info{flex-basis:100%;font-size:.7rem;font-weight:700;font-style:italic;color:var(--muted)}
+#octBtn sup{font-size:.6em}
 </style>
 </head>
 <body>
@@ -452,6 +456,7 @@ body.dark .version-badge{border-color:var(--border)}
     <button class="btn" id="longBtn" onclick="toggleLong()" style="color:var(--red)">→ <span id="longLbl"></span></button>
     <button class="btn" id="trillBtn" onclick="toggleTrillPanel()">〰 <span id="trillLbl"></span></button>
     <button class="btn" id="dualBtn" onclick="toggleDualPanel()">∥ <span id="dualLbl"></span></button>
+    <button class="btn" id="octBtn" onclick="toggleOctPanel()">8<sup>va</sup> <span id="octLbl"></span></button>
     <button class="btn" onclick="addSeparator()"><span style="pointer-events:none;display:block;width:100%;text-align:center">| <span id="sepLbl"></span></span></button>
     <button class="btn" onclick="addNewline()"><span style="pointer-events:none;display:block;width:100%;text-align:center">↵ <span id="nlLbl"></span></span></button>
     <div class="spacer"></div>
@@ -470,6 +475,13 @@ body.dark .version-badge{border-color:var(--border)}
     <label><span id="dualBLbl"></span><select id="dualB"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
     <div class="metro-btns"><button class="metro-btn active" id="dualDirBlow" onclick="setDualDir('blow')"></button><button class="metro-btn" id="dualDirDraw" onclick="setDualDir('draw')"></button></div>
     <button class="btn primary" onclick="addDual()">+ <span id="addDualLbl"></span></button>
+  </div>
+  <div class="trill-panel" id="octPanel">
+    <label><span id="octALbl"></span><select id="octA"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+    <label><span id="octBLbl"></span><select id="octB"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+    <div class="metro-btns"><button class="metro-btn active" id="octDirBlow" onclick="setOctDir('blow')"></button><button class="metro-btn" id="octDirDraw" onclick="setOctDir('draw')"></button></div>
+    <button class="btn primary" onclick="addOct()">+ <span id="addOctLbl"></span></button>
+    <div class="oct-info" id="octInfo"></div>
   </div>
   <span class="sel-bar" id="selBar">
     <span id="selCount">0</span> <span id="selLbl"></span>&nbsp;
@@ -591,7 +603,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',oct:'Ottava',addOct:'Aggiungi ottava',octLow:'Foro basso',octHigh:'Foro alto',octClosed:'Chiusi con la lingua:',octSpan:'Scegli due fori con almeno un foro in mezzo da chiudere con la lingua.',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -609,7 +621,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',oct:'Octave',addOct:'Add octave',octLow:'Low hole',octHigh:'High hole',octClosed:'Blocked by the tongue:',octSpan:'Choose two holes with at least one hole in between to block with the tongue.',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -668,6 +680,8 @@ function applyTx(){
   document.getElementById('longLbl').textContent=t('lng');document.getElementById('trillLbl').textContent=t('trill');
   document.getElementById('addTrillLbl').textContent=t('addTrill');document.getElementById('trillALbl').textContent=t('trillA');document.getElementById('trillBLbl').textContent=t('trillB');
   document.getElementById('trillDirBlow').textContent=t('trillBlow');document.getElementById('trillDirDraw').textContent=t('trillDraw');
+  document.getElementById('octLbl').textContent=t('oct');document.getElementById('addOctLbl').textContent=t('addOct');document.getElementById('octALbl').textContent=t('octLow');document.getElementById('octBLbl').textContent=t('octHigh');
+  document.getElementById('octDirBlow').textContent=t('trillBlow');document.getElementById('octDirDraw').textContent=t('trillDraw');if(window.octInfo)octInfo();
   document.getElementById('dualLbl').textContent=t('dual');document.getElementById('addDualLbl').textContent=t('addDual');document.getElementById('dualALbl').textContent=t('trillA');document.getElementById('dualBLbl').textContent=t('trillB');
   document.getElementById('dualDirBlow').textContent=t('trillBlow');document.getElementById('dualDirDraw').textContent=t('trillDraw');
   document.getElementById('sensLow').textContent=t('sensLow');
@@ -1446,13 +1460,34 @@ function chordToText(n){
 function trillToText(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLowerCase()+' '+a.sym+a.hole+'~'+b.sym+b.hole+' ('+mn(a.midi)+'~'+mn(b.midi)+')]';}
 function trillToHtml(n){var a=n.notes[0],b=n.notes[1];return '['+t('trill').toLowerCase()+' <span class="cn '+a.dir+'">'+a.sym+a.hole+'</span>~<span class="cn '+b.dir+'">'+b.sym+b.hole+'</span> ('+mn(a.midi)+'~'+mn(b.midi)+')]';}
 function mbS(n){return n&&n.dir==='drawmicro'?'\u2198':'';}
-function itemTxt(n){var x=n.type==='chord'?chordToText(n):n.type==='trill'?trillToText(n):n.sym+n.hole+mbS(n);return x+(n.long?'→':'');}
-function itemHtml(n){var x=n.type==='chord'?chordToHtml(n):n.type==='trill'?trillToHtml(n):'<span class="cn '+n.dir+'">'+n.sym+n.hole+mbS(n)+'</span>';return x+(n.long?'<span class="lgarrow">→</span>':'');}
+function octDots(n){var k=n.closed!=null?n.closed:Math.max(0,n.notes[1].hole-n.notes[0].hole-1),d='';for(var i=0;i<k;i++)d+='\u00b7';return d;}
+function octToText(n){var a=n.notes[0],b=n.notes[1];return '['+t('oct').toLowerCase()+' '+a.sym+a.hole+octDots(n)+b.sym+b.hole+' ('+mn(a.midi)+'-'+mn(b.midi)+')]';}
+function octToHtml(n){var a=n.notes[0],b=n.notes[1];return '['+t('oct').toLowerCase()+' <span class="cn '+a.dir+'">'+a.sym+a.hole+'</span><span class="octdot">'+octDots(n)+'</span><span class="cn '+b.dir+'">'+b.sym+b.hole+'</span> ('+mn(a.midi)+'-'+mn(b.midi)+')]';}
+function itemTxt(n){var x=n.type==='octave'?octToText(n):n.type==='chord'?chordToText(n):n.type==='trill'?trillToText(n):n.sym+n.hole+mbS(n);return x+(n.long?'→':'');}
+function itemHtml(n){var x=n.type==='octave'?octToHtml(n):n.type==='chord'?chordToHtml(n):n.type==='trill'?trillToHtml(n):'<span class="cn '+n.dir+'">'+n.sym+n.hole+mbS(n)+'</span>';return x+(n.long?'<span class="lgarrow">→</span>':'');}
 var trillDir='blow';
+var octDir='blow';
+function closeOct(){document.getElementById('octPanel').style.display='none';document.getElementById('octBtn').classList.remove('on');}
+function toggleOctPanel(){closeDual();closeTrill();var p=document.getElementById('octPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('octBtn').classList.toggle('on',open);octInfo();}
+function setOctDir(d){octDir=d;document.getElementById('octDirBlow').classList.toggle('active',d==='blow');document.getElementById('octDirDraw').classList.toggle('active',d==='draw');octInfo();}
+document.addEventListener('change',function(e){if(e.target&&(e.target.id==='octA'||e.target.id==='octB'))octInfo();});
+function octInfo(){
+  var el=document.getElementById('octInfo');if(!el)return;
+  var a=parseInt(document.getElementById('octA').value),b=parseInt(document.getElementById('octB').value);if(a>b){var x=a;a=b;b=x;}
+  var na=findHM(a,octDir),nb=findHM(b,octDir),cl=[];for(var h=a+1;h<b;h++)cl.push(h);
+  el.textContent=(na&&nb?mn(na.midi)+' – '+mn(nb.midi)+' · ':'')+t('octClosed')+' '+(cl.length?cl.join(', '):'—');
+}
+function addOct(){
+  var a=parseInt(document.getElementById('octA').value),b=parseInt(document.getElementById('octB').value);
+  if(a>b){var x=a;a=b;b=x;}
+  if(b-a<2){alert(t('octSpan'));return;}
+  var na=findHM(a,octDir),nb=findHM(b,octDir);if(!na||!nb)return;
+  snap();tabList.push({type:'octave',sym:na.sym,dir:octDir,closed:b-a-1,notes:[copyNote(na),copyNote(nb)]});render();
+}
 function closeDual(){document.getElementById('dualPanel').style.display='none';document.getElementById('dualBtn').classList.remove('on');}
 function closeTrill(){document.getElementById('trillPanel').style.display='none';document.getElementById('trillBtn').classList.remove('on');}
 var dualDir='blow';
-function toggleDualPanel(){closeTrill();var p=document.getElementById('dualPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('dualBtn').classList.toggle('on',open);}
+function toggleDualPanel(){closeTrill();closeOct();var p=document.getElementById('dualPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('dualBtn').classList.toggle('on',open);}
 function setDualDir(d){dualDir=d;document.getElementById('dualDirBlow').classList.toggle('active',d==='blow');document.getElementById('dualDirDraw').classList.toggle('active',d==='draw');}
 function addDual(){
   var a=parseInt(document.getElementById('dualA').value),b=parseInt(document.getElementById('dualB').value);
@@ -1460,7 +1495,7 @@ function addDual(){
   var na=findHM(a,dualDir),nb=findHM(b,dualDir);if(!na||!nb)return;
   snap();tabList.push({type:'chord',two:true,sym:na.sym,dir:dualDir,notes:[copyNote(na),copyNote(nb)]});render();
 }
-function toggleTrillPanel(){closeDual();var p=document.getElementById('trillPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('trillBtn').classList.toggle('on',open);}
+function toggleTrillPanel(){closeDual();closeOct();var p=document.getElementById('trillPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('trillBtn').classList.toggle('on',open);}
 function setTrillDir(d){trillDir=d;document.getElementById('trillDirBlow').classList.toggle('active',d==='blow');document.getElementById('trillDirDraw').classList.toggle('active',d==='draw');}
 function findHM(hole,dir){for(var i=0;i<HMAP.length;i++){if(HMAP[i].hole===hole&&HMAP[i].dir===dir)return HMAP[i];}return null;}
 function addTrill(){
@@ -1515,6 +1550,10 @@ function render(){
         var notes=n.notes||[];
         var holeTxt=notes.map(function(x){return '<span class="cn '+x.dir+'">'+x.sym+x.hole+'</span>';}).join('<span class="sepc">-</span>');
         chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn">'+holeTxt+'</span><span class="nn">'+(n.two?t('dualChip'):'accordo')+'</span></span>';
+      }else if(n.type==='octave'){
+        chip.className='chip octave '+n.dir+(selected.has(idx)?' sel':'');
+        var oa=n.notes[0],ob=n.notes[1];
+        chip.innerHTML='<span style="pointer-events:none;display:contents"><span class="arr cn '+n.dir+'">'+n.sym+'</span><span class="hn"><span class="cn '+oa.dir+'">'+oa.hole+'</span><span class="octdot">'+octDots(n)+'</span><span class="cn '+ob.dir+'">'+ob.hole+'</span></span><span class="nn">'+t('oct')+'</span></span>';
       }else if(n.type==='trill'){
         chip.className='chip trill '+n.dir+(selected.has(idx)?' sel':'');
         var ta=n.notes[0],tb=n.notes[1];
@@ -1617,6 +1656,9 @@ function exportPDF(){
         var holeTxt=notes.map(function(x){return '<span style="color:'+(colors[x.dir]||'#888')+'">'+x.sym+x.hole+'</span>';}).join('-');
         var nameTxt=notes.map(function(x){return mn(x.midi);}).join('-');
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:Montserrat,sans-serif;font-weight:700;border-radius:12px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700">'+holeTxt+'</div><div style="font-size:10px;color:#666">'+(n.two?t('dualChip'):'accordo')+'</div><div style="font-size:9px;color:#888">'+nameTxt+'</div></td>');
+      }else if(n.type==='octave'){
+        var qa=n.notes[0],qb=n.notes[1];
+        cells.push('<td style="padding:6px 8px;text-align:center;font-family:Montserrat,sans-serif;font-weight:700;border-radius:12px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700"><span style="color:'+(colors[qa.dir]||'#888')+'">'+qa.sym+qa.hole+'</span><span style="color:#aaa">'+octDots(n)+'</span><span style="color:'+(colors[qb.dir]||'#888')+'">'+qb.sym+qb.hole+'</span></div><div style="font-size:10px;color:#A02818;font-weight:700">'+t('oct').toLowerCase()+'</div><div style="font-size:9px;color:#888">'+mn(qa.midi)+'-'+mn(qb.midi)+'</div></td>');
       }else if(n.type==='trill'){
         var pa=n.notes[0],pb=n.notes[1];
         cells.push('<td style="padding:6px 8px;text-align:center;font-family:Montserrat,sans-serif;font-weight:700;border-radius:12px;background:rgba(0,0,0,.04);color:#333;border:1px solid #bbb"><div style="font-size:13px;font-weight:700"><span style="color:'+(colors[pa.dir]||'#888')+'">'+pa.sym+pa.hole+'</span>~<span style="color:'+(colors[pb.dir]||'#888')+'">'+pb.sym+pb.hole+'</span></div><div style="font-size:10px;color:#A02818;font-weight:700">'+t('trill').toLowerCase()+'</div><div style="font-size:9px;color:#888">'+mn(pa.midi)+'~'+mn(pb.midi)+'</div></td>');
