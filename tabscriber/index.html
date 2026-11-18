@@ -370,6 +370,11 @@ body.dark .version-badge{border-color:var(--border)}
 .octdot{color:var(--muted) !important;opacity:.7;letter-spacing:-.05em;font-style:normal}
 .oct-info{flex-basis:100%;font-size:.7rem;font-weight:700;font-style:italic;color:var(--muted)}
 #octBtn sup{font-size:.6em}
+.sel-bar.on{flex-wrap:wrap}
+.sel-hint{flex-basis:100%;font-size:.68rem;font-weight:700;font-style:italic;color:var(--muted);line-height:1.4;font-family:'Montserrat',sans-serif}
+.sel-hint:empty{display:none}
+.sel-hint.flash{animation:hintflash 1.2s ease}
+@keyframes hintflash{0%,60%{color:var(--red)}100%{color:var(--muted)}}
 </style>
 </head>
 <body>
@@ -487,6 +492,7 @@ body.dark .version-badge{border-color:var(--border)}
     <span id="selCount">0</span> <span id="selLbl"></span>&nbsp;
     <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" id="delBtn"></button>
     <button class="btn" style="padding:2px 9px;font-size:.7rem" onclick="clearSel()">✕</button>
+    <span class="sel-hint" id="selHint"></span>
   </span>
   <div class="tab-notes" id="tabNotes"></div>
   <div class="txt-out" id="txtOut">—</div>
@@ -594,7 +600,7 @@ var TX={
     legOB:'↑ overblow',legOD:'↓ overdraw',legMB:'↓5↘ micro-bend (5 aspirato leggermente calante)',rowMB:'↓ micro',microLbl:'micro-bend',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Soffia',rowDraw:'↓ Aspira',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
-    add:'+ Aggiungi',replace:'Sostituisci',sep:'Battuta',nl:'A capo',
+    add:'+ Aggiungi',replace:'Sostituisci',replaceHint:'Per sostituirla tocca la nota giusta nella griglia, oppure suonala e premi Sostituisci.',sep:'Battuta',nl:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clearAll:'Cancella tutto',selected:'selezionate',del:'Elimina',
     copy:'Copia testo',pdf:'Esporta PDF',save:'Salva sessione',
     metro:'Metronomo',metroTime:'Tempo:',
@@ -612,7 +618,7 @@ var TX={
     legOB:'↑ overblow',legOD:'↓ overdraw',legMB:'↓5↘ micro-bend (5 draw, slightly flat)',rowMB:'↓ micro',microLbl:'micro-bend',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Blow',rowDraw:'↓ Draw',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
-    add:'+ Add',replace:'Replace',sep:'Bar',nl:'New line',
+    add:'+ Add',replace:'Replace',replaceHint:'To replace it, tap the right note in the grid, or play it and press Replace.',sep:'Bar',nl:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clearAll:'Clear all',selected:'selected',del:'Delete',
     copy:'Copy text',pdf:'Export PDF',save:'Save session',
     metro:'Metronome',metroTime:'Time:',
@@ -833,6 +839,11 @@ function buildHarpVisual(){
           for(var j=0;j<chordSel.length;j++){if(chordSel[j].hole===n.hole&&chordSel[j].dir===n.dir){found=j;break;}}
           if(found>=0){chordSel.splice(found,1);elem.classList.remove('chord-sel');}
           else{chordSel.push(copyNote(n));elem.classList.add('chord-sel');}
+        }else if(selected.size===1){
+          var ri=Array.from(selected)[0],old=tabList[ri];
+          if(old){var nw=copyNote(n);if(old.long)nw.long=true;snap();tabList[ri]=nw;selected.clear();render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);}
+          elem.style.opacity='0.5';
+          setTimeout(function(){elem.style.opacity='1';},200);
         }else{
           snap();tabList.push(copyNote(n));render();
           elem.style.opacity='0.5';
@@ -1440,8 +1451,9 @@ function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(co
 function upUD(){document.getElementById('undoBtn').disabled=histIdx<=0;document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;}
 function addNote(){if(!curMatch&&!lastStableMatch)return;snap();tabList.push(copyNote(curMatch||lastStableMatch));render();}
 function replaceNote(){
-  if(!curMatch&&!lastStableMatch)return;if(selected.size!==1)return;
-  var idx=Array.from(selected)[0];snap();tabList[idx]=copyNote(curMatch||lastStableMatch);selected.clear();render();
+  if(selected.size!==1)return;
+  if(!curMatch&&!lastStableMatch){var h=document.getElementById('selHint');if(h){h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash');}return;}
+  var idx=Array.from(selected)[0],old=tabList[idx],nw=copyNote(curMatch||lastStableMatch);if(old&&old.long)nw.long=true;snap();tabList[idx]=nw;selected.clear();render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
 }
 function addSeparator(){snap();tabList.push({type:'separator'});render();}
 function addNewline(){snap();tabList.push({type:'newline'});render();}
@@ -1571,6 +1583,7 @@ function render(){
   }
   txt.innerHTML=strH.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
+  var shn=document.getElementById('selHint');if(shn)shn.textContent=selected.size===1?t('replaceHint'):'';
   setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
 }
 
