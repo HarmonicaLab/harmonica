@@ -1682,7 +1682,7 @@ function exportPDF(){
       if(n.dir==='drawmicro'&&!n.type){cells[cells.length-1]=cells[cells.length-1].replace('</div><div style="font-size:9px;color:#888">','\u2198</div><div style="font-size:9px;color:#888">').replace(/<\/td>$/,'<div style="font-size:9px;color:#C47A12;font-weight:700;margin-top:2px">micro-bend</div></td>');}
       if(n.long&&n.type!=='separator'){cells[cells.length-1]=cells[cells.length-1].replace(/<\/td>$/,'<div style="font-size:9px;color:#A02818;font-weight:700;margin-top:2px">&#9473;&#9473;&#9654; '+t('lng').toLowerCase()+'</div></td>');}
     }
-    noteRows.push('<table style="margin-bottom:8px"><tbody><tr>'+cells.join('<td style="width:4px"></td>')+'</tr></tbody></table>');
+    noteRows.push('<div class="prow">'+cells.map(function(c){return c.replace(/^<td/,'<div class="pc"').replace(/<\/td>$/,'</div>');}).join('')+'</div>');
   }
   var tabTxt=tabList.filter(function(n){return n.type!=='newline';}).map(function(n){
     if(n.type==='separator')return '|';
@@ -1699,6 +1699,7 @@ function exportPDF(){
    +'.sub{font-size:11px;color:#6f6a60;text-transform:uppercase;letter-spacing:.08em}'
    +'.sec{background:#fff;border:1px solid rgba(17,17,17,.12);border-radius:18px;padding:16px 20px;margin-bottom:14px;break-inside:avoid}'
    +'.sec h2{font-size:10px;font-weight:800;font-style:italic;color:#6f6a60;text-transform:uppercase;letter-spacing:.14em;margin:0 0 12px}'
+   +'.prow{display:flex;flex-wrap:wrap;gap:6px 5px;margin-bottom:12px;align-items:stretch}.pc{flex:0 0 auto;min-width:40px;max-width:130px;break-inside:avoid;page-break-inside:avoid;display:flex;flex-direction:column;justify-content:center}'
    +'table{border-collapse:separate;border-spacing:0}.txt{font-family:Montserrat,sans-serif;font-size:14px;background:#F2EEE6;border-radius:12px;padding:12px 16px;word-break:break-word;letter-spacing:2px;line-height:1.8;border:1px solid rgba(17,17,17,.12)}'
    +'.cn.blow{color:#0f9d76}.cn.draw{color:#B07F2A}.cn.drawbend1,.cn.blowbend1{color:#e88c32}.cn.drawbend2,.cn.blowbend2{color:#e84a4a}.cn.drawbend3{color:#8b5a2b}.cn.overblow{color:#9933ee}.cn.overdraw{color:#2299dd}.lgarrow{color:#A02818}'
    +'.leg{display:flex;gap:14px;flex-wrap:wrap}.li{display:flex;align-items:center;gap:6px;font-size:11px;color:#444}.ls{width:12px;height:12px;border-radius:4px;border:1.5px solid}'
