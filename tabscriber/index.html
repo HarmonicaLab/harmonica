@@ -1787,18 +1787,31 @@ function exportPDF(){
 var metroBpm=80,metroBeats=4,metroCurrent=0,metroRunning=false,metroTimer=null,metroACtx=null,metroFeel='straight';
 function getMetroCtx(){if(!metroACtx)metroACtx=new(window.AudioContext||window.webkitAudioContext)();return metroACtx;}
 function playClick(i){
-  var ctx=getMetroCtx(),osc=ctx.createOscillator(),gain=ctx.createGain();
-  osc.connect(gain);gain.connect(ctx.destination);osc.type='sine';
+  var ctx=getMetroCtx();if(ctx.state==='suspended'&&ctx.resume)ctx.resume();
   var freq,vol;
   if(metroFeel==='swing'){freq=i===0?1100:i===2?900:650;vol=i===0?0.7:i===2?0.5:0.25;}
   else if(metroFeel==='blues'){freq=i===0?1100:i===3?950:650;vol=i===0?0.7:i===3?0.55:0.25;}
   else{freq=i===0?1100:750;vol=i===0?0.7:0.35;}
-  vol=Math.min(1,vol*1.3); // volume metronomo +30%
-  osc.frequency.value=freq;
-  gain.gain.setValueAtTime(vol,ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
-  osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.08);
+  loudClick(ctx,freq,Math.min(1,vol*1.3));
 }
+// Metronomo più forte: onda più ricca, attacco tenuto e compressore con guadagno (il volume percepito sale molto senza distorcere)
+function metroOut(ctx){
+  if(ctx._hlOut)return ctx._hlOut;
+  var comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.knee.value=6;comp.ratio.value=8;comp.attack.value=0.001;comp.release.value=0.08;
+  var mk=ctx.createGain();mk.gain.value=2.4;
+  var lim=ctx.createDynamicsCompressor();lim.threshold.value=-1;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=0.0005;lim.release.value=0.05;
+  comp.connect(mk);mk.connect(lim);lim.connect(ctx.destination);ctx._hlOut=comp;return comp;
+}
+function loudClick(ctx,freq,vol){
+  var t=ctx.currentTime,out=metroOut(ctx),g=ctx.createGain(),lp=ctx.createBiquadFilter();
+  lp.type='lowpass';lp.frequency.value=5200;lp.connect(g);g.connect(out);
+  var o1=ctx.createOscillator();o1.type='square';o1.frequency.value=freq;
+  var o2=ctx.createOscillator();o2.type='triangle';o2.frequency.value=freq*2;
+  var g2=ctx.createGain();g2.gain.value=0.5;o1.connect(lp);o2.connect(g2);g2.connect(lp);
+  g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+0.002);g.gain.setValueAtTime(vol,t+0.03);g.gain.exponentialRampToValueAtTime(0.0005,t+0.11);
+  o1.start(t);o2.start(t);o1.stop(t+0.12);o2.stop(t+0.12);
+}
+
 function isAccent(i){if(metroFeel==='swing')return i===0||i===2;if(metroFeel==='blues')return i===0||i===3;return i===0;}
 function buildMetroBeats(){
   var wrap=document.getElementById('metroBeats');wrap.innerHTML='';
