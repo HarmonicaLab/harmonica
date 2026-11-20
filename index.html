@@ -1368,11 +1368,27 @@ function buildMetroBeats() {
   for(let i=0;i<metroBeats;i++){const d=document.createElement('div');d.className='metro-beat';d.textContent=i+1;wrap.appendChild(d);}
 }
 function playClick(isAccent) {
-  const ctx=getMetroCtx(),osc=ctx.createOscillator(),gain=ctx.createGain();
-  osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=isAccent?1050:750;osc.type='sine';
-  gain.gain.setValueAtTime(isAccent?0.6:0.35,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
-  osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.08);
+  const ctx=getMetroCtx();if(ctx.state==='suspended'&&ctx.resume)ctx.resume();
+  loudClick(ctx,isAccent?1050:750,isAccent?0.9:0.55);
 }
+// Metronomo più forte: onda più ricca, attacco tenuto e compressore con guadagno (il volume percepito sale molto senza distorcere)
+function metroOut(ctx){
+  if(ctx._hlOut)return ctx._hlOut;
+  var comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.knee.value=6;comp.ratio.value=8;comp.attack.value=0.001;comp.release.value=0.08;
+  var mk=ctx.createGain();mk.gain.value=2.4;
+  var lim=ctx.createDynamicsCompressor();lim.threshold.value=-1;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=0.0005;lim.release.value=0.05;
+  comp.connect(mk);mk.connect(lim);lim.connect(ctx.destination);ctx._hlOut=comp;return comp;
+}
+function loudClick(ctx,freq,vol){
+  var t=ctx.currentTime,out=metroOut(ctx),g=ctx.createGain(),lp=ctx.createBiquadFilter();
+  lp.type='lowpass';lp.frequency.value=5200;lp.connect(g);g.connect(out);
+  var o1=ctx.createOscillator();o1.type='square';o1.frequency.value=freq;
+  var o2=ctx.createOscillator();o2.type='triangle';o2.frequency.value=freq*2;
+  var g2=ctx.createGain();g2.gain.value=0.5;o1.connect(lp);o2.connect(g2);g2.connect(lp);
+  g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+0.002);g.gain.setValueAtTime(vol,t+0.03);g.gain.exponentialRampToValueAtTime(0.0005,t+0.11);
+  o1.start(t);o2.start(t);o1.stop(t+0.12);o2.stop(t+0.12);
+}
+
 function metroTick() {
   const beats=document.querySelectorAll('.metro-beat');
   beats.forEach(b=>b.classList.remove('active-accent','active-normal'));
