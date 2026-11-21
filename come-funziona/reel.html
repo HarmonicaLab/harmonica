@@ -46,6 +46,18 @@ svg text{font-family:'Barlow Condensed',sans-serif}
 /* anteprima */
 #play{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);cursor:pointer;z-index:9;color:#fff;font:800 28px 'Barlow Condensed',sans-serif;letter-spacing:.1em}
 #play span{padding:16px 30px;border-radius:999px;background:var(--pill);border:1.5px solid rgba(255,255,255,.3)}
+
+/* versione 16:9 (?wide): 960x540, testi a sinistra, animazione a destra */
+body.wide #stage{width:960px;height:540px}
+body.wide #logo{left:365px;top:100px;width:230px;height:230px}
+body.wide #introTxt{top:358px;font-size:34px}
+body.wide #title{left:40px;right:auto;width:420px;top:94px;text-align:left;font-size:56px}
+body.wide .sub{left:40px;right:auto;width:400px;top:158px;text-align:left}
+body.wide #row{left:40px;right:auto;width:420px;top:216px;justify-content:flex-start}
+body.wide #endT{top:180px}
+body.wide #cardA{left:40px;top:308px;width:420px;height:142px}
+body.wide #cardB{left:480px;top:126px;width:450px;height:300px}
+body.wide #cardG{left:478px;top:28px;width:452px;height:484px}
 </style>
 </head>
 <body>
@@ -73,6 +85,8 @@ svg text{font-family:'Barlow Condensed',sans-serif}
 <script>
 (function(){
 const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const WIDE=/[?&]wide\b/.test(location.search);if(WIDE)document.body.classList.add('wide');
+const SW=WIDE?960:540,SH=WIDE?540:960,CX=WIDE?480:270,CY=WIDE?215:400;
 const el=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
 const C={ink:'#1E1916',mute:'#7A706A',blow:'#1FBF84',draw:'#F07A1A',pill:'rgba(22,17,14,.9)',cream:'#EFE6D2',metal:'#d6d1c9',metalD:'#a39b91',wood:'#e3d3b6',woodL:'#c4a97c'};
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
@@ -213,7 +227,7 @@ gRead.box.setAttribute('fill','#1FBF84');
 // ---------- riga di schede (notazione Transcriber) ----------
 const row=$('row');let rowKey=null,rowEls=[];
 function buildRow(sc){if(rowKey===sc)return;rowKey=sc;row.innerHTML='';rowEls=[];if(!scenes[sc])return;
-  const cs=scenes[sc].cards,w=cs.length>4?56:84;
+  const cs=scenes[sc].cards,w=cs.length>4?(WIDE?44:56):84;
   cs.forEach(([h,md])=>{const d=document.createElement('div');d.className='nc glass '+(md==='b'?'blow':'draw');d.style.width=w+'px';d.style.borderRadius='18px';
     d.innerHTML=`<b>${tab(h,md)}</b><i>${nm(midi(h,md))}</i>`;row.appendChild(d);rowEls.push({d,h,md})})}
 
@@ -230,7 +244,7 @@ function seek(t){
   const it=eo(seg(t,1.2,.6));$('introTxt').style.opacity=it;$('introTxt').style.transform=`translateY(${(1-it)*14}px)`;
   const glow=.12+.06*Math.sin(t*2);$('logo').style.boxShadow=`0 0 ${80+20*Math.sin(t*2)}px rgba(239,230,210,${glow})`;
   const R=eo(seg(t,4.3,.85))*1150;
-  $('light').style.clipPath=`circle(${R}px at 270px 400px)`;$('intro').style.visibility=R>1100?'hidden':'visible';
+  $('light').style.clipPath=`circle(${R}px at ${CX}px ${CY}px)`;$('intro').style.visibility=R>1100?'hidden':'visible';
   bg(t);
   // titolo e sottotitoli
   const ti=eo(seg(t,5.1,.6)),tOut=eo(seg(t,S5,.5));
@@ -324,7 +338,7 @@ window.REEL={duration:END,seek,schedule};
 
 // ---------- anteprima ----------
 const rec=/[?&]rec\b/.test(location.search);
-function fit(){const k=rec?1:Math.min(innerWidth/540,innerHeight/960);$('stage').style.transform=`scale(${k})`}
+function fit(){const k=rec?1:Math.min(innerWidth/SW,innerHeight/SH);$('stage').style.transform=`scale(${k})`}
 addEventListener('resize',fit);fit();
 const ready=document.fonts?document.fonts.ready:Promise.resolve();
 ready.then(()=>seek(0));

@@ -45,6 +45,19 @@ svg text{font-family:'Barlow Condensed',sans-serif}
 .t-pill{font-size:11px;font-weight:800;letter-spacing:.05em;fill:var(--cream)}
 #play{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);cursor:pointer;z-index:9;color:#fff;font:800 28px 'Barlow Condensed',sans-serif;letter-spacing:.1em}
 #play span{padding:16px 30px;border-radius:999px;background:var(--pill);border:1.5px solid rgba(255,255,255,.3)}
+
+/* versione 16:9 (?wide): 960x540, testi a sinistra, animazione a destra */
+body.wide #stage{width:960px;height:540px}
+body.wide #logo{left:365px;top:100px;width:230px;height:230px}
+body.wide #introTxt{top:358px;font-size:34px}
+body.wide #title{left:40px;right:auto;width:420px;top:94px;text-align:left;font-size:56px}
+body.wide .sub{left:40px;right:auto;width:400px;top:158px;text-align:left}
+body.wide #row{left:40px;right:auto;width:420px;top:216px;justify-content:flex-start}
+body.wide #endT{top:180px}
+body.wide #cardL{left:40px;top:308px;width:204px;height:148px}
+body.wide #cardM{left:256px;top:308px;width:204px;height:148px}
+body.wide #cardB{left:480px;top:126px;width:450px;height:300px}
+body.wide #cardMap{left:470px;top:28px;width:462px;height:450px}
 </style>
 </head>
 <body>
@@ -73,6 +86,8 @@ svg text{font-family:'Barlow Condensed',sans-serif}
 <script>
 (function(){
 const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const WIDE=/[?&]wide\b/.test(location.search);if(WIDE)document.body.classList.add('wide');
+const SW=WIDE?960:540,SH=WIDE?540:960,CX=WIDE?480:270,CY=WIDE?215:400;
 const el=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
 const C={ink:'#1E1916',mute:'#7A706A',blow:'#1FBF84',draw:'#F07A1A',pill:'rgba(22,17,14,.9)',cream:'#EFE6D2',metal:'#d6d1c9',metalD:'#a39b91',wood:'#e3d3b6',woodL:'#c4a97c'};
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),seg=(t,a,d)=>clamp((t-a)/d);
@@ -224,7 +239,7 @@ function seek(t){
   const lg=back(seg(t,.3,.8));$('logo').style.transform=`scale(${.55+.45*lg})`;$('logo').style.opacity=seg(t,.3,.25);
   $('logo').style.boxShadow=`0 0 ${80+20*Math.sin(t*2)}px rgba(239,230,210,${.12+.06*Math.sin(t*2)})`;
   const it=eo(seg(t,1.2,.6));$('introTxt').style.opacity=it;$('introTxt').style.transform=`translateY(${(1-it)*14}px)`;
-  const R=eo(seg(t,4.3,.85))*1150;$('light').style.clipPath=`circle(${R}px at 270px 400px)`;$('intro').style.visibility=R>1100?'hidden':'visible';
+  const R=eo(seg(t,4.3,.85))*1150;$('light').style.clipPath=`circle(${R}px at ${CX}px ${CY}px)`;$('intro').style.visibility=R>1100?'hidden':'visible';
   bg(t);
   const ti=eo(seg(t,5.1,.6)),tOut=eo(seg(t,S4,.5));
   $('title').style.opacity=ti*(1-tOut);$('title').style.transform=`translateY(${(1-ti)*-20}px)`;
@@ -331,7 +346,7 @@ function schedule(ctx,dest,t0){
 window.REEL={duration:END,seek,schedule};
 
 const rec=/[?&]rec\b/.test(location.search);
-function fit(){$('stage').style.transform=`scale(${rec?1:Math.min(innerWidth/540,innerHeight/960)})`}
+function fit(){$('stage').style.transform=`scale(${rec?1:Math.min(innerWidth/SW,innerHeight/SH)})`}
 addEventListener('resize',fit);fit();
 (document.fonts?document.fonts.ready:Promise.resolve()).then(()=>seek(0));
 if(rec){$('play').remove();return}
