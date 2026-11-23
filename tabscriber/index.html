@@ -390,6 +390,9 @@ body.dark .sp-key{border-color:var(--border)}
 body.dark .sp-harp-use{border-color:var(--border)}
 .sp-harp-use:hover{border-color:var(--hl-gold)}
 .sp-harp-use.cur{background:var(--pill-active);color:var(--pill-active-text);border-color:transparent}
+.metro-vol{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;max-width:420px;margin-left:auto;margin-right:auto}
+.metro-vol input[type=range]{flex:1;min-width:0;accent-color:var(--hl-gold);cursor:pointer}
+.metro-vol b{min-width:44px;text-align:right;font-size:.8rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text)}
 </style>
 </head>
 <body>
@@ -595,6 +598,14 @@ body.dark .sp-harp-use{border-color:var(--border)}
       <button class="metro-btn" onclick="setFeel('blues',this)">Blues</button>
     </div>
   </div>
+  <div class="metro-row" style="margin-top:8px">
+    <span class="metro-row-lbl" id="metroSndLbl">Suono:</span>
+    <div class="metro-btns"><button class="metro-btn" data-snd="click" onclick="setMetroSound('click')">Click</button><button class="metro-btn" data-snd="wood" onclick="setMetroSound('wood')" id="sndWoodBtn">Legno</button></div>
+  </div>
+  <div class="metro-row metro-vol" style="margin-top:10px">
+    <span class="metro-row-lbl" id="metroVolLbl">Volume:</span>
+    <input type="range" id="metroVol" min="0" max="100" step="1" value="100" aria-label="Volume metronomo"><b id="metroVolVal">100%</b>
+  </div>
 </div>
 <div class="card">
   <div class="sess-hdr">
@@ -623,7 +634,7 @@ var TX={
     add:'+ Aggiungi',replace:'Sostituisci',replaceHint:'Per sostituirla tocca la nota giusta nella griglia, oppure suonala e premi Sostituisci.',sep:'Battuta',nl:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clearAll:'Cancella tutto',selected:'selezionate',del:'Elimina',
     copy:'Copia testo',pdf:'Esporta PDF',save:'Salva sessione',
-    metro:'Metronomo',metroTime:'Tempo:',
+    metro:'Metronomo',metroTime:'Tempo:',metroSnd:'Suono:',metroVolL:'Volume:',sndWood:'Legno',
     sessions:'Sessioni salvate',newSess:'+ Nuova sessione',noSess:'Nessuna sessione',noNotes:'Nessuna nota ancora',
     promptName:'Nome sessione:',confirmDel:'Eliminare la sessione?',noSave:'Nessuna nota da salvare.',noExport:'Nessuna nota da esportare.',
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
@@ -641,7 +652,7 @@ var TX={
     add:'+ Add',replace:'Replace',replaceHint:'To replace it, tap the right note in the grid, or play it and press Replace.',sep:'Bar',nl:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clearAll:'Clear all',selected:'selected',del:'Delete',
     copy:'Copy text',pdf:'Export PDF',save:'Save session',
-    metro:'Metronome',metroTime:'Time:',
+    metro:'Metronome',metroTime:'Time:',metroSnd:'Sound:',metroVolL:'Volume:',sndWood:'Wood',
     sessions:'Saved sessions',newSess:'+ New session',noSess:'No sessions',noNotes:'No notes yet',
     promptName:'Session name:',confirmDel:'Delete this session?',noSave:'No notes to save.',noExport:'No notes to export.',
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
@@ -692,6 +703,7 @@ function applyTx(){
   document.getElementById('saveBtn').textContent=t('save');
   document.getElementById('metroTitle').textContent=t('metro');
   document.getElementById('metroTimeLbl').textContent=t('metroTime');
+  document.getElementById('metroSndLbl').textContent=t('metroSnd');document.getElementById('metroVolLbl').textContent=t('metroVolL');document.getElementById('sndWoodBtn').textContent=t('sndWood');
   document.getElementById('sessTitle').textContent=t('sessions');
   document.getElementById('newSessBtn').textContent=t('newSess');
   document.getElementById('chordLbl').textContent=chordMode?t('chordOn'):t('chord');
@@ -1800,9 +1812,32 @@ function metroOut(ctx){
   var comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.knee.value=6;comp.ratio.value=8;comp.attack.value=0.001;comp.release.value=0.08;
   var mk=ctx.createGain();mk.gain.value=2.4;
   var lim=ctx.createDynamicsCompressor();lim.threshold.value=-1;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=0.0005;lim.release.value=0.05;
-  comp.connect(mk);mk.connect(lim);lim.connect(ctx.destination);ctx._hlOut=comp;return comp;
+  var vg=ctx.createGain();vg.gain.value=metroVolGain();comp.connect(mk);mk.connect(lim);lim.connect(vg);vg.connect(ctx.destination);ctx._hlVol=vg;ctx._hlOut=comp;return comp;
 }
-function loudClick(ctx,freq,vol){
+// Volume e suono del metronomo (ricordati per le volte successive)
+var metroSound='click',metroVol=100;
+try{var _ms=localStorage.getItem('hl_metro_snd');if(_ms==='wood'||_ms==='click')metroSound=_ms;var _mv=parseInt(localStorage.getItem('hl_metro_vol'),10);if(_mv>=0&&_mv<=100)metroVol=_mv;}catch(e){}
+function metroVolGain(){return Math.pow(metroVol/100,1.6);}
+function updMetroUI(){
+  document.querySelectorAll('[data-snd]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-snd')===metroSound);});
+  var sl=document.getElementById('metroVol'),vv=document.getElementById('metroVolVal');if(sl)sl.value=metroVol;if(vv)vv.textContent=metroVol+'%';
+}
+function metroPreview(){if(!metroRunning){playClick(0);}}
+function setMetroSound(s){metroSound=s;try{localStorage.setItem('hl_metro_snd',s);}catch(e){}updMetroUI();metroPreview();}
+function setMetroVol(v,prev){metroVol=Math.max(0,Math.min(100,parseInt(v,10)||0));try{localStorage.setItem('hl_metro_vol',metroVol);}catch(e){}var c=getMetroCtx();if(c._hlVol)c._hlVol.gain.value=metroVolGain();updMetroUI();if(prev)metroPreview();}
+function woodClick(ctx,freq,vol){
+  var t=ctx.currentTime,out=metroOut(ctx),sr=ctx.sampleRate,len=Math.floor(sr*0.08),buf=ctx.createBuffer(1,len,sr),d=buf.getChannelData(0);
+  for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(sr*0.015));
+  var wg=ctx.createGain();wg.gain.value=3.5;wg.connect(out);
+  var src=ctx.createBufferSource();src.buffer=buf;var bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq*1.7;bp.Q.value=4;
+  var gn=ctx.createGain();gn.gain.value=vol*2.4;src.connect(bp);bp.connect(gn);gn.connect(wg);
+  var o=ctx.createOscillator();o.type='triangle';o.frequency.setValueAtTime(freq*1.35,t);o.frequency.exponentialRampToValueAtTime(freq*1.1,t+0.03);
+  var og=ctx.createGain();og.gain.setValueAtTime(0.0001,t);og.gain.linearRampToValueAtTime(vol,t+0.001);og.gain.setValueAtTime(vol,t+0.012);og.gain.exponentialRampToValueAtTime(0.0005,t+0.08);
+  o.connect(og);og.connect(wg);src.start(t);o.start(t);o.stop(t+0.09);
+}
+function loudClick(ctx,freq,vol){if(metroSound==='wood'){woodClick(ctx,freq,vol);return;}clickTone(ctx,freq,vol);}
+(function(){var sl=document.getElementById('metroVol');if(sl){sl.addEventListener('input',function(){setMetroVol(sl.value,false);});sl.addEventListener('change',function(){setMetroVol(sl.value,true);});}updMetroUI();})();
+function clickTone(ctx,freq,vol){
   var t=ctx.currentTime,out=metroOut(ctx),g=ctx.createGain(),lp=ctx.createBiquadFilter();
   lp.type='lowpass';lp.frequency.value=5200;lp.connect(g);g.connect(out);
   var o1=ctx.createOscillator();o1.type='square';o1.frequency.value=freq;
