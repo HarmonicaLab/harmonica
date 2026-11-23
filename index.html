@@ -702,7 +702,7 @@ const I18N = {
     subtitle:     'Bending Tool — Key of ',
     keyTitle:     "Tonalità dell'armonica",
     sensLabel:    'Sensibilità',
-    recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Registrati mentre suoni. Puoi dare un nome alla registrazione e scaricarla. Le registrazioni restano qui finché non chiudi o ricarichi la pagina.',recTake:'Registrazione',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',
+    recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Registrati mentre suoni. Puoi dare un nome alla registrazione e scaricarla. Le registrazioni restano qui finché non chiudi o ricarichi la pagina.',recTake:'Registrazione',recPrep:'Preparo l\'MP3',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',
     micOff:       'Microfono OFF',
     micOn:        'Microfono ON',
     micStart:     'Attiva il microfono per iniziare',
@@ -755,7 +755,7 @@ const I18N = {
     subtitle:     'Bending Tool — Key of ',
     keyTitle:     'Harmonica Key',
     sensLabel:    'Sensitivity',
-    recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Record yourself while you play. You can name the recording and download it. Recordings stay here until you close or reload the page.',recTake:'Recording',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',
+    recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Record yourself while you play. You can name the recording and download it. Recordings stay here until you close or reload the page.',recTake:'Recording',recPrep:'Preparing MP3',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',
     micOff:       'Microphone OFF',
     micOn:        'Microphone ON',
     micStart:     'Turn on the microphone to start',
@@ -1109,7 +1109,7 @@ function toggleRec(){
       clearInterval(recTimer);recTimer=null;
       var dur=(Date.now()-recStart)/1000,type=recorder.mimeType||mime||'audio/webm',blob=new Blob(recChunks,{type:type});
       if(recOwn&&!(micActive&&micStream===recOwn)){recOwn.getTracks().forEach(function(tr){tr.stop();});}recOwn=null;
-      if(blob.size>0){takeN++;takes.push({n:takeN,url:URL.createObjectURL(blob),dur:dur,ext:/mp4/.test(type)?'m4a':/ogg/.test(type)?'ogg':'webm',when:new Date(),name:''});}
+      if(blob.size>0){takeN++;takes.push({n:takeN,blob:blob,url:URL.createObjectURL(blob),dur:dur,ext:/mp4/.test(type)?'m4a':/ogg/.test(type)?'ogg':'webm',when:new Date(),name:''});var _nt=takes[takes.length-1];setTimeout(function(){takePrep(_nt);},400);}
       document.getElementById('recBtn').classList.remove('on');document.getElementById('recBtnLbl').textContent=t('recStart');document.getElementById('recTime').classList.remove('on');
       renderTakes();
     };
@@ -1124,19 +1124,86 @@ function escAttr(x){return String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;'
 function takeFile(tk){
   var base=(tk.name&&tk.name.trim())?tk.name.trim().replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim():'';
   if(!base){var d=tk.when;base='harmonica-lab-'+d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'_'+pad2(d.getHours())+'-'+pad2(d.getMinutes())+'-'+pad2(d.getSeconds());}
-  return base+'.'+tk.ext;
+  return base+'.'+(tk.dlExt||'mp3');
+}
+
+// ===== Download registrazioni in MP3 (encoder caricato solo quando serve; se non si carica, WAV) =====
+var LAME_URL='https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js';
+function loadLame(cb){
+  if(window.lamejs&&window.lamejs.Mp3Encoder){cb(true);return;}
+  if(window._lameCbs){window._lameCbs.push(cb);return;}
+  window._lameCbs=[cb];var s=document.createElement('script');s.src=LAME_URL;s.async=true;
+  var done=function(ok){var cs=window._lameCbs||[];window._lameCbs=null;cs.forEach(function(f){f(ok);});};
+  s.onload=function(){done(!!(window.lamejs&&window.lamejs.Mp3Encoder));};s.onerror=function(){done(false);};
+  document.head.appendChild(s);
+}
+function encWav(buf){
+  var nc=Math.min(2,buf.numberOfChannels),sr=buf.sampleRate,len=buf.length,ab=new ArrayBuffer(44+len*nc*2),v=new DataView(ab),c,i;
+  function w(o,s){for(var k=0;k<s.length;k++)v.setUint8(o+k,s.charCodeAt(k));}
+  w(0,'RIFF');v.setUint32(4,36+len*nc*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,nc,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*nc*2,true);v.setUint16(32,nc*2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,len*nc*2,true);
+  var ch=[];for(c=0;c<nc;c++)ch.push(buf.getChannelData(c));var o=44;
+  for(i=0;i<len;i++){for(c=0;c<nc;c++){var x=Math.max(-1,Math.min(1,ch[c][i]));v.setInt16(o,x<0?x*32768:x*32767,true);o+=2;}}
+  return new Blob([ab],{type:'audio/wav'});
+}
+function encMp3(buf,cb,prog){
+  var nc=Math.min(2,buf.numberOfChannels),sr=buf.sampleRate,len=buf.length,enc=new lamejs.Mp3Encoder(nc,sr,nc>1?192:128);
+  var L=buf.getChannelData(0),R=nc>1?buf.getChannelData(1):null,out=[],BLK=1152,i=0;
+  function conv(a,st,n){var r=new Int16Array(n);for(var k=0;k<n;k++){var x=a[st+k];x=x<-1?-1:x>1?1:x;r[k]=x<0?x*32768:x*32767;}return r;}
+  function step(){
+    var end=Math.min(len,i+BLK*150);
+    for(;i<end;i+=BLK){var n=Math.min(BLK,len-i);var b=nc>1?enc.encodeBuffer(conv(L,i,n),conv(R,i,n)):enc.encodeBuffer(conv(L,i,n));if(b.length)out.push(new Uint8Array(b));}
+    if(prog)prog(Math.min(1,i/len));
+    if(i<len)setTimeout(step,0);else{var f=enc.flush();if(f.length)out.push(new Uint8Array(f));cb(new Blob(out,{type:'audio/mpeg'}));}
+  }
+  step();
+}
+function takeDecode(tk,cb){
+  if(tk.buf){cb(tk.buf);return;}
+  var once=false,fin=function(b){if(once)return;once=true;cb(b);};
+  var C=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!C||!tk.blob){fin(null);return;}
+  var ctx=new C(2,44100,44100);
+  var go=function(ab){try{var pr=ctx.decodeAudioData(ab,function(b){fin(b);},function(){fin(null);});if(pr&&pr.then)pr.then(fin,function(){fin(null);});}catch(e){fin(null);}};
+  if(tk.blob.arrayBuffer)tk.blob.arrayBuffer().then(go,function(){fin(null);});
+  else{var fr=new FileReader();fr.onload=function(){go(fr.result);};fr.onerror=function(){fin(null);};fr.readAsArrayBuffer(tk.blob);}
+}
+function dlLabel(tk){return '⬇ '+t('recDownload')+' '+(tk.dlExt||'mp3').toUpperCase();}
+function takePrepDone(tk){
+  tk.dlBusy=false;
+  document.querySelectorAll('a[data-dl="'+tk.n+'"]').forEach(function(a){a.href=tk.dlUrl;a.setAttribute('download',takeFile(tk));a.textContent=dlLabel(tk);});
+  var cs=tk.dlCbs||[];tk.dlCbs=[];cs.forEach(function(f){f();});
+}
+function takePrep(tk,cb){
+  if(!tk)return;
+  if(tk.dlUrl){if(cb)cb();return;}
+  tk.dlCbs=tk.dlCbs||[];if(cb)tk.dlCbs.push(cb);
+  if(tk.dlBusy)return;tk.dlBusy=true;
+  takeDecode(tk,function(buf){
+    if(!buf){tk.dlUrl=tk.url;tk.dlExt=tk.ext;takePrepDone(tk);return;}
+    loadLame(function(ok){
+      if(ok){try{encMp3(buf,function(blob){tk.dlUrl=URL.createObjectURL(blob);tk.dlExt='mp3';takePrepDone(tk);},function(p){
+          document.querySelectorAll('a[data-dl="'+tk.n+'"]').forEach(function(a){if(a.dataset.wait)a.textContent='⏳ '+t('recPrep')+' '+Math.round(p*100)+'%';});});return;}catch(e){}}
+      tk.dlUrl=URL.createObjectURL(encWav(buf));tk.dlExt='wav';takePrepDone(tk);
+    });
+  });
+}
+function takeDlClick(e,a,tk){
+  if(tk.dlUrl){a.href=tk.dlUrl;a.setAttribute('download',takeFile(tk));return;}
+  e.preventDefault();a.dataset.wait='1';a.textContent='⏳ '+t('recPrep')+'…';
+  takePrep(tk,function(){delete a.dataset.wait;a.textContent=dlLabel(tk);a.href=tk.dlUrl;a.setAttribute('download',takeFile(tk));a.click();});
 }
 function renderTakes(){
   var box=document.getElementById('takes');if(!box)return;box.innerHTML='';
   for(var i=takes.length-1;i>=0;i--){(function(tk){
     var el=document.createElement('div');el.className='take';
     el.innerHTML='<div class="take-head"><input class="tk-name" type="text" maxlength="60" value="'+escAttr(takeName(tk))+'" aria-label="'+escAttr(t('recName'))+'"><span class="tk-dur">'+fmtRec(tk.dur)+'</span><span class="tk-pen">✎</span></div>'
-      +'<div class="take-btns"><a class="tk-a" href="'+tk.url+'" download="'+escAttr(takeFile(tk))+'">⬇ '+t('recDownload')+'</a><button class="tk-del" type="button">'+t('recDelete')+'</button></div>';
+      +'<div class="take-btns"><a class="tk-a" data-dl="'+tk.n+'" href="'+(tk.dlUrl||'#')+'" download="'+escAttr(takeFile(tk))+'">'+dlLabel(tk)+'</a><button class="tk-del" type="button">'+t('recDelete')+'</button></div>';
     var nm=el.querySelector('.tk-name'),dl=el.querySelector('.tk-a');
     nm.addEventListener('input',function(){tk.name=nm.value;dl.setAttribute('download',takeFile(tk));});
     nm.addEventListener('blur',function(){if(!nm.value.trim()){tk.name='';nm.value=takeName(tk);dl.setAttribute('download',takeFile(tk));}});
     nm.addEventListener('keydown',function(e){if(e.key==='Enter')nm.blur();});
-    el.querySelector('.tk-del').onclick=function(){URL.revokeObjectURL(tk.url);takes=takes.filter(function(x){return x!==tk;});renderTakes();};
+    dl.addEventListener('click',function(e){takeDlClick(e,dl,tk);});
+    el.querySelector('.tk-del').onclick=function(){if(tk.dlUrl&&tk.dlUrl!==tk.url)URL.revokeObjectURL(tk.dlUrl);URL.revokeObjectURL(tk.url);takes=takes.filter(function(x){return x!==tk;});renderTakes();};
     box.appendChild(el);
   })(takes[i]);}
 }
