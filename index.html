@@ -526,6 +526,9 @@ body:not(.light) .take{border-color:var(--border)}
 .tk-a{background:var(--cta);color:#111;border-color:transparent;box-shadow:0 4px 12px rgba(185,143,46,.3)}
 .tk-del{color:var(--hl-red);border-color:rgba(160,40,24,.35)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.metro-vol{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;max-width:420px;margin-left:auto;margin-right:auto}
+.metro-vol input[type=range]{flex:1;min-width:0;accent-color:var(--hl-gold);cursor:pointer}
+.metro-vol b{min-width:44px;text-align:right;font-size:.8rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text)}
 </style>
 </head>
 <body class="light">
@@ -659,6 +662,14 @@ body:not(.light) .take{border-color:var(--border)}
         <button class="metro-time-btn" data-beats="2">2/4</button>
       </div>
     </div>
+    <div class="metro-time-wrap" style="margin-top:10px">
+      <span class="metro-time-label" data-i18n="metroSnd">Suono:</span>
+      <div class="metro-time-btns"><button class="metro-time-btn" type="button" data-snd="click" onclick="setMetroSound('click')">Click</button><button class="metro-time-btn" type="button" data-snd="wood" onclick="setMetroSound('wood')" data-i18n="sndWood">Legno</button></div>
+    </div>
+    <div class="metro-time-wrap metro-vol" style="margin-top:10px">
+      <span class="metro-time-label" data-i18n="metroVolL">Volume:</span>
+      <input type="range" id="metroVol" min="0" max="100" step="1" value="100" aria-label="Volume metronomo"><b id="metroVolVal">100%</b>
+    </div>
   </div>
 </div>
 
@@ -711,7 +722,7 @@ const I18N = {
     selectedNote: 'Nota selezionata',
     listenNote:   'Ascolta la nota',
     metroTitle:   'Metronomo',
-    tempo:        'Tempo:',
+    tempo:        'Tempo:',metroSnd:'Suono:',metroVolL:'Volume:',sndWood:'Legno',
     levelsTitle:  'Livelli di difficoltà',
     levelsHint:   'Seleziona un livello per vedere le istruzioni.',
     markDone:     '✓ Segna come completato',
@@ -764,7 +775,7 @@ const I18N = {
     selectedNote: 'Selected note',
     listenNote:   'Listen to note',
     metroTitle:   'Metronome',
-    tempo:        'Time:',
+    tempo:        'Time:',metroSnd:'Sound:',metroVolL:'Volume:',sndWood:'Wood',
     levelsTitle:  'Difficulty levels',
     levelsHint:   'Select a level to see instructions.',
     markDone:     '✓ Mark as completed',
@@ -1377,9 +1388,32 @@ function metroOut(ctx){
   var comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.knee.value=6;comp.ratio.value=8;comp.attack.value=0.001;comp.release.value=0.08;
   var mk=ctx.createGain();mk.gain.value=2.4;
   var lim=ctx.createDynamicsCompressor();lim.threshold.value=-1;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=0.0005;lim.release.value=0.05;
-  comp.connect(mk);mk.connect(lim);lim.connect(ctx.destination);ctx._hlOut=comp;return comp;
+  var vg=ctx.createGain();vg.gain.value=metroVolGain();comp.connect(mk);mk.connect(lim);lim.connect(vg);vg.connect(ctx.destination);ctx._hlVol=vg;ctx._hlOut=comp;return comp;
 }
-function loudClick(ctx,freq,vol){
+// Volume e suono del metronomo (ricordati per le volte successive)
+var metroSound='click',metroVol=100;
+try{var _ms=localStorage.getItem('hl_metro_snd');if(_ms==='wood'||_ms==='click')metroSound=_ms;var _mv=parseInt(localStorage.getItem('hl_metro_vol'),10);if(_mv>=0&&_mv<=100)metroVol=_mv;}catch(e){}
+function metroVolGain(){return Math.pow(metroVol/100,1.6);}
+function updMetroUI(){
+  document.querySelectorAll('[data-snd]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-snd')===metroSound);});
+  var sl=document.getElementById('metroVol'),vv=document.getElementById('metroVolVal');if(sl)sl.value=metroVol;if(vv)vv.textContent=metroVol+'%';
+}
+function metroPreview(){if(!metroRunning){playClick(true);}}
+function setMetroSound(s){metroSound=s;try{localStorage.setItem('hl_metro_snd',s);}catch(e){}updMetroUI();metroPreview();}
+function setMetroVol(v,prev){metroVol=Math.max(0,Math.min(100,parseInt(v,10)||0));try{localStorage.setItem('hl_metro_vol',metroVol);}catch(e){}var c=getMetroCtx();if(c._hlVol)c._hlVol.gain.value=metroVolGain();updMetroUI();if(prev)metroPreview();}
+function woodClick(ctx,freq,vol){
+  var t=ctx.currentTime,out=metroOut(ctx),sr=ctx.sampleRate,len=Math.floor(sr*0.08),buf=ctx.createBuffer(1,len,sr),d=buf.getChannelData(0);
+  for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(sr*0.015));
+  var wg=ctx.createGain();wg.gain.value=3.5;wg.connect(out);
+  var src=ctx.createBufferSource();src.buffer=buf;var bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq*1.7;bp.Q.value=4;
+  var gn=ctx.createGain();gn.gain.value=vol*2.4;src.connect(bp);bp.connect(gn);gn.connect(wg);
+  var o=ctx.createOscillator();o.type='triangle';o.frequency.setValueAtTime(freq*1.35,t);o.frequency.exponentialRampToValueAtTime(freq*1.1,t+0.03);
+  var og=ctx.createGain();og.gain.setValueAtTime(0.0001,t);og.gain.linearRampToValueAtTime(vol,t+0.001);og.gain.setValueAtTime(vol,t+0.012);og.gain.exponentialRampToValueAtTime(0.0005,t+0.08);
+  o.connect(og);og.connect(wg);src.start(t);o.start(t);o.stop(t+0.09);
+}
+function loudClick(ctx,freq,vol){if(metroSound==='wood'){woodClick(ctx,freq,vol);return;}clickTone(ctx,freq,vol);}
+(function(){var sl=document.getElementById('metroVol');if(sl){sl.addEventListener('input',function(){setMetroVol(sl.value,false);});sl.addEventListener('change',function(){setMetroVol(sl.value,true);});}updMetroUI();})();
+function clickTone(ctx,freq,vol){
   var t=ctx.currentTime,out=metroOut(ctx),g=ctx.createGain(),lp=ctx.createBiquadFilter();
   lp.type='lowpass';lp.frequency.value=5200;lp.connect(g);g.connect(out);
   var o1=ctx.createOscillator();o1.type='square';o1.frequency.value=freq;
@@ -1414,9 +1448,9 @@ function setupLongPress(id,fn){
 }
 setupLongPress('bpmDown',()=>{metroBpm=Math.max(20,metroBpm-1);document.getElementById('bpmValue').textContent=metroBpm;if(metroRunning){stopMetro();startMetro();}});
 setupLongPress('bpmUp',()=>{metroBpm=Math.min(300,metroBpm+1);document.getElementById('bpmValue').textContent=metroBpm;if(metroRunning){stopMetro();startMetro();}});
-document.querySelectorAll('.metro-time-btn').forEach(btn=>{
+document.querySelectorAll('#metroTimeSig .metro-time-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    document.querySelectorAll('.metro-time-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('#metroTimeSig .metro-time-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');metroBeats=parseInt(btn.dataset.beats);metroCurrent=0;buildMetroBeats();
     if(metroRunning){stopMetro();startMetro();}
   });
