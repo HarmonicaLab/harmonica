@@ -393,6 +393,10 @@ body.dark .sp-harp-use{border-color:var(--border)}
 .metro-vol{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;max-width:420px;margin-left:auto;margin-right:auto}
 .metro-vol input[type=range]{flex:1;min-width:0;accent-color:var(--hl-gold);cursor:pointer}
 .metro-vol b{min-width:44px;text-align:right;font-size:.8rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text)}
+#selBar.sel-bar.on{border-radius:20px !important;padding:10px 14px !important}
+.ins-modes{display:none;flex-basis:100%;gap:6px;flex-wrap:wrap;margin-top:4px}
+.ins-modes button{padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:var(--glass-in);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:800;font-style:italic;font-size:.72rem;cursor:pointer}
+.ins-modes button.on{background:var(--pill-active);color:var(--pill-active-text);border-color:transparent}
 </style>
 </head>
 <body>
@@ -510,6 +514,7 @@ body.dark .sp-harp-use{border-color:var(--border)}
     <span id="selCount">0</span> <span id="selLbl"></span>&nbsp;
     <button class="btn danger" style="padding:2px 9px;font-size:.7rem" onclick="deleteSelected()" id="delBtn"></button>
     <button class="btn" style="padding:2px 9px;font-size:.7rem" onclick="clearSel()">✕</button>
+    <span class="ins-modes" id="insModes"><button type="button" data-m="replace" onclick="setInsMode('replace')"></button><button type="button" data-m="before" onclick="setInsMode('before')"></button><button type="button" data-m="after" onclick="setInsMode('after')"></button></span>
     <span class="sel-hint" id="selHint"></span>
   </span>
   <div class="tab-notes" id="tabNotes"></div>
@@ -524,7 +529,7 @@ body.dark .sp-harp-use{border-color:var(--border)}
   <h2 class="section-label" id="spTitle"></h2>
   <div class="sp-file">
     <label class="btn sp-choose" for="spFile">&#9835; <span id="spChooseLbl"></span></label>
-    <input type="file" id="spFile" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac" style="display:none">
+    <input type="file" id="spFile" accept="audio/*,video/mp4,video/quicktime,.mp3,.wav,.m4a,.aac,.ogg,.flac,.mp4,.m4v,.mov" style="display:none">
     <span class="sp-name" id="spName"></span>
   </div>
   <div class="sp-hint" id="spHint"></div>
@@ -631,7 +636,7 @@ var TX={
     legOB:'↑ overblow',legOD:'↓ overdraw',legMB:'↓5↘ micro-bend (5 aspirato leggermente calante)',rowMB:'↓ micro',microLbl:'micro-bend',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Soffia',rowDraw:'↓ Aspira',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
-    add:'+ Aggiungi',replace:'Sostituisci',replaceHint:'Per sostituirla tocca la nota giusta nella griglia, oppure suonala e premi Sostituisci.',sep:'Battuta',nl:'A capo',
+    add:'+ Aggiungi',replace:'Sostituisci',insReplace:'⟳ Sostituisci',insBefore:'+ Inserisci prima',insAfter:'+ Inserisci dopo',insBeforeHint:'Tocca le note nella griglia (oppure suonale e premi Aggiungi): vengono inserite prima della nota selezionata.',insAfterHint:'Tocca le note nella griglia (oppure suonale e premi Aggiungi): vengono inserite dopo la nota selezionata, una dopo l\'altra.',replaceHint:'Per sostituirla tocca la nota giusta nella griglia, oppure suonala e premi Sostituisci.',sep:'Battuta',nl:'A capo',
     undo:'↩ Annulla',redo:'↪ Ripristina',clearAll:'Cancella tutto',selected:'selezionate',del:'Elimina',
     copy:'Copia testo',pdf:'Esporta PDF',save:'Salva sessione',
     metro:'Metronomo',metroTime:'Tempo:',metroSnd:'Suono:',metroVolL:'Volume:',sndWood:'Legno',
@@ -640,7 +645,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spKeyOrig:'Tonalità del brano',spKeyNow:'Tonalità ora',spKeyEst:'stimata, puoi correggerla',spKeyAnalyzing:'analizzo…',spKeyMaj:'maggiore',spKeyMin:'minore',spHarpTitle:'Armonica consigliata',spPos1:'1ª posizione',spPos2:'2ª posizione (cross harp, blues)',spPos3:'3ª posizione (minore)',spUse:'Usa',spInUse:'in uso',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A… Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file audio.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recPrep:'Preparo l\'MP3',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',oct:'Ottava',addOct:'Aggiungi ottava',octLow:'Foro basso',octHigh:'Foro alto',octClosed:'Chiusi con la lingua:',octSpan:'Scegli due fori con almeno un foro in mezzo da chiudere con la lingua.',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',spTitle:'Brano · Tempo, intonazione e loop',spKeyOrig:'Tonalità del brano',spKeyNow:'Tonalità ora',spKeyEst:'stimata, puoi correggerla',spKeyAnalyzing:'analizzo…',spKeyMaj:'maggiore',spKeyMin:'minore',spHarpTitle:'Armonica consigliata',spPos1:'1ª posizione',spPos2:'2ª posizione (cross harp, blues)',spPos3:'3ª posizione (minore)',spUse:'Usa',spInUse:'in uso',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A e video MP4 (si usa solo l\'audio). Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spErr:'Non riesco a leggere questo file. Se è un video, prova con un MP4 o esporta l\'audio in MP3.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recPrep:'Preparo l\'MP3',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',oct:'Ottava',addOct:'Aggiungi ottava',octLow:'Foro basso',octHigh:'Foro alto',octClosed:'Chiusi con la lingua:',octSpan:'Scegli due fori con almeno un foro in mezzo da chiudere con la lingua.',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -649,7 +654,7 @@ var TX={
     legOB:'↑ overblow',legOD:'↓ overdraw',legMB:'↓5↘ micro-bend (5 draw, slightly flat)',rowMB:'↓ micro',microLbl:'micro-bend',
     rowOB:'↑ Overblow',rowOD:'↓ Overdraw',
     rowBB2:"↑'' bend",rowBB:"↑' bend",rowBlow:'↑ Blow',rowDraw:'↓ Draw',rowDB1:"↓' bend",rowDB2:"↓'' bend",rowDB3:"↓''' bend",
-    add:'+ Add',replace:'Replace',replaceHint:'To replace it, tap the right note in the grid, or play it and press Replace.',sep:'Bar',nl:'New line',
+    add:'+ Add',replace:'Replace',insReplace:'⟳ Replace',insBefore:'+ Insert before',insAfter:'+ Insert after',insBeforeHint:'Tap notes in the grid (or play them and press Add): they are inserted before the selected note.',insAfterHint:'Tap notes in the grid (or play them and press Add): they are inserted after the selected note, one after another.',replaceHint:'To replace it, tap the right note in the grid, or play it and press Replace.',sep:'Bar',nl:'New line',
     undo:'↩ Undo',redo:'↪ Redo',clearAll:'Clear all',selected:'selected',del:'Delete',
     copy:'Copy text',pdf:'Export PDF',save:'Save session',
     metro:'Metronome',metroTime:'Time:',metroSnd:'Sound:',metroVolL:'Volume:',sndWood:'Wood',
@@ -658,7 +663,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spKeyOrig:'Track key',spKeyNow:'Key now',spKeyEst:'estimated, you can correct it',spKeyAnalyzing:'analysing…',spKeyMaj:'major',spKeyMin:'minor',spHarpTitle:'Suggested harmonica',spPos1:'1st position',spPos2:'2nd position (cross harp, blues)',spPos3:'3rd position (minor)',spUse:'Use',spInUse:'in use',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A… The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This audio file can\'t be read.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recPrep:'Preparing MP3',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',oct:'Octave',addOct:'Add octave',octLow:'Low hole',octHigh:'High hole',octClosed:'Blocked by the tongue:',octSpan:'Choose two holes with at least one hole in between to block with the tongue.',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',spTitle:'Track · Tempo, pitch and loop',spKeyOrig:'Track key',spKeyNow:'Key now',spKeyEst:'estimated, you can correct it',spKeyAnalyzing:'analysing…',spKeyMaj:'major',spKeyMin:'minor',spHarpTitle:'Suggested harmonica',spPos1:'1st position',spPos2:'2nd position (cross harp, blues)',spPos3:'3rd position (minor)',spUse:'Use',spInUse:'in use',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A and MP4 videos (only the audio is used). The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spErr:'This file can\'t be read. If it is a video, try an MP4 or export the audio as MP3.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recPrep:'Preparing MP3',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',oct:'Octave',addOct:'Add octave',octLow:'Low hole',octHigh:'High hole',octClosed:'Blocked by the tongue:',octSpan:'Choose two holes with at least one hole in between to block with the tongue.',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -736,7 +741,7 @@ function midi2hz(m){return 440*Math.pow(2,(m-69)/12);}
 // ── Richter standard offsets (root = foro 1 blow) ──
 var BASE_BLOW =[0,4,7,12,16,19,24,28,31,36];
 var BASE_DRAW =[2,7,11,14,17,21,23,26,29,33];
-var BASE_DB1  =[1,6,10,13,null,null,null,null,null,null];
+var BASE_DB1  =[1,6,10,13,null,20,null,null,null,null]; // foro 6: bend di 1 semitono (in C: A→Ab)
 var BASE_DB2  =[null,5,9,null,null,null,null,null,null,null];
 var BASE_DB3  =[null,null,8,null,null,null,null,null,null,null];
 var BASE_BB1  =[null,null,null,null,null,null,22,27,30,35];
@@ -840,7 +845,7 @@ function addChord(){
   if(!chordSel.length)return;
   snap();
   var first=chordSel[0];
-  tabList.push({type:'chord',sym:first.sym,dir:first.dir,notes:chordSel.map(copyNote)});
+  placeItem({type:'chord',sym:first.sym,dir:first.dir,notes:chordSel.map(copyNote)});
   chordSel=[];chordMode=false;
   document.getElementById('chordBtn').style.background='';
   document.getElementById('chordLbl').textContent=t('chord');
@@ -873,13 +878,13 @@ function buildHarpVisual(){
           for(var j=0;j<chordSel.length;j++){if(chordSel[j].hole===n.hole&&chordSel[j].dir===n.dir){found=j;break;}}
           if(found>=0){chordSel.splice(found,1);elem.classList.remove('chord-sel');}
           else{chordSel.push(copyNote(n));elem.classList.add('chord-sel');}
-        }else if(selected.size===1){
+        }else if(selected.size===1&&insMode==='replace'){
           var ri=Array.from(selected)[0],old=tabList[ri];
           if(old){var nw=copyNote(n);if(old.long)nw.long=true;snap();tabList[ri]=nw;selected.clear();render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);}
           elem.style.opacity='0.5';
           setTimeout(function(){elem.style.opacity='1';},200);
         }else{
-          snap();tabList.push(copyNote(n));render();
+          snap();placeItem(copyNote(n));render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
           elem.style.opacity='0.5';
           setTimeout(function(){elem.style.opacity='1';},200);
         }
@@ -1025,7 +1030,7 @@ function tickAuto(match){
       var fill=document.getElementById('cFill');
       fill.style.left='0';fill.style.width=(pct*100)+'%';fill.style.background='#8855dd';
       if(pct>=1){
-        snap();tabList.push(copyNote(match));render();autoHoldMatch=null;
+        snap();placeItem(copyNote(match));render();autoHoldMatch=null;
         autoCaptureCooldown=true;
         setTimeout(function(){autoCaptureCooldown=false;document.getElementById('cFill').style.width='0';},1000);
       }else{autoTimer=setTimeout(tick,30);}
@@ -1585,7 +1590,7 @@ function loop(){
   }
 }
 
-var tabList=[],selected=new Set(),hist=[[]],histIdx=0;
+var tabList=[],selected=new Set(),undoSt=[],redoSt=[];
 function copyObj(x){
   if(!x)return x;
   var o={};
@@ -1595,18 +1600,30 @@ function copyObj(x){
   }
   return o;
 }
-function snap(){hist=hist.slice(0,histIdx+1);hist.push(tabList.map(copyObj));histIdx++;upUD();}
-function undo(){if(histIdx>0){histIdx--;tabList=hist[histIdx].map(copyObj);selected.clear();render();upUD();}}
-function redo(){if(histIdx<hist.length-1){histIdx++;tabList=hist[histIdx].map(copyObj);selected.clear();render();upUD();}}
-function upUD(){document.getElementById('undoBtn').disabled=histIdx<=0;document.getElementById('redoBtn').disabled=histIdx>=hist.length-1;}
-function addNote(){if(!curMatch&&!lastStableMatch)return;snap();tabList.push(copyNote(curMatch||lastStableMatch));render();}
+function snap(){undoSt.push(tabList.map(copyObj));if(undoSt.length>300)undoSt.shift();redoSt=[];upUD();}
+function undo(){if(!undoSt.length)return;redoSt.push(tabList.map(copyObj));tabList=undoSt.pop();selected.clear();render();upUD();}
+function redo(){if(!redoSt.length)return;undoSt.push(tabList.map(copyObj));tabList=redoSt.pop();selected.clear();render();upUD();}
+function upUD(){document.getElementById('undoBtn').disabled=!undoSt.length;document.getElementById('redoBtn').disabled=!redoSt.length;}
+// Inserimento: con UNA nota selezionata si può sostituire, inserire prima o inserire dopo
+var insMode='replace';
+function placeItem(it){
+  if(selected.size===1&&insMode!=='replace'){
+    var idx=Array.from(selected)[0];
+    if(insMode==='after'){tabList.splice(idx+1,0,it);selected=new Set([idx+1]);}
+    else{tabList.splice(idx,0,it);selected=new Set([idx+1]);}
+    return;
+  }
+  tabList.push(it);
+}
+function setInsMode(m){insMode=m;render();}
+function addNote(){if(!curMatch&&!lastStableMatch)return;snap();placeItem(copyNote(curMatch||lastStableMatch));render();}
 function replaceNote(){
   if(selected.size!==1)return;
   if(!curMatch&&!lastStableMatch){var h=document.getElementById('selHint');if(h){h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash');}return;}
   var idx=Array.from(selected)[0],old=tabList[idx],nw=copyNote(curMatch||lastStableMatch);if(old&&old.long)nw.long=true;snap();tabList[idx]=nw;selected.clear();render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
 }
-function addSeparator(){snap();tabList.push({type:'separator'});render();}
-function addNewline(){snap();tabList.push({type:'newline'});render();}
+function addSeparator(){snap();placeItem({type:'separator'});render();}
+function addNewline(){snap();placeItem({type:'newline'});render();}
 function toggleSel(i){if(selected.has(i))selected.delete(i);else selected.add(i);render();setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);}
 function clearSel(){selected.clear();render();}
 function deleteSelected(){if(!selected.size)return;snap();tabList=tabList.filter(function(_,i){return !selected.has(i);});selected.clear();render();}
@@ -1644,7 +1661,7 @@ function addOct(){
   if(a>b){var x=a;a=b;b=x;}
   if(b-a<2){alert(t('octSpan'));return;}
   var na=findHM(a,octDir),nb=findHM(b,octDir);if(!na||!nb)return;
-  snap();tabList.push({type:'octave',sym:na.sym,dir:octDir,closed:b-a-1,notes:[copyNote(na),copyNote(nb)]});render();
+  snap();placeItem({type:'octave',sym:na.sym,dir:octDir,closed:b-a-1,notes:[copyNote(na),copyNote(nb)]});render();
 }
 function closeDual(){document.getElementById('dualPanel').style.display='none';document.getElementById('dualBtn').classList.remove('on');}
 function closeTrill(){document.getElementById('trillPanel').style.display='none';document.getElementById('trillBtn').classList.remove('on');}
@@ -1655,7 +1672,7 @@ function addDual(){
   var a=parseInt(document.getElementById('dualA').value),b=parseInt(document.getElementById('dualB').value);
   if(a===b){alert(t('dualSame'));return;}
   var na=findHM(a,dualDir),nb=findHM(b,dualDir);if(!na||!nb)return;
-  snap();tabList.push({type:'chord',two:true,sym:na.sym,dir:dualDir,notes:[copyNote(na),copyNote(nb)]});render();
+  snap();placeItem({type:'chord',two:true,sym:na.sym,dir:dualDir,notes:[copyNote(na),copyNote(nb)]});render();
 }
 function toggleTrillPanel(){closeDual();closeOct();var p=document.getElementById('trillPanel');var open=p.style.display!=='flex';p.style.display=open?'flex':'none';document.getElementById('trillBtn').classList.toggle('on',open);}
 function setTrillDir(d){trillDir=d;document.getElementById('trillDirBlow').classList.toggle('active',d==='blow');document.getElementById('trillDirDraw').classList.toggle('active',d==='draw');}
@@ -1664,7 +1681,7 @@ function addTrill(){
   var a=parseInt(document.getElementById('trillA').value),b=parseInt(document.getElementById('trillB').value);
   if(a===b){alert(t('trillSame'));return;}
   var na=findHM(a,trillDir),nb=findHM(b,trillDir);if(!na||!nb)return;
-  snap();tabList.push({type:'trill',sym:na.sym,dir:trillDir,notes:[copyNote(na),copyNote(nb)]});render();
+  snap();placeItem({type:'trill',sym:na.sym,dir:trillDir,notes:[copyNote(na),copyNote(nb)]});render();
 }
 function toggleLong(){
   var idxs=[];
@@ -1733,7 +1750,9 @@ function render(){
   }
   txt.innerHTML=strH.trim();
   if(selected.size>0){sb.classList.add('on');sc.textContent=selected.size;}else sb.classList.remove('on');
-  var shn=document.getElementById('selHint');if(shn)shn.textContent=selected.size===1?t('replaceHint'):'';
+  var one=selected.size===1,im=document.getElementById('insModes');
+  if(im){im.style.display=one?'flex':'none';im.querySelectorAll('button').forEach(function(b){var m=b.getAttribute('data-m');b.textContent=t(m==='replace'?'insReplace':m==='before'?'insBefore':'insAfter');b.classList.toggle('on',m===insMode);});}
+  var shn=document.getElementById('selHint');if(shn)shn.textContent=one?t(insMode==='replace'?'replaceHint':insMode==='before'?'insBeforeHint':'insAfterHint'):'';
   setAddBtn(!!(curMatch||lastStableMatch),curMatch||lastStableMatch);
 }
 
@@ -1766,13 +1785,13 @@ function saveSession(){
   }
   saveSess();renderSess();
 }
-function loadSession(i){activeSess=i;tabList=sessions[i].notes.map(copyObj);selected.clear();hist=[tabList.map(copyObj)];histIdx=0;upUD();render();renderSess();}
+function loadSession(i){activeSess=i;tabList=sessions[i].notes.map(copyObj);selected.clear();undoSt=[];redoSt=[];upUD();render();renderSess();}
 function deleteSession(i,e){
   e.stopPropagation();if(!confirm(t('confirmDel')))return;
   sessions.splice(i,1);if(activeSess===i)activeSess=null;else if(activeSess>i)activeSess--;
   saveSess();renderSess();
 }
-function newSession(){activeSess=null;tabList=[];selected.clear();hist=[[]];histIdx=0;upUD();render();renderSess();}
+function newSession(){activeSess=null;tabList=[];selected.clear();undoSt=[];redoSt=[];upUD();render();renderSess();}
 function startRename(i,el,e){
   e.stopPropagation();var inp=document.createElement('input');inp.value=sessions[i].name;
   inp.onclick=function(ev){ev.stopPropagation();};
