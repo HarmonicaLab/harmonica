@@ -291,6 +291,22 @@ body.dark .take{border-color:var(--border)}
 .sp-name{font-size:.78rem;font-weight:800;font-style:italic;color:var(--text);overflow-wrap:anywhere;flex:1 1 140px;min-width:0}
 .sp-hint{margin-top:10px;font-size:.68rem;font-weight:700;font-style:italic;color:var(--muted);line-height:1.5}
 .sp-body{margin-top:16px}
+.yt-or{display:flex;align-items:center;gap:10px;margin:14px 0 10px;font-size:.66rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+.yt-or:before,.yt-or:after{content:"";flex:1;height:1px;background:var(--border)}
+.yt-in{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.yt-in input{flex:1 1 200px;min-width:0;padding:10px 16px;border-radius:999px;border:1px solid var(--glass-edge);background:var(--glass-in);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;outline:none;box-shadow:inset 0 1px 0 var(--glass-hi)}
+body.dark .yt-in input{border-color:var(--border)}
+.yt-in input:focus{border-color:var(--hl-gold)}
+.yt-go{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.yt-go svg{width:20px;height:14px;flex:none}
+.yt-msg{margin-top:8px;font-size:.7rem;font-weight:800;font-style:italic;color:var(--hl-red,#C8281E);min-height:0}
+.yt-body{margin-top:14px}
+.yt-frame{position:relative;width:100%;padding-top:56.25%;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.yt-frame iframe,.yt-frame>div{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt-rates{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.yt-rates .metro-btn{padding:6px 12px;font-size:.78rem}
+.yt-note{margin-top:12px;font-size:.66rem;font-weight:700;font-style:italic;color:var(--muted);line-height:1.5}
+.yt-close{margin-left:auto}
 .sp-row{padding:12px 0;border-bottom:1px solid var(--border)}
 .sp-row:last-of-type{border-bottom:none}
 .sp-head{display:flex;align-items:center;gap:10px}
@@ -542,6 +558,33 @@ body.dark .cof-info{border-color:var(--border);border-left-color:var(--hl-gold)}
     <span class="sp-name" id="spName"></span>
   </div>
   <div class="sp-hint" id="spHint"></div>
+  <div class="yt-or"><span id="ytOrLbl"></span></div>
+  <div class="yt-in">
+    <input type="url" id="ytUrl" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button class="btn yt-go" type="button" onclick="ytLoadFromInput()"><svg viewBox="0 0 28 20"><rect width="28" height="20" rx="5" fill="#C8281E"/><path d="M11 5.5v9l8-4.5z" fill="#fff"/></svg><span id="ytGoLbl"></span></button>
+  </div>
+  <div class="yt-msg" id="ytMsg"></div>
+  <div class="yt-body" id="ytBody" style="display:none">
+    <div class="yt-frame"><div id="ytPlayer"></div></div>
+    <div class="sp-row">
+      <div class="sp-head"><span class="sp-lbl" id="ytSpeedLbl"></span><span class="sp-val" id="ytSpeedVal">100%</span></div>
+      <div class="yt-rates" id="ytRates"></div>
+    </div>
+    <div class="sp-row">
+      <div class="sp-head"><span class="sp-lbl" id="ytLoopLbl"></span>
+        <div class="sp-ab"><button class="sp-abbtn" type="button" id="ytABtn" onclick="ytSetA()"><b>A</b><span id="ytAVal">&ndash;</span></button><button class="sp-abbtn" type="button" id="ytBBtn" onclick="ytSetB()"><b>B</b><span id="ytBVal">&ndash;</span></button></div>
+        <button class="sp-ic" type="button" onclick="ytClearLoop()" title="Clear"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button></div>
+    </div>
+    <div class="sp-prog"><span id="ytCur">0:00</span><input type="range" id="ytSeek" min="0" max="1000" step="1" value="0"><span id="ytDur">0:00</span></div>
+    <div class="sp-trans">
+      <button class="sp-ic" type="button" onclick="ytToStart()" title="Inizio"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button class="sp-ic" type="button" onclick="ytJump(-5)" title="-5 s"><svg viewBox="0 0 24 24"><path d="M11 6v12L2 12zM21 6v12l-9-6z"/></svg></button>
+      <button class="sp-play" type="button" id="ytPlayBtn" onclick="ytToggle()"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+      <button class="sp-ic" type="button" onclick="ytJump(5)" title="+5 s"><svg viewBox="0 0 24 24"><path d="M13 6v12l9-6zM3 6v12l9-6z"/></svg></button>
+      <button class="sp-ic" type="button" id="ytLoopBtn" onclick="ytToggleLoop()" title="Loop"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg></button>
+    </div>
+    <div class="yt-note" id="ytNote"></div>
+  </div>
   <div class="sp-body" id="spBody" style="display:none">
     <div class="sp-row">
       <div class="sp-head"><span class="sp-lbl" id="spTempoLbl"></span><span class="sp-val" id="spTempoVal">100%</span><button class="sp-ic" type="button" onclick="spSetTempo(100)" title="Reset"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button></div>
@@ -660,7 +703,7 @@ var TX={
     lvl:'Livello ingresso · linea rossa = soglia',sens:'Sensibilità mic',sensLow:'− meno',sensHigh:'più +',
     copied:'Copiato!',pdfLeg:'Legenda',pdfGraph:'Tablatura grafica',pdfTxt:'Tablatura testo',pdfFoot:'Generato con Harmonica Lab Tab Transcriber',
     gridHint:'👆 Clicca una nota per aggiungerla alla tablatura',
-    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',cofTitle:'Circolo delle quinte',cofSub:'Tocca una tonalità per scegliere l\'armonica. La chiave evidenziata è quella attiva.',spTitle:'Brano · Tempo, intonazione e loop',spKeyOrig:'Tonalità del brano',spKeyNow:'Tonalità ora',spKeyEst:'stimata, puoi correggerla',spKeyAnalyzing:'analizzo…',spKeyMaj:'maggiore',spKeyMin:'minore',spHarpTitle:'Armonica consigliata',spPos1:'1ª posizione',spPos2:'2ª posizione (cross harp, blues)',spPos3:'3ª posizione (minore)',spUse:'Usa',spInUse:'in uso',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A e video MP4 (si usa solo l\'audio). Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spTapAgain:'se non senti nulla, premi di nuovo Play',spErr:'Non riesco a leggere questo file. Se è un video, prova con un MP4 o esporta l\'audio in MP3.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recPrep:'Preparo l\'MP3',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',oct:'Ottava',addOct:'Aggiungi ottava',octLow:'Foro basso',octHigh:'Foro alto',octClosed:'Chiusi con la lingua:',octSpan:'Scegli due fori con almeno un foro in mezzo da chiudere con la lingua.',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
+    chord:'Accordo',chordOn:'Accordo ON',addChord:'Aggiungi accordo',cofTitle:'Circolo delle quinte',cofSub:'Tocca una tonalità per scegliere l\'armonica. La chiave evidenziata è quella attiva.',ytOr:'oppure',ytPh:'Incolla qui un link YouTube',ytGo:'Apri',ytSpeed:'Velocità',ytLoop:'Loop A-B',ytBad:'Link non valido: incolla un indirizzo di un video YouTube.',ytLoading:'Carico il video…',ytNet:'Non riesco a collegarmi a YouTube. Controlla la connessione.',ytEmbed:'Questo video non si può riprodurre fuori da YouTube (lo ha bloccato chi lo ha caricato). Prova un altro video o carica il file.',ytGone:'Video non trovato o privato.',ytNote:'Con un link YouTube hai velocità, loop A-B e salti di 5 secondi. Intonazione, riconoscimento della tonalità e forma d\'onda funzionano solo caricando un file. Se registri, il brano entra solo attraverso le casse.',spTitle:'Brano · Tempo, intonazione e loop',spKeyOrig:'Tonalità del brano',spKeyNow:'Tonalità ora',spKeyEst:'stimata, puoi correggerla',spKeyAnalyzing:'analizzo…',spKeyMaj:'maggiore',spKeyMin:'minore',spHarpTitle:'Armonica consigliata',spPos1:'1ª posizione',spPos2:'2ª posizione (cross harp, blues)',spPos3:'3ª posizione (minore)',spUse:'Usa',spInUse:'in uso',spChoose:'Scegli un file audio',spHint:'MP3, WAV, M4A e video MP4 (si usa solo l\'audio). Il brano resta sul tuo dispositivo: non viene caricato su internet.',spTempo:'Tempo',spPitch:'Intonazione',spLoop:'Loop',spSnap:'Scatta a semitono',spLoading:'Carico il brano…',spTapAgain:'se non senti nulla, premi di nuovo Play',spErr:'Non riesco a leggere questo file. Se è un video, prova con un MP4 o esporta l\'audio in MP3.',recSync:'Sincronizza',recSyncL:'◀ Anticipa armonica',recSyncR:'Ritarda armonica ▶',recSyncHint:'Al centro (0) la registrazione resta com\'è. Se l\'armonica arriva dopo il brano sposta il cursore a sinistra, se arriva prima spostalo a destra. Con cuffie Bluetooth di solito serve molto più anticipo (250-600 ms).',recMix:'Includi il brano nella registrazione',recMixHint:'Usa le cuffie, così il microfono non registra anche il brano che esce dalle casse.',recTitle:'Registra audio',recStart:'Registra',recStop:'Stop',recHint:'Suona e registrati: puoi riascoltarti e scaricare l\'audio. Le registrazioni restano qui finché non chiudi o ricarichi la pagina, quindi scaricale per tenerle.',recTake:'Registrazione',recPrep:'Preparo l\'MP3',recName:'Nome della registrazione',recDownload:'Scarica',recDelete:'Elimina',recErr:'Microfono non disponibile.',autoHint:'Modalità Auto: suona e tieni la nota per almeno 1-2 secondi per inserirla.',lng:'Nota lunga',dual:'2 fori',addDual:'Aggiungi 2 fori',dualChip:'due fori',oct:'Ottava',addOct:'Aggiungi ottava',octLow:'Foro basso',octHigh:'Foro alto',octClosed:'Chiusi con la lingua:',octSpan:'Scegli due fori con almeno un foro in mezzo da chiudere con la lingua.',trill:'Trillo',addTrill:'Aggiungi trillo',trillA:'Foro A',trillB:'Foro B',trillBlow:'Soffiata ↑',trillDraw:'Aspirata ↓',trillSame:'Scegli due fori diversi per il trillo.',dualSame:'Scegli due fori diversi.'},
   en:{sub:'Diatonic harmonica in',key:'Key:',grid:'Note grid',tab:'Tab',
     micOn:'Enable microphone',micOff:'Stop',idle:'waiting',silence:'silence',intune:'in tune',
     high:'too sharp',low:'too flat',blowbend:'blow bend',drawbend:'bend detected',
@@ -678,7 +721,7 @@ var TX={
     lvl:'Input level · red line = threshold',sens:'Mic sensitivity',sensLow:'− less',sensHigh:'more +',
     copied:'Copied!',pdfLeg:'Legend',pdfGraph:'Graphic tab',pdfTxt:'Text tab',pdfFoot:'Generated with Harmonica Lab Tab Transcriber',
     gridHint:'👆 Click a note to add it to the tab',
-    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',cofTitle:'Circle of fifths',cofSub:'Tap a key to choose the harmonica. The highlighted key is the active one.',spTitle:'Track · Tempo, pitch and loop',spKeyOrig:'Track key',spKeyNow:'Key now',spKeyEst:'estimated, you can correct it',spKeyAnalyzing:'analysing…',spKeyMaj:'major',spKeyMin:'minor',spHarpTitle:'Suggested harmonica',spPos1:'1st position',spPos2:'2nd position (cross harp, blues)',spPos3:'3rd position (minor)',spUse:'Use',spInUse:'in use',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A and MP4 videos (only the audio is used). The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spTapAgain:'if you hear nothing, press Play again',spErr:'This file can\'t be read. If it is a video, try an MP4 or export the audio as MP3.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recPrep:'Preparing MP3',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',oct:'Octave',addOct:'Add octave',octLow:'Low hole',octHigh:'High hole',octClosed:'Blocked by the tongue:',octSpan:'Choose two holes with at least one hole in between to block with the tongue.',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
+    chord:'Chord',chordOn:'Chord ON',addChord:'Add chord',cofTitle:'Circle of fifths',cofSub:'Tap a key to choose the harmonica. The highlighted key is the active one.',ytOr:'or',ytPh:'Paste a YouTube link here',ytGo:'Open',ytSpeed:'Speed',ytLoop:'A-B loop',ytBad:'Invalid link: paste the address of a YouTube video.',ytLoading:'Loading the video…',ytNet:'Cannot reach YouTube. Check your connection.',ytEmbed:'This video cannot be played outside YouTube (the uploader blocked it). Try another video or load the file.',ytGone:'Video not found or private.',ytNote:'With a YouTube link you get speed, A-B loop and 5-second jumps. Pitch, key detection and waveform only work when you load a file. When recording, the track is only captured through the speakers.',spTitle:'Track · Tempo, pitch and loop',spKeyOrig:'Track key',spKeyNow:'Key now',spKeyEst:'estimated, you can correct it',spKeyAnalyzing:'analysing…',spKeyMaj:'major',spKeyMin:'minor',spHarpTitle:'Suggested harmonica',spPos1:'1st position',spPos2:'2nd position (cross harp, blues)',spPos3:'3rd position (minor)',spUse:'Use',spInUse:'in use',spChoose:'Choose an audio file',spHint:'MP3, WAV, M4A and MP4 videos (only the audio is used). The track stays on your device: it is not uploaded to the internet.',spTempo:'Tempo',spPitch:'Pitch',spLoop:'Loop',spSnap:'Snap to semitone',spLoading:'Loading track…',spTapAgain:'if you hear nothing, press Play again',spErr:'This file can\'t be read. If it is a video, try an MP4 or export the audio as MP3.',recSync:'Sync',recSyncL:'◀ Harmonica earlier',recSyncR:'Harmonica later ▶',recSyncHint:'At the centre (0) the recording stays as it is. If the harmonica sounds late, move the slider left; if early, move it right. Bluetooth headphones usually need much more (250-600 ms).',recMix:'Include the track in the recording',recMixHint:'Use headphones, so the mic doesn\'t also pick up the track from the speakers.',recTitle:'Record audio',recStart:'Record',recStop:'Stop',recHint:'Play and record yourself: you can listen back and download the audio. Recordings stay here until you close or reload the page, so download them to keep them.',recTake:'Recording',recPrep:'Preparing MP3',recName:'Recording name',recDownload:'Download',recDelete:'Delete',recErr:'Microphone not available.',autoHint:'Auto mode: play and hold the note for at least 1–2 seconds to add it.',lng:'Long note',dual:'2 holes',addDual:'Add 2 holes',dualChip:'2 holes',oct:'Octave',addOct:'Add octave',octLow:'Low hole',octHigh:'High hole',octClosed:'Blocked by the tongue:',octSpan:'Choose two holes with at least one hole in between to block with the tongue.',trill:'Trill',addTrill:'Add trill',trillA:'Hole A',trillB:'Hole B',trillBlow:'Blow ↑',trillDraw:'Draw ↓',trillSame:'Choose two different holes for the trill.',dualSame:'Choose two different holes.'}
 };
 function t(k){return TX[lang][k]||k;}
 
@@ -771,6 +814,7 @@ function applyTx(){
   document.getElementById('lvlLbl').textContent=t('lvl');
   ['spTitle','spHint','spTempoLbl:spTempo','spPitchLbl:spPitch','spLoopLbl:spLoop','spSnapLbl:spSnap','spChooseLbl:spChoose','recMixLbl:recMix','recMixHint:recMixHint','recSyncLbl:recSync','recSyncHint:recSyncHint','recSyncL:recSyncL','recSyncR:recSyncR','spKeyOrigLbl:spKeyOrig','spKeyNowLbl:spKeyNow'].forEach(function(k){var a=k.split(':');var el=document.getElementById(a[0]);if(el)el.textContent=t(a[1]||a[0]);});
   if(window.spKeyRefresh)spKeyRefresh(true);
+  if(window.ytI18n)ytI18n();
   document.getElementById('cofTitle').textContent=t('cofTitle');document.getElementById('cofSubtitle').textContent=t('cofSub');if(window.buildCOF)buildCOF();
   document.getElementById('recTitle').textContent=t('recTitle');document.getElementById('recHint').textContent=t('recHint');
   document.getElementById('recBtnLbl').textContent=(window.recorder&&recorder.state==='recording')?t('recStop'):t('recStart');
@@ -1281,6 +1325,7 @@ function spEnsureCtx(){
 function spFmt(t){t=Math.max(0,t||0);var m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+(s<10?'0':'')+s;}
 function spLoadFile(file){
   if(!file)return;
+  if(window.ytClose)ytClose();
   spEnsureCtx();if(SP.ctx.state==='suspended')SP.ctx.resume();
   if(SP.playing){SP.playing=false;SP.fade=null;}
   document.getElementById('spName').textContent=t('spLoading');
@@ -1309,7 +1354,7 @@ function spLoadFile(file){
 }
 function hlAudioSession(type){try{if(navigator.audioSession&&navigator.audioSession.type!==type)navigator.audioSession.type=type;}catch(e){}}
 function spUnlock(){try{var b=SP.ctx.createBuffer(1,1,SP.ctx.sampleRate),s=SP.ctx.createBufferSource();s.buffer=b;s.connect(SP.ctx.destination);s.start(0);}catch(e){}}
-function spPlay(){if(!SP.buf)return;if(window.takePlaying)takeStop(true);if(!(window.sharedStream&&sharedStream.active))hlAudioSession('playback');spEnsureCtx();spUnlock();if(SP.ctx.state!=='running'&&SP.ctx.resume){var pr=SP.ctx.resume();if(pr&&pr.catch)pr.catch(function(){});}SP.fade=null;SP.eng.reset(SP.pos*SP.eng.sr);SP.playing=true;spUpdatePlayBtn();spCheckRun();}
+function spPlay(){if(!SP.buf)return;if(window.YT_S&&YT_S.player&&YT_S.player.pauseVideo){try{YT_S.player.pauseVideo();}catch(e){}}if(window.takePlaying)takeStop(true);if(!(window.sharedStream&&sharedStream.active))hlAudioSession('playback');spEnsureCtx();spUnlock();if(SP.ctx.state!=='running'&&SP.ctx.resume){var pr=SP.ctx.resume();if(pr&&pr.catch)pr.catch(function(){});}SP.fade=null;SP.eng.reset(SP.pos*SP.eng.sr);SP.playing=true;spUpdatePlayBtn();spCheckRun();}
 function spCheckRun(){setTimeout(function(){if(SP.playing&&SP.ctx&&SP.ctx.state!=='running'){var n=document.getElementById('spName');if(n&&!n.dataset.warn){n.dataset.warn='1';n.textContent=SP.name+' — '+t('spTapAgain');}SP.ctx.resume&&SP.ctx.resume();}},700);}
 function spPause(){if(!SP.playing)return;SP.fade={r:SP_FADE,kind:'pause'};SP.playing=false;spUpdatePlayBtn();}
 function spToggle(){if(SP.playing)spPause();else spPlay();}
@@ -1389,6 +1434,132 @@ function spTick(){
   cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
   window.addEventListener('resize',spResizeCanvas);
   spUpdatePlayBtn();requestAnimationFrame(spTick);
+})();
+
+/* ===== YouTube (lettore ufficiale IFrame API) ===== */
+var YT_S={player:null,api:false,apiLoading:false,pending:null,A:null,B:null,loopOn:false,timer:null,dragSeek:false,id:null,rate:1};
+function ytI18n(){
+  var m={ytOrLbl:'ytOr',ytGoLbl:'ytGo',ytSpeedLbl:'ytSpeed',ytLoopLbl:'ytLoop',ytNote:'ytNote'};
+  for(var k in m){var el=document.getElementById(k);if(el)el.textContent=t(m[k]);}
+  var u=document.getElementById('ytUrl');if(u)u.placeholder=t('ytPh');
+}
+function ytParse(u){
+  u=(u||'').trim();if(!u)return null;
+  if(/^[A-Za-z0-9_-]{11}$/.test(u))return {id:u,start:0};
+  if(!/^https?:\/\//i.test(u))u='https://'+u;
+  var url;try{url=new URL(u);}catch(e){return null;}
+  var h=url.hostname.replace(/^www\.|^m\.|^music\./,''),id=null;
+  if(h==='youtu.be')id=url.pathname.split('/')[1];
+  else if(/(^|\.)youtube(-nocookie)?\.com$/.test(h)){
+    if(url.pathname==='/watch')id=url.searchParams.get('v');
+    else{var mm=url.pathname.match(/^\/(shorts|embed|live|v)\/([A-Za-z0-9_-]{11})/);if(mm)id=mm[2];}
+  }
+  if(!id||!/^[A-Za-z0-9_-]{11}$/.test(id))return null;
+  var st=url.searchParams.get('t')||url.searchParams.get('start')||'0',sec=0;
+  if(/^\d+$/.test(st))sec=parseInt(st,10);else{var p=st.match(/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/);if(p)sec=(+p[1]||0)*3600+(+p[2]||0)*60+(+p[3]||0);}
+  return {id:id,start:sec};
+}
+function ytMsg(k){var el=document.getElementById('ytMsg');if(el)el.textContent=k?t(k):'';}
+function ytLoadFromInput(){
+  var v=ytParse(document.getElementById('ytUrl').value);
+  if(!v){ytMsg('ytBad');return;}
+  ytMsg('');ytOpen(v.id,v.start);
+}
+function ytLoadApi(cb){
+  if(YT_S.api&&window.YT&&YT.Player){cb();return;}
+  YT_S.pending=cb;if(YT_S.apiLoading)return;YT_S.apiLoading=true;
+  var prev=window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady=function(){YT_S.api=true;if(prev)try{prev();}catch(e){}var f=YT_S.pending;YT_S.pending=null;if(f)f();};
+  var sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';sc.async=true;
+  sc.onerror=function(){YT_S.apiLoading=false;ytMsg('ytNet');};
+  document.head.appendChild(sc);
+}
+function ytOpen(id,start){
+  // ferma il brano caricato da file
+  if(window.SP&&SP.playing)spPause();
+  document.getElementById('spBody').style.display='none';
+  var mr=document.getElementById('recMixRow'),sr=document.getElementById('recSyncRow');if(mr)mr.style.display='none';if(sr)sr.style.display='none';
+  document.getElementById('spName').textContent=t('ytLoading');
+  YT_S.A=null;YT_S.B=null;YT_S.loopOn=false;YT_S.id=id;ytLoopUI();
+  ytLoadApi(function(){
+    document.getElementById('ytBody').style.display='';
+    if(YT_S.player&&YT_S.player.loadVideoById){YT_S.player.cueVideoById({videoId:id,startSeconds:start||0});return;}
+    var pv={playsinline:1,rel:0,modestbranding:1,fs:1,start:start||0};
+    if(/^https?:/.test(location.protocol))pv.origin=location.origin;
+    YT_S.player=new YT.Player('ytPlayer',{videoId:id,playerVars:pv,events:{
+      onReady:function(){ytAfterLoad();},
+      onStateChange:ytState,
+      onError:function(e){var c=e&&e.data;ytMsg(c===101||c===150||c===153?'ytEmbed':(c===100?'ytGone':'ytBad'));document.getElementById('spName').textContent='';},
+      onPlaybackRateChange:function(e){YT_S.rate=e.data;ytRatesUI();}
+    }});
+  });
+}
+function ytAfterLoad(){
+  var p=YT_S.player;if(!p)return;
+  var nm='YouTube';try{var d=p.getVideoData&&p.getVideoData();if(d&&d.title)nm=d.title;}catch(e){}
+  document.getElementById('spName').textContent='▶ '+nm;
+  try{p.setPlaybackRate(YT_S.rate||1);}catch(e){}
+  ytRatesUI(true);
+  if(!YT_S.timer)YT_S.timer=setInterval(ytTick,40);
+}
+function ytState(e){
+  var s=e.data;
+  if(s===YT.PlayerState.CUED||s===YT.PlayerState.PLAYING)ytAfterLoad();
+  if(s===YT.PlayerState.PLAYING){if(window.takePlaying)try{takeStop(true);}catch(er){}}
+  if(s===YT.PlayerState.ENDED&&YT_S.loopOn){var a=(YT_S.A!=null&&YT_S.B!=null)?YT_S.A:0;YT_S.player.seekTo(a,true);YT_S.player.playVideo();}
+  ytPlayUI();
+}
+function ytPlaying(){try{return YT_S.player&&YT_S.player.getPlayerState()===YT.PlayerState.PLAYING;}catch(e){return false;}}
+function ytPlayUI(){var b=document.getElementById('ytPlayBtn');if(!b)return;var on=ytPlaying()||(YT_S.player&&YT_S.player.getPlayerState&&YT_S.player.getPlayerState()===YT.PlayerState.BUFFERING);var st=on?'1':'0';if(b.dataset.st===st)return;b.dataset.st=st;b.innerHTML=on?'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>':'<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';}
+function ytRatesUI(rebuild){
+  var box=document.getElementById('ytRates'),p=YT_S.player;if(!box||!p)return;
+  if(rebuild||!box.childNodes.length){
+    var rs=[0.25,0.5,0.75,1,1.25,1.5,1.75,2];try{var a=p.getAvailablePlaybackRates();if(a&&a.length>1)rs=a;}catch(e){}
+    box.innerHTML='';rs.forEach(function(r){var b=document.createElement('button');b.type='button';b.className='metro-btn';b.dataset.r=r;b.textContent=Math.round(r*100)+'%';b.onclick=function(){ytSetRate(r);};box.appendChild(b);});
+  }
+  var cur=YT_S.rate;try{cur=p.getPlaybackRate()||cur;}catch(e){}
+  [].forEach.call(box.childNodes,function(b){b.classList.toggle('active',Math.abs(parseFloat(b.dataset.r)-cur)<0.001);});
+  document.getElementById('ytSpeedVal').textContent=Math.round(cur*100)+'%';
+}
+function ytSetRate(r){YT_S.rate=r;try{YT_S.player.setPlaybackRate(r);}catch(e){}setTimeout(ytRatesUI,150);}
+function ytNow(){try{return YT_S.player.getCurrentTime()||0;}catch(e){return 0;}}
+function ytDurS(){try{return YT_S.player.getDuration()||0;}catch(e){return 0;}}
+function ytToggle(){var p=YT_S.player;if(!p||!p.playVideo)return;if(window.SP&&SP.playing)spPause();if(ytPlaying())p.pauseVideo();else p.playVideo();}
+function ytSeekTo(x){var p=YT_S.player;if(!p||!p.seekTo)return;var d=ytDurS();x=Math.max(0,d?Math.min(d-0.2,x):x);p.seekTo(x,true);}
+function ytJump(d){ytSeekTo(ytNow()+d);}
+function ytToStart(){ytSeekTo(YT_S.loopOn&&YT_S.A!=null&&YT_S.B!=null?YT_S.A:0);}
+function ytSetA(){if(!YT_S.player)return;YT_S.A=ytNow();if(YT_S.B!=null&&YT_S.B<=YT_S.A+0.1)YT_S.B=null;if(YT_S.A!=null&&YT_S.B!=null)YT_S.loopOn=true;ytLoopUI();}
+function ytSetB(){if(!YT_S.player)return;var t0=ytNow();if(YT_S.A!=null&&t0<YT_S.A){YT_S.B=YT_S.A;YT_S.A=t0;}else if(YT_S.A==null||t0>YT_S.A+0.1)YT_S.B=t0;if(YT_S.A!=null&&YT_S.B!=null&&YT_S.B>YT_S.A+0.1){YT_S.loopOn=true;ytSeekTo(YT_S.A);}ytLoopUI();}
+function ytClearLoop(){YT_S.A=null;YT_S.B=null;YT_S.loopOn=false;ytLoopUI();}
+function ytToggleLoop(){if(!YT_S.player)return;YT_S.loopOn=!YT_S.loopOn;ytLoopUI();}
+function ytLoopUI(){
+  document.getElementById('ytAVal').textContent=YT_S.A!=null?spFmt(YT_S.A):'–';
+  document.getElementById('ytBVal').textContent=YT_S.B!=null?spFmt(YT_S.B):'–';
+  document.getElementById('ytABtn').classList.toggle('set',YT_S.A!=null);
+  document.getElementById('ytBBtn').classList.toggle('set',YT_S.B!=null);
+  document.getElementById('ytLoopBtn').classList.toggle('on',YT_S.loopOn);
+}
+function ytTick(){
+  if(!YT_S.player||!YT_S.player.getCurrentTime)return;
+  var now=ytNow(),d=ytDurS();
+  if(YT_S.loopOn&&YT_S.A!=null&&YT_S.B!=null&&ytPlaying()&&(now>=YT_S.B||now<YT_S.A-0.5))YT_S.player.seekTo(YT_S.A,true);
+  if(!YT_S.dragSeek){document.getElementById('ytCur').textContent=spFmt(now);document.getElementById('ytSeek').value=d?Math.round(now/d*1000):0;}
+  document.getElementById('ytDur').textContent=spFmt(d);
+  ytPlayUI();
+}
+function ytClose(){
+  if(YT_S.player){try{YT_S.player.stopVideo();}catch(e){}}
+  var b=document.getElementById('ytBody');if(b)b.style.display='none';ytMsg('');
+}
+(function ytInit(){
+  var sk=document.getElementById('ytSeek');if(!sk)return;
+  sk.addEventListener('input',function(){YT_S.dragSeek=true;document.getElementById('ytCur').textContent=spFmt(this.value/1000*ytDurS());});
+  sk.addEventListener('change',function(){YT_S.dragSeek=false;ytSeekTo(this.value/1000*ytDurS());});
+  var u=document.getElementById('ytUrl');
+  u.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ytLoadFromInput();}});
+  u.addEventListener('paste',function(){setTimeout(function(){if(ytParse(u.value))ytLoadFromInput();},30);});
+  u.addEventListener('input',function(){ytMsg('');});
+  ytI18n();
 })();
 
 var recMixNodes=null,recSyncMs=80,recSyncReady=false;
